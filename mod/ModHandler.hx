@@ -2,6 +2,7 @@ package lib.mod;
 
 class ModHandler {
 
+    public var identifiers:IdentifierStorage;
     public var content:ContentHandler;
 
 

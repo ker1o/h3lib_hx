@@ -1,4 +1,4 @@
-package lib;
+package lib.hero;
 
 import constants.GameConstants;
 import data.ConfigData;
@@ -9,7 +9,7 @@ import lib.hero.ObstacleInfo;
 import lib.mod.IHandlerBase;
 import lib.mod.VLC;
 
-class HeroHandler extends IHandlerBase {
+class HeroHandler implements IHandlerBase {
     public var classes:HeroClassHandler;
 
     public var heroes:Array<Hero>;
@@ -27,6 +27,8 @@ class HeroHandler extends IHandlerBase {
 
     public function new() {
         VLC.instance.heroh = this;
+        classes = new HeroClassHandler();
+
         loadObstacles();
         loadTerrains();
         for(i in 0...GameConstants.TERRAIN_TYPES) {
@@ -131,7 +133,62 @@ class HeroHandler extends IHandlerBase {
     }
 
 
-    override public function loadLegacyData(dataSize:Int):Array<Dynamic> {
+    public function loadLegacyData(dataSize:Int):Array<Dynamic> {
+        heroes = [];
+        var h3Data:Array<Dynamic> = [];
+        var specParser = H3mConfigData.data.get("DATA/HEROSPEC.TXT");
+        var bioParser = H3mConfigData.data.get("DATA/HEROBIOS.TXT");
+        var parser = H3mConfigData.data.get("DATA/HOTRAITS.TXT");
 
+        for(i in GameConstants.HEROES_QUANTITY) {
+            var parserData = parser[i];
+            var heroData:HeroData = {
+                texts: {
+                    name: parserData[0],
+                    biography: bioParser[i],
+                    speciality: {
+                        name: specParser[i][0],
+                        tooltip: specParser[i][1],
+                        description: specParser[i][2]
+                    }
+                },
+                army: []
+            };
+
+            for(x in 0...3) {
+                var index = 1 + x * 3;
+                var heroArmy:HeroArmyData = {
+                    min: parserData[index],
+                    max: parserData[index + 1],
+                    creature: parserData[index + 2]
+                };
+                heroData.army.push(heroArmy);
+            }
+            h3Data.push(heroData);
+        }
+        return h3Data;
     }
+}
+
+typedef HeroData = {
+    var texts:HeroTextsData;
+    var army:Array<HeroArmyData>;
+}
+
+typedef HeroTextsData = {
+    var name:String;
+    var biography:String;
+    var speciality:HeroSpecialityData;
+}
+
+typedef HeroSpecialityData = {
+    var name:String;
+    var tooltip:String;
+    var description:String;
+}
+
+typedef HeroArmyData = {
+    var min:Int;
+    var max:Int;
+    var creature:String;
 }

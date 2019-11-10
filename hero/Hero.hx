@@ -30,7 +30,7 @@ class Hero {
     public var specDescr:String;
     public var specTooltip:String;
 
-    public var /// Graphics
+    /// Graphics
     public var iconSpecSmall:String;
     public var iconSpecLarge:String;
     public var portraitSmall:String;

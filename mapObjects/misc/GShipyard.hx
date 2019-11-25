@@ -8,9 +8,10 @@ class GShipyard extends GObjectInstance implements IShipyard {
         super();
     }
 
-    public function getBoardCost():Array<Int> {
+    public function getBoatCost():Array<Int> {
         var cost:Array<Int> = [];
         cost[ResType.WOOD] = 10;
         cost[ResType.GOLD] = 1000;
+        return cost;
     }
 }

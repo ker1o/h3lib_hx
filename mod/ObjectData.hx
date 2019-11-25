@@ -1,3 +1,5 @@
+package lib.mod;
+
 // entry created on ID registration
 abstract ObjectData({id:Int, scope:String}) {
 

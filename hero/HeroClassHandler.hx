@@ -1,5 +1,6 @@
 package lib.hero;
 
+import haxe.Json;
 import data.H3mConfigData;
 import lib.mod.IHandlerBase;
 
@@ -9,10 +10,13 @@ class HeroClassHandler implements IHandlerBase {
     public function new() {
     }
 
+    public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+    }
+
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         heroClasses = [];
         var h3Data:Array<Dynamic> = [];
-        var parser = H3mConfigData.data.get("HCTRAITS.TXT");
+        var parser = Json.parse(H3mConfigData.data.get("DATA/HCTRAITS.TXT"));
 
         for(i in 0...dataSize) {
             var parserData = parser[i];

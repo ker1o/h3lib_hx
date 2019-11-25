@@ -1,6 +1,6 @@
 package lib.mod;
 
-typedef ModInfo = {
+private typedef ModInfo = {
     /// mod data from this mod and for this mod
     var modData:Dynamic;
     /// mod data for this mod from other mods (patches)
@@ -20,5 +20,7 @@ class ContentTypeHandler {
         this.handler = handler;
         this.objectName = objectName;
         originalData = handler.loadLegacyData(VLC.instance.modh.settings.data.get(objectName));
+
+        //set meta core?
     }
 }

@@ -1,5 +1,16 @@
 package lib.mapObjects.hero;
 
+import lib.herobonus.Bonus;
+import lib.herobonus.BonusValue;
+import constants.PrimarySkill;
+import lib.herobonus.BonusSource;
+import lib.herobonus.BonusType;
+import lib.herobonus.BonusDuration;
+import lib.netpacks.ArtifactLocation;
+import lib.artifacts.ArtifactInstance;
+import constants.ArtifactPosition;
+import lib.artifacts.Artifact.ArtBearer;
+import lib.artifacts.ArtifactSet;
 import lib.mapObjects.misc.GBoat;
 import constants.id.ObjectInstanceId;
 import constants.SecondarySkill;
@@ -8,11 +19,13 @@ import lib.hero.Hero;
 import lib.mapObjects.town.GTownInstance;
 
 class GHeroInstance extends ArmedInstance {
-    public static var UNINITIALIZED_PORTRAIT = -1;
-    public static var UNINITIALIZED_MANA = -1;
-    public static var UNINITIALIZED_MOVEMENT = -1;
+    public static inline var UNINITIALIZED_PORTRAIT = -1;
+    public static inline var UNINITIALIZED_MANA = -1;
+    public static inline var UNINITIALIZED_MOVEMENT = -1;
 
     //////////////////////////////////////////////////////////////////////////
+
+    public var artifactSet(default, null) = new ArtifactSet();
 
     public var moveDir:Int; //format:	123
                             //  		8 4
@@ -34,7 +47,7 @@ class GHeroInstance extends ArmedInstance {
     public var sex:Int;
     public var inTownGarrison:Bool; // if hero is in town garrison
     public var visitedTown:GTownInstance; //set if hero is visiting town or in the town garrison
-    public var commander:CommanderInstance;
+//    public var commander:CommanderInstance; ToDo
     public var boat:GBoat; //set to CGBoat when sailing
 
     //public var artifacts:Array<CArtifact>; //hero's artifacts from bag
@@ -44,5 +57,17 @@ class GHeroInstance extends ArmedInstance {
 
     public function new() {
         super();
+    }
+
+    public function pushPrimSkill(which:PrimarySkill, val:BonusValue):Void {
+        bonusSystemNode.addNewBonus(new Bonus(BonusDuration.PERMANENT, BonusType.PRIMARY_SKILL, BonusSource.HERO_BASE_SKILL, val, id.getNum(), which));
+    }
+
+    public function putArtifact(pos:ArtifactPosition, art:ArtifactInstance):Void {
+        art.putAt(new ArtifactLocation(this, pos));
+    }
+
+    public function bearerType():ArtBearer {
+        return ArtBearer.HERO;
     }
 }

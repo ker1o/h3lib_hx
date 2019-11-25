@@ -144,7 +144,13 @@ class ObjectClassesHandler implements IHandlerBase {
         });
     }
 
+    public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+    }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
+        var ret:Array<Dynamic> = null;
+        //ToDo
+
+        return ret;
     }
 }

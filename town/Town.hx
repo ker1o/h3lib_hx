@@ -1,6 +1,7 @@
 package lib.town;
 
-import constants.CreatureId;
+import lib.battle.BattleHex;
+import constants.CreatureType;
 import constants.BuildingID;
 import constants.ArtifactId;
 
@@ -10,7 +11,7 @@ class Town {
     public var names:Array<String>; //names of the town instances
 
     /// level -> list of creatures on this tier
-    public var creatures:Array<Array<CreatureId>>;
+    public var creatures:Array<Array<CreatureType>>;
 
     public var buildings:Map<BuildingID, Building>;
 

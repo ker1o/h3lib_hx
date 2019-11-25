@@ -8,6 +8,6 @@ class DwellingInstanceConstructor extends DefaultObjectTypeHandler<GDwelling> {
     private var guards:Dynamic;
 
     public function new() {
-        super();
+        super(GDwelling);
     }
 }

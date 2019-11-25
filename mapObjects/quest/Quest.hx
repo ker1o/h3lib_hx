@@ -1,5 +1,6 @@
 package lib.mapObjects.quest;
 
+import lib.mapObjects.hero.GHeroInstance;
 import lib.creature.StackBasicDescriptor;
 
 class Quest {
@@ -47,6 +48,11 @@ class Quest {
         isCustomFirst = false;
         isCustomNext = false;
         isCustomComplete = false;
+    }
+
+    public function checkQuest(h:GHeroInstance):Bool {
+        //ToDo
+        return false;
     }
 }
 

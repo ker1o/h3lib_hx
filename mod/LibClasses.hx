@@ -26,6 +26,9 @@ class LibClasses {
 //    public var tplh:RmgTemplateStorage;
 
     public function new() {
+    }
+
+    private function instantiateHandlers() {
         heroh = new HeroHandler();
         arth = new ArtHandler();
         creh = new CreatureHandler();
@@ -42,6 +45,7 @@ class LibClasses {
 
     public function loadFilesystem() {
         modh = new ModHandler();
+        instantiateHandlers();
     }
 
     public function init() {

@@ -1,14 +1,15 @@
 package lib.mapping;
 
+import haxe.Json;
 import data.ConfigData;
-
-typedef TVPVector = Array<TerrainViewPattern>;
 
 using Reflect;
 using StringTools;
 
+typedef TVPVector = Array<TerrainViewPattern>;
+
 class TerrainViewPatternConfig {
-    private static inline var TER_GROUPS:Map<String, TerrainGroup> = [
+    private static var TER_GROUPS:Map<String, TerrainGroup> = [
         "normal" => TerrainGroup.NORMAL,
         "dirt" => TerrainGroup.DIRT,
         "sand" => TerrainGroup.SAND,
@@ -23,7 +24,7 @@ class TerrainViewPatternConfig {
         terrainViewPatterns = new Map<TerrainGroup, Array<TVPVector>>();
         terrainTypePatterns = new Map<String, TVPVector>();
 
-        var config:Dynamic = ConfigData.data.get("config/terrainViewPatterns.json");
+        var config:Dynamic = Json.parse(ConfigData.data.get("config/terrainViewPatterns.json"));
         var patternTypes = ["terrainView", "terrainType"];
         for(patternType in patternTypes) {
             var patternsVec:Array<Dynamic> = config.field(patternType);
@@ -32,7 +33,8 @@ class TerrainViewPatternConfig {
                 var pattern = new TerrainViewPattern();
                 // Read pattern data
                 var data:Array<String> = ptrnNode.field("data");
-                for(cell in data) {
+                for(j in 0...data.length) {
+                    var cell = data[j];
                     cell = cell.replace(" ", "");
                     var rules:Array<String> = cell.split(",");
                     for(ruleStr in rules) {
@@ -54,15 +56,15 @@ class TerrainViewPatternConfig {
 
                 // Read mapping
                 if(patternType == patternTypes[0]) {
-                    var mappingStruct = ptrnNode.field("mapping");
+                    var mappingStruct:Dynamic = ptrnNode.field("mapping");
                     for(field in mappingStruct.fields()) {
                         var terGroupPattern = new TerrainViewPattern();
-                        var mappingStr = (mappingStruct.field(field):String).replace(" ");
+                        var mappingStr = (mappingStruct.field(field):String).replace(" ", "");
                         var colonIndex = mappingStr.indexOf(":");
                         var flipMode = mappingStr.substr(0, colonIndex);
                         terGroupPattern.diffImages = TerrainViewPattern.FLIP_MODE_DIFF_IMAGES == flipMode.charAt(flipMode.length - 1);
                         if(terGroupPattern.diffImages) {
-                            terGroupPattern.rotationTypesCount = Std.parseInt(flipMode.substr(0, flipMode.length() - 1));
+                            terGroupPattern.rotationTypesCount = Std.parseInt(flipMode.substr(0, flipMode.length - 1));
                         }
                         mappingStr = mappingStr.substr(colonIndex + 1);
                         var mappings:Array<String> = mappingStr.split(",");
@@ -87,8 +89,8 @@ class TerrainViewPatternConfig {
                         terrainViewPatterns.get(terGroup).push(terrainViewPatternFlips);
                     }
                 } else if (patternType == patternTypes[1]) {
-                    if(!terrainViewPatterns.exists(pattern.id)) {
-                        terrainViewPatterns.set(pattern.id, []);
+                    if(!terrainTypePatterns.exists(pattern.id)) {
+                        terrainTypePatterns.set(pattern.id, []);
                     }
                     terrainTypePatterns.get(pattern.id).push(pattern);
                     for (i in 1...4) {
@@ -121,12 +123,12 @@ class TerrainViewPatternConfig {
         //always flip horizontal
         for (i in 0...3) {
             var y = i * 3;
-            swap(pattern.data[y], pattern.data[y + 2]);
+            swap(pattern.data, y, y + 2);
         }
         //flip vertical only at 2nd step
         if (flip == MapOperation.FLIP_PATTERN_VERTICAL) {
             for (i in 0...3) {
-                swap(pattern.data[i], pattern.data[6 + i]);
+                swap(pattern.data, i, 6 + i);
             }
         }
     }

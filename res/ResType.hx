@@ -1,6 +1,6 @@
 package lib.res;
 
-@:enum abstract ResType {
+@:enum abstract ResType(Int) from Int to Int {
     public var WOOD:Int = 0;
     public var MERCURY:Int = 1;
     public var ORE:Int = 2;

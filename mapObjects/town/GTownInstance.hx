@@ -1,5 +1,6 @@
 package lib.mapObjects.town;
 
+import lib.mapping.CastleEvent;
 import lib.town.Town;
 import lib.artifacts.Artifact;
 import lib.mapObjects.hero.GHeroInstance;

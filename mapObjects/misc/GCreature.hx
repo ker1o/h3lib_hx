@@ -28,7 +28,7 @@ class GCreature extends ArmedInstance {
     public var JOIN_FOR_FREE:Int = 0; //values > 0 mean gold price
 }
 
-@:enum abstract Character {
+@:enum abstract Character(Int) from Int to Int {
     public var COMPLIANT = 0;
     public var FRIENDLY = 1;
     public var AGRESSIVE = 2;

@@ -1,10 +1,11 @@
 package lib.artifacts;
 
-import constants.ArtifactPosition;
 import constants.ArtifactId;
-import constants.CreatureId;
+import constants.CreatureType;
+import constants.ArtifactPosition;
+import lib.herobonus.BonusSystemNode;
 
-class Artifact {
+class Artifact extends BonusSystemNode { //container for artifacts
     public var name(default, null):String;
     public var description(default, null):String;
     public var eventText(default, null):String;
@@ -20,9 +21,14 @@ class Artifact {
     public var constituentOf:Array<Artifact>; // Reverse map of constituents - combined arts that include this art
     public var aClass:ArtClass;
     public var id:ArtifactId;
-    public var warMachine:CreatureId;
+    public var warMachine:CreatureType;
 
     public function new() {
+        super();
+    }
+
+    public inline function isBig():Bool {
+        return warMachine != CreatureType.NONE;
     }
 }
 

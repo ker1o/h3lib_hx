@@ -2,10 +2,10 @@ package lib.creature;
 
 class CreatureAnimation {
     public var timeBetweenFidgets:Float;
-    public var idleAnimationTime;
-    public var walkAnimationTime;
-    public var attackAnimationTime;
-    public var flightAnimationDistance;
+    public var idleAnimationTime:Float;
+    public var walkAnimationTime:Float;
+    public var attackAnimationTime:Float;
+    public var flightAnimationDistance:Float;
     public var upperRightMissleOffsetX:Int;
     public var rightMissleOffsetX:Int;
     public var lowerRightMissleOffsetX:Int;

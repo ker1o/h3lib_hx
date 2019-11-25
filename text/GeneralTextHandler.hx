@@ -3,6 +3,8 @@ package lib.text;
 class GeneralTextHandler {
     public var localizedTexts:Dynamic;
 
+    public var allTexts:Array<String>;
+
     public var arraytxt:Array<String>;
     public var primarySkillNames:Array<String>;
     public var jktexts:Array<String>;
@@ -49,6 +51,8 @@ class GeneralTextHandler {
     public var campaignRegionNames:Array<Array<String>>;
 
     public function new() {
+        allTexts = [for(i in 0...1000) ""];
+
         readToVector("DATA/VCDESC.TXT",   victoryConditions = []);
         readToVector("DATA/LCDESC.TXT",   lossCondtions = []);
         readToVector("DATA/TCOMMAND.TXT", tcommands = []);

@@ -1,7 +1,7 @@
 package lib.creature;
 
 import constants.ArtifactId;
-import constants.CreatureId;
+import constants.CreatureType;
 import lib.res.ResourceSet;
 
 typedef Resources = ResourceSet;
@@ -15,7 +15,7 @@ class Creature {
 
     public var abilityText:String; //description of abilities
 
-    public var idNumber:CreatureId;
+    public var idNumber:CreatureType;
     public var faction:Int;
     public var level:Int; // 0 - unknown; 1-7 for "usual" creatures
 
@@ -30,7 +30,7 @@ class Creature {
     public var special:Bool; // Creature is not available normally (war machines, commanders, several unused creatures, etc
 
     public var cost:Resources; //cost[res_id] - amount of that resource required to buy creature from dwelling
-    public var upgrades:Array<CreatureId>; // [originally a set] IDs of creatures to which this creature can be upgraded
+    public var upgrades:Array<CreatureType>; // [originally a set] IDs of creatures to which this creature can be upgraded
 
     public var animDefName:String; // creature animation used during battles
     public var advMapDef:String; //for new creatures only, image for adventure map

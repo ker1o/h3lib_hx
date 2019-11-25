@@ -10,6 +10,6 @@ class TownInstanceConstructor extends DefaultObjectTypeHandler<GTownInstance> {
     public var filters:Map<String, LogicalExpression<BuildingID>>;
 
     public function new() {
-        super();
+        super(GTownInstance);
     }
 }

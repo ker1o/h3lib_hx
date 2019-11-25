@@ -10,6 +10,6 @@ class HeroInstanceConstructor extends DefaultObjectTypeHandler<GHeroInstance> {
     public var filters:Map<String, LogicalExpression<HeroTypeId>>;
 
     public function new() {
-        super();
+        super(GHeroInstance);
     }
 }

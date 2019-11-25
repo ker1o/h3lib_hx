@@ -13,12 +13,7 @@ class GSeerHut extends ArmedInstance implements IQuestObject {
 
     public function new() {
         super();
-    }
 
-    public function getVisitText():Void {
-    }
-
-    public function checkQuest(hero:GHeroInstance):Bool {
         rewardType = NOTHING;
         rID = -1;
         rVal = -1;
@@ -28,6 +23,13 @@ class GSeerHut extends ArmedInstance implements IQuestObject {
         quest.isCustomFirst = false;
         quest.isCustomNext = false;
         quest.isCustomComplete = false;
+    }
+
+    public function getVisitText():Void {
+    }
+
+    public function checkQuest(hero:GHeroInstance):Bool {
+        return quest.checkQuest(hero);
     }
 }
 

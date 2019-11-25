@@ -5,15 +5,15 @@ import mapping.TerrainType;
 
 class ObstacleInfo {
 
-    var ID:Int;
-    var defName:String;
-    var allowedTerrains:Array<TerrainType>;
-    var allowedSpecialBfields:Array<BFieldType>;
+    public var ID:Int;
+    public var defName:String;
+    public var allowedTerrains:Array<TerrainType>;
+    public var allowedSpecialBfields:Array<BFieldType>;
 
-    var isAbsoluteObstacle:Int; //there may only one such obstacle in battle and its position is always the same
-    var width:Int; //how much space to the right and up is needed to place obstacle (affects only placement algorithm)
-    var height:Int;
-    var blockedTiles:Array<Int>; //offsets relative to obstacle position (that is its left bottom corner)
+    public var isAbsoluteObstacle:Bool; //there may only one such obstacle in battle and its position is always the same
+    public var width:Int; //how much space to the right and up is needed to place obstacle (affects only placement algorithm)
+    public var height:Int;
+    public var blockedTiles:Array<Int>; //offsets relative to obstacle position (that is its left bottom corner)
 
     public function new() {
 

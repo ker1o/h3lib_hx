@@ -1,12 +1,12 @@
 package lib.hero;
 
-import constants.CreatureId;
+import constants.id.CreatureId;
 
 class InitialArmyStack {
 
-    var minAmount:Int;
-    var maxAmount:Int;
-    var creature:CreatureId;
+    public var minAmount:UInt;
+    public var maxAmount:UInt;
+    public var creature:CreatureId;
 
     public function new() {
     }

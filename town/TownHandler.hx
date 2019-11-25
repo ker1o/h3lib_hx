@@ -1,5 +1,6 @@
 package lib.town;
 
+import haxe.Json;
 import data.H3mConfigData;
 import lib.mod.IHandlerBase;
 import lib.mod.VLC;
@@ -20,6 +21,9 @@ class TownHandler implements IHandlerBase {
         VLC.instance.townh = this;
 
         randomTown = new Town();
+    }
+
+    public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
@@ -45,12 +49,12 @@ class TownHandler implements IHandlerBase {
 
         factions = [];
 
-        var parser:Dynamic = H3mConfigData.data.get("BUILDING.TXT");
+        var parser:Dynamic = Json.parse(H3mConfigData.data.get("DATA/BUILDING.TXT"));
 
         //Unique buildings
         var specialsObj = parser.field("unique");
         for (town in 0...dataSize) {
-            var castleBuildingsObj = specialsObj[town];
+            var castleBuildingsObj:Array<Dynamic> = specialsObj[town];
             var buildID = 17;
 
             for (buildingObj in castleBuildingsObj) {
@@ -61,28 +65,27 @@ class TownHandler implements IHandlerBase {
 
         // Common buildings
         var buildID = 0;
-        var commonObj = parser.field("common");
+        var commonObj:Array<Dynamic> = parser.field("common");
 
         for (buildingObj in commonObj) {
             var building:Dynamic = {};
             readBuilding(building, buildingObj);
             for (town in 0...dataSize) {
-                getBuild(town, buildID).setField("cost") = building.field("cost");
+                getBuild(town, buildID).setField("cost", building.field("cost"));
             }
 
             buildID++;
         }
 
         //Dwellings
-        var dwellingsObj:Array<Dynamic> = parser.field("dwellings");
+        var dwellingsObj:Array<Array<Dynamic>> = parser.field("dwellings");
         for (town in 0...dataSize) {
             for (i in 0...14) {
-                readBuilding(getBuild(town, 30 + i), dwellingsObj[i]);
+                readBuilding(getBuild(town, 30 + i), dwellingsObj[town][i]);
             }
         }
 
-
-        parser = H3mConfigData.data.get("BLDGNEUT.TXT");
+        parser = Json.parse(H3mConfigData.data.get("DATA/BLDGNEUT.TXT"));
         var pos:Int = 0;
         for (building in 0...15) {
             var name:String  = parser[pos][0];
@@ -115,7 +118,7 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        parser = H3mConfigData.data.get("BLDGSPEC.TXT");
+        parser = Json.parse(H3mConfigData.data.get("DATA/BLDGSPEC.TXT"));
         pos = 0;
         for(town in 0...dataSize) {
             for(build in 0...9) {
@@ -133,7 +136,7 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        parser = H3mConfigData.data.get("DWELLING.TXT");
+        parser = Json.parse(H3mConfigData.data.get("DATA/DWELLING.TXT"));
         pos = 0;
         for(town in 0...dataSize) {
             for(build in 0...14) {
@@ -144,8 +147,8 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        var typeParser = H3mConfigData.data.get("TOWNTYPE.TXT");
-        var nameParser = H3mConfigData.data.get("TOWNNAME.TXT");
+        var typeParser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/TOWNTYPE.TXT"));
+        var nameParser = Json.parse(H3mConfigData.data.get("DATA/TOWNNAME.TXT"));
         pos = 0;
         var townID = 0;
         var nameIndex = 0;
@@ -167,8 +170,11 @@ class TownHandler implements IHandlerBase {
 
         //note: this code will try to parse mithril as well but wil always return 0 for it
         for(resId in StringConstants.RESOURCE_NAMES) {
-            pos++;
-            costObj.setField(resId, parser[pos++]);
+            try {
+                costObj.setField(resId, parser[pos++]);
+            }catch(e:Dynamic) {
+                trace("");
+            }
         }
         costObj.deleteField("mithril");
 

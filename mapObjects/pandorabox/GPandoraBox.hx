@@ -1,11 +1,11 @@
 package lib.mapObjects.pandorabox;
 
+import lib.creature.CreatureSet;
 import constants.ArtifactId;
 import constants.SecondarySkill;
 import constants.SpellId;
 import lib.creature.Creature.Resources;
 import lib.mapObjects.ArmedInstance;
-import lib.mapObjects.town.GDwelling.CreaturesSet;
 
 class GPandoraBox extends ArmedInstance {
     public var message:String;
@@ -22,9 +22,15 @@ class GPandoraBox extends ArmedInstance {
     public var abilityLevels:Array<Int>; //levels of gained abilities
     public var artifacts:Array<ArtifactId>; //gained artifacts
     public var spells:Array<SpellId>; //gained spells
-    public var creatures:CreaturesSet; //gained creatures
+    public var creatures:CreatureSet; //gained creatures
 
     public function new() {
         super();
+
+        hasGuardians = false;
+        gainedExp = 0;
+        manaDiff = 0;
+        moraleDiff = 0;
+        luckDiff = 0;
     }
 }

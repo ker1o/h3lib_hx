@@ -16,6 +16,6 @@ class ContentHandler {
         handlers.set("heroes", new ContentTypeHandler(VLC.instance.heroh, "hero"));
         handlers.set("spells", new ContentTypeHandler(VLC.instance.spellh, "spell"));
         handlers.set("skills", new ContentTypeHandler(VLC.instance.skillh, "skill"));
-        handlers.set("templates", new ContentTypeHandler(VLC.instance.tplh, "template"));
+//        handlers.set("templates", new ContentTypeHandler(VLC.instance.tplh, "template"));
     }
 }

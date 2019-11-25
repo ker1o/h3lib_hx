@@ -1,24 +1,27 @@
 package lib.spells;
 
+import Array;
+import constants.GameConstants;
 import constants.SpellId;
 import data.H3mConfigData;
-import Reflect;
-import constants.GameConstants;
-import Array;
+import haxe.Json;
+import lib.mod.HandlerBase;
 import lib.mod.IHandlerBase;
+import Reflect;
 
-class SpellHandler implements IHandlerBase {
+class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
 
     private static var LEVEL_NAMES = ["none", "basic", "advanced", "expert"];
 
     public function new() {
+        super();
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         function read(combat:Bool, ability:Bool, legacyData:Array<Dynamic>, parseObject:Array<Dynamic>) {
             var readSchool = function(data:Dynamic, schoolName:String, value:Bool) {
                 if (value) {
-                    Reflect.setField(data, schoolName);
+                    Reflect.setField(data, schoolName, value);
                 }
             }
 
@@ -57,7 +60,7 @@ class SpellHandler implements IHandlerBase {
 
             pos++; //ignore attributes. All data present in JSON
 
-            for (i in GameConstants.SPELL_SCHOOL_LEVELS) {
+            for (i in 0...GameConstants.SPELL_SCHOOL_LEVELS) {
                 var level = {description: descriptions[i], cost: costs[i], power: powers[i], aiValue: aiVals[i]};
                 Reflect.setField(levelsObj, LEVEL_NAMES[i], level);
             }
@@ -68,11 +71,11 @@ class SpellHandler implements IHandlerBase {
 
         var legacyData:Array<Dynamic> = [];
 
-        var parser = H3mConfigData.data.get("SPTRAITS.TXT");
+        var parser = Json.parse(H3mConfigData.data.get("DATA/SPTRAITS.TXT"));
 
-        read(false,false, legacyData); //read adventure map spells
-        read(true,false, legacyData); //read battle spells
-        read(true,true, legacyData);//read creature abilities
+        read(false, false, legacyData, parser); //read adventure map spells
+        read(true, false, legacyData, parser); //read battle spells
+        read(true, true, legacyData, parser);//read creature abilities
 
         //TODO: maybe move to config
         //clone Acid Breath attributes for Acid Breath damage effect

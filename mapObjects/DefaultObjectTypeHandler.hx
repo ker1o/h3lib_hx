@@ -10,7 +10,7 @@ class DefaultObjectTypeHandler<T:GObjectInstance> extends AObjectTypeHandler {
     }
 
     function createTyped(tmpl:ObjectTemplate):T {
-        var obj:GObjectInstance = Type.createInstance(_clsT, []);
+        var obj:T = Type.createInstance(_clsT, []);
         preInitObject(obj);
         obj.appearance = tmpl;
         return obj;

@@ -1,5 +1,10 @@
 package lib.hero;
 
+import constants.id.CreatureId;
+import constants.CreatureType;
+import lib.mod.ModHandler;
+import haxe.Json;
+import haxe.Json;
 import constants.GameConstants;
 import data.ConfigData;
 import data.H3mConfigData;
@@ -8,6 +13,8 @@ import lib.hero.Hero;
 import lib.hero.ObstacleInfo;
 import lib.mod.IHandlerBase;
 import lib.mod.VLC;
+
+using Reflect;
 
 class HeroHandler implements IHandlerBase {
     public var classes:HeroClassHandler;
@@ -26,21 +33,71 @@ class HeroHandler implements IHandlerBase {
     private var expPerLevel:Array<Int>;
 
     public function new() {
-        VLC.instance.heroh = this;
         classes = new HeroClassHandler();
 
         loadObstacles();
         loadTerrains();
         for(i in 0...GameConstants.TERRAIN_TYPES) {
-            VLC.instance.modh.identifiers.registerStorage("core", "terrain", StringConstants.TERRAIN_NAMES[i], i)
+            VLC.instance.modh.identifiers.registerObject("core", "terrain", StringConstants.TERRAIN_NAMES[i], i);
         }
         loadBallistics();
         loadExperience();
     }
 
+    public function loadObject(scope:String, name:String, data:Dynamic, index:Int = 0) {
+        var object = loadFromJson(data, ModHandler.normalizeIdentifier(scope, "core", name));
+        object.ID = index;
+        object.imageIndex = index;
+
+        heroes[index] = object;
+        VLC.instance.modh.identifiers.registerObject(scope, "hero", name, object.ID.getNum());
+    }
+
+    public function loadFromJson(node:Dynamic, identifier:String):Hero {
+        var hero = new Hero();
+        hero.identifier = identifier;
+        hero.sex = node.field("female");
+        hero.special = node.field("special");
+
+        hero.name        = node.field("texts").field("name");
+        hero.biography   = node.field("texts").field("biography");
+        hero.specName    = node.field("texts").field("specialty").field("name");
+        hero.specTooltip = node.field("texts").field("specialty").field("tooltip");
+        hero.specDescr   = node.field("texts").field("specialty").field("description");
+
+        hero.iconSpecSmall = node.field("images").field("specialtySmall");
+        hero.iconSpecLarge = node.field("images").field("specialtyLarge");
+        hero.portraitSmall = node.field("images").field("small");
+        hero.portraitLarge = node.field("images").field("large");
+        hero.battleImage = node.field("battleImage");
+
+        loadHeroArmy(hero, node);
+        loadHeroSkills(hero, node);
+        loadHeroSpecialty(hero, node);
+
+        VLC.instance.modh.identifiers.requestIdentifier("heroClass", node.field("class"), "core", function(classID:Int) {
+            hero.heroClass = classes.heroClasses[classID];
+        });
+
+        return hero;
+   }
+
     /// helpers for loading to apublic varhuge load functions
     private function loadHeroArmy(hero:Hero, node:Dynamic) {
+        hero.initialArmy = [];
+        var armyObjsArr:Array<Dynamic> = node.field("army");
 
+        for (i in 0...armyObjsArr.length) {
+            var source = armyObjsArr[i];
+            var initialArmyStack = new InitialArmyStack();
+            initialArmyStack.minAmount = (source.field("min"):UInt);
+            initialArmyStack.maxAmount = (source.field("max"):UInt);
+            hero.initialArmy[i] = initialArmyStack;
+
+            VLC.instance.modh.identifiers.requestIdentifier("creature", source.field("creature"), "core", function(creature:Int) {
+                hero.initialArmy[i].creature = new CreatureId((creature:CreatureType));
+            });
+        }
     }
 
     private function loadHeroSkills(hero:Hero, node:Dynamic) {
@@ -70,20 +127,20 @@ class HeroHandler implements IHandlerBase {
             34140
         ];
 
-        while (expPerLevel[expPerLevel.length - 1] > expPerLevel[expPerLevel.length - 2])
+        var l = expPerLevel.length;
+        for (i in l...GameConstants.MAX_HERO_LEVEL)
         {
             var i:Int = expPerLevel.length - 1;
             var diff:Int = expPerLevel[i] - expPerLevel[i-1];
             diff += Std.int(diff / 5);
             expPerLevel.push(expPerLevel[i] + diff);
         }
-        expPerLevel.pop();//last value is broken
     }
 
     private function loadBallistics() {
         ballistics = [];
 
-        var ballisticsRawData = H3mConfigData.data.get("DATA/BALLIST.TXT");
+        var ballisticsRawData:Array<Array<Int>> = Json.parse(H3mConfigData.data.get("DATA/BALLIST.TXT"));
 
         for(levelData in ballisticsRawData) {
             var bli = new BallisticsLevelInfo();
@@ -101,47 +158,46 @@ class HeroHandler implements IHandlerBase {
     }
 
     private function loadTerrains() {
-        var config = ConfigData.data.get("config/terrains.json");
+        var config:Dynamic = Json.parse(ConfigData.data.get("config/terrains.json"));
         terrCosts = [];
         for(name in StringConstants.TERRAIN_NAMES) {
-            terrCosts.push(config[name]["moveCost"]);
+            terrCosts.push(config.field(name).field("moveCost"));
         }
     }
 
     private function loadObstacles() {
-        function local_loadObstacles(node:Dynamic, absolute:Bool):Map<Int, ObstacleInfo> {
+        function local_loadObstacles(node:Array<Dynamic>, absolute:Bool):Map<Int, ObstacleInfo> {
             var out = new Map<Int, ObstacleInfo>();
-            for(obs in (node:Array<Dynamic>)) {
-                var id = obs["id"];
+            for(obs in node) {
+                var id = obs.field("id");
                 var obi = new ObstacleInfo();
                 obi.ID = id;
-                obi.defName = obs["defname"];
-                obi.width = obs["width"];
-                obi.height = obs["height"];
-                obi.allowedTerrains = obs["allowedTerrain"]; //ToDo: convertTo array of TerrainType
-                obi.allowedSpecialBfields = obs["specialBattlefields"]; //ToDo: convertTo array of BFieldType;
-                obi.blockedTiles = obs["blockedTiles"]; //ToDo: convertTo array of Int;
+                obi.defName = obs.field("defname");
+                obi.width = obs.field("width");
+                obi.height = obs.field("height");
+                obi.allowedTerrains = obs.field("allowedTerrain"); //ToDo: convertTo array of TerrainType
+                obi.allowedSpecialBfields = obs.field("specialBattlefields"); //ToDo: convertTo array of BFieldType;
+                obi.blockedTiles = obs.field("blockedTiles"); //ToDo: convertTo array of Int;
                 obi.isAbsoluteObstacle = absolute;
-                out[id] = obi;
+                out.set(id, obi);
             }
             return out;
         }
 
-        var config = ConfigData.data.get("config/obstacles.json");
-        obstacles = local_loadObstacles(config["obstacles"], false);
-        absoluteObstacles = local_loadObstacles(config["absoluteObstacles"], true);
+        var config:Dynamic = Json.parse(ConfigData.data.get("config/obstacles.json"));
+        obstacles = local_loadObstacles(config.field("obstacles"), false);
+        absoluteObstacles = local_loadObstacles(config.field("absoluteObstacles"), true);
     }
-
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         heroes = [];
         var h3Data:Array<Dynamic> = [];
-        var specParser = H3mConfigData.data.get("DATA/HEROSPEC.TXT");
-        var bioParser = H3mConfigData.data.get("DATA/HEROBIOS.TXT");
-        var parser = H3mConfigData.data.get("DATA/HOTRAITS.TXT");
+        var specParser = Json.parse(H3mConfigData.data.get("DATA/HEROSPEC.TXT"));
+        var bioParser = Json.parse(H3mConfigData.data.get("DATA/HEROBIOS.TXT"));
+        var parser = Json.parse(H3mConfigData.data.get("DATA/HOTRAITS.TXT"));
 
-        for(i in GameConstants.HEROES_QUANTITY) {
-            var parserData = parser[i];
+        for(i in 0...GameConstants.HEROES_QUANTITY) {
+            var parserData:Dynamic = parser[i];
             var heroData:HeroData = {
                 texts: {
                     name: parserData[0],

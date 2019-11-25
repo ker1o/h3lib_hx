@@ -1,8 +1,8 @@
 package lib.mapObjects.town;
 
-import constants.CreatureId;
+import constants.CreatureType;
 
-typedef CreaturesSet = Array<{id:Int, creatures:Array<CreatureId>}>;
+private typedef CreaturesSet = Array<{id:Int, creatures:Array<CreatureType>}>;
 
 class GDwelling extends ArmedInstance {
     public var info:SpecObjInfo; //random dwelling options; not serialized

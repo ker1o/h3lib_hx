@@ -1,5 +1,7 @@
 package lib.mod;
 
+using Reflect;
+
 class ModHandler {
     public var identifiers:IdentifierStorage;
     public var content:ContentHandler;
@@ -32,8 +34,19 @@ class ModHandler {
         activeMods = [];
     }
 
+    public function loadMods() {
+        var modConfig:Dynamic = {core: {}};
+
+        coreMod = new ModInfo("core", modConfig.field("core"));
+        coreMod.name = "Original game files";
+    }
+
     public function load() {
         content.init();
+
+        // first - load virtual "core" mod that contains all data
+        // TODO? move all data into real mods? RoE, AB, SoD, WoG
+        content.preloadData(coreMod);
     }
 
     public static function normalizeIdentifier(scope:String, remoteScope:String, identifier:String):String {

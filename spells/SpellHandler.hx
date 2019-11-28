@@ -17,7 +17,7 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
         super();
     }
 
-    public function loadLegacyData(dataSize:Int):Array<Dynamic> {
+    override public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         function read(combat:Bool, ability:Bool, legacyData:Array<Dynamic>, parseObject:Array<Dynamic>) {
             var readSchool = function(data:Dynamic, schoolName:String, value:Bool) {
                 if (value) {
@@ -85,6 +85,5 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
 
         return legacyData;
     }
-
 
 }

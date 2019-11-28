@@ -1,5 +1,13 @@
 package lib.hero;
 
+import lib.herobonus.BonusSource;
+import lib.herobonus.BonusDuration;
+import lib.herobonus.Bonus;
+import utils.JsonUtils;
+import lib.herobonus.BonusList;
+import constants.SpellId;
+import constants.SecondarySkill;
+import constants.SecSkillLevel;
 import constants.id.CreatureId;
 import constants.CreatureType;
 import lib.mod.ModHandler;
@@ -101,11 +109,96 @@ class HeroHandler implements IHandlerBase {
     }
 
     private function loadHeroSkills(hero:Hero, node:Dynamic) {
+        hero.secSkillsInit = [];
+        var skillsObjsArr:Array<Dynamic> = node.field("skills");
+        for(set in skillsObjsArr) {
+            var skillLevel:Int = StringConstants.SECONDARY_SKILLS_LEVELS.indexOf(set.field("level"));
+            if (skillLevel < SecSkillLevel.LEVELS_SIZE) {
+                var currentIndex:Int = hero.secSkillsInit.length;
+                hero.secSkillsInit.push({skill: (-1:SecondarySkill), level: skillLevel});
 
+                VLC.instance.modh.identifiers.requestIdentifier("skill", set.field("skill"), "core", function(id:Int) {
+                    hero.secSkillsInit[currentIndex].skill = (id:SecondarySkill);
+                });
+            } else {
+                trace('Unknown skill level: ${set.field("level")}');
+            }
+        }
+
+        // spellbook is considered present if hero have "spellbook" entry even when this is an empty set (0 spells)
+        hero.haveSpellBook = node.field("spellbook") != null;
+
+        hero.spells = [];
+        var spellbookObjsArr:Array<Dynamic> = node.field("spellbook");
+        for(spell in spellbookObjsArr) {
+            VLC.instance.modh.identifiers.requestIdentifier("spell", spell, "core", function(spellId:Int) {
+                hero.spells.push((spellId:SpellId));
+            });
+        }
     }
 
     private function loadHeroSpecialty(hero:Hero, node:Dynamic) {
+        var sid:Int = hero.ID.getNum();
+        var prepSpec = function(bonus:Bonus) {
+            bonus.duration = BonusDuration.PERMANENT;
+            bonus.source = BonusSource.HERO_SPECIAL;
+            bonus.sid = sid;
+            return bonus;
+        };
 
+        //deprecated, used only for original specialties
+        hero.specDeprecated = [];
+        var specialtiesNode:Array<Dynamic> = node.field("specialties");
+        if (specialtiesNode != null) {
+            //logMod->warn("Hero %s has deprecated specialties format.", hero->identifier);
+            for (specialty in specialtiesNode) {
+                var spec = new SpecialtyInfo();
+                spec.type = (specialty.field("type"):Int);
+                spec.val = (specialty.field("val"):Int);
+                spec.subtype = (specialty.field("subtype"):Int);
+                spec.additionalinfo = (specialty.field("info"):Int);
+                //we convert after loading completes, to have all identifiers for json logging
+                hero.specDeprecated.push(spec);
+            }
+        }
+
+        hero.specialtyDeprecated = [];
+        hero.specialty = new BonusList();
+        //new(er) format, using bonus system
+        var specialtyNode:Dynamic = node.field("specialty");
+        if(Std.is(specialtyNode, Array)) {
+            var nodes:Array<Dynamic> = cast specialtyNode;
+            //deprecated middle-aged format
+            for(specialty in nodes) {
+                var hs = new SpecialtyBonus();
+                hs.growsWithLevel = (specialty.field("growsWithLevel"):Bool);
+                hs.bonuses = new BonusList();
+                var bonusesDynArray:Array<Dynamic> = specialty.field("bonuses");
+                for (bonus in bonusesDynArray) {
+                    hs.bonuses.push(prepSpec(JsonUtils.parseBonus(bonus)));
+                }
+                hero.specialtyDeprecated.push(hs);
+            }
+        } else {
+                //creature specialty - alias for simplicity
+            if(specialtyNode.field("creature") != null) {
+                VLC.instance.modh.identifiers.requestIdentifier("creature", specialtyNode.field("creature"), "core", function(creature:Int) {
+                    // use legacy format for delayed conversion (must have all creature data loaded, also for upgrades)
+                    var spec = new SpecialtyInfo();
+                    spec.type = 1;
+                    spec.additionalinfo = creature;
+                    hero.specDeprecated.push(spec);
+                });
+            }
+            var bonusesObj:Dynamic = specialtyNode.field("bonuses");
+            if(bonusesObj != null) {
+                //proper new format
+                //ToDo: rewrite it?
+                for(keyValue in bonusesObj.fields()) {
+                    hero.specialty.push(prepSpec(JsonUtils.parseBonus(bonusesObj.field(keyValue))));
+                }
+            }
+        }
     }
 
     private function loadExperience() {

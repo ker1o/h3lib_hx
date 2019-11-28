@@ -1,5 +1,7 @@
 package lib.mod;
 
+using Reflect;
+
 class ContentHandler {
     public var handlers:Map<String, ContentTypeHandler>;
 
@@ -17,5 +19,28 @@ class ContentHandler {
         handlers.set("spells", new ContentTypeHandler(VLC.instance.spellh, "spell"));
         handlers.set("skills", new ContentTypeHandler(VLC.instance.skillh, "skill"));
 //        handlers.set("templates", new ContentTypeHandler(VLC.instance.tplh, "template"));
+    }
+
+    public function preloadData(mod:ModInfo) {
+        var validate = false;
+        preloadModData(mod.identifier, mod.config, validate);
+    }
+
+    private function preloadModData(modName:String, modConfig:Map<String, Dynamic>, validate:Bool):Bool {
+        var result:Bool = true;
+        for (handlerKey in handlers.keys()) {
+            var handler = handlers.get(handlerKey);
+            result = result && handler.preloadModData(modName, modConfig.get(handlerKey), validate);
+        }
+        return result;
+    }
+
+    private function loadMod(modName:String, validate:Bool):Bool {
+        var result:Bool = true;
+        for (handler in handlers) {
+            result = result && handler.loadMod(modName, validate);
+        }
+        return result;
+
     }
 }

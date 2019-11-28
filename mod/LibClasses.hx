@@ -45,6 +45,7 @@ class LibClasses {
 
     public function loadFilesystem() {
         modh = new ModHandler();
+        modh.loadMods();
         instantiateHandlers();
     }
 

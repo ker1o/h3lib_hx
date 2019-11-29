@@ -35,6 +35,11 @@ class ContentHandler {
         return result;
     }
 
+    public function load(mod:ModInfo) {
+        var validate = false;
+        loadMod(mod.identifier, validate);
+    }
+
     private function loadMod(modName:String, validate:Bool):Bool {
         var result:Bool = true;
         for (handler in handlers) {

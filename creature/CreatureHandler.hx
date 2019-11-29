@@ -47,6 +47,7 @@ class CreatureHandler implements IHandlerBase {
     }
 
     public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+        
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
@@ -116,12 +117,12 @@ class CreatureHandler implements IHandlerBase {
 
         if(abilities.indexOf("const_raises_morale") > -1) {
             var moraleNode = {type: "MORALE", val: 1, propagator: "HERO"};
-            Reflect.setField(abilitiesData, "const_raises_morale", true);
+            Reflect.setField(abilitiesData, "const_raises_morale", moraleNode);
         }
 
         if(abilities.indexOf("const_lowers_morale") > -1) {
             var moraleNode = {type: "MORALE", val: -1, effectRange: "ONLY_ENEMY_ARMY"};
-            Reflect.setField(abilitiesData, "const_lowers_morale", true);
+            Reflect.setField(abilitiesData, "const_lowers_morale", moraleNode);
         }
 
         Reflect.setField(creature, "abilities", abilitiesData);

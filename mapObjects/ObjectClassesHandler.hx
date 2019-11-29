@@ -1,5 +1,8 @@
 package lib.mapObjects;
 
+import constants.Obj;
+import haxe.Json;
+import data.H3mConfigData;
 import lib.mapObjects.misc.GWitchHut;
 import lib.mapObjects.rewardable.GVisitableOPH;
 import lib.mapObjects.market.GUniversity;
@@ -50,7 +53,7 @@ import lib.mapObjects.misc.GCreature;
 import lib.mapObjects.misc.GResource;
 import lib.mod.IHandlerBase;
 
-typedef TTemplatesContainer = Map<{x:Int, y:ObjectContainter}, ObjectTemplate>;
+typedef TTemplatesContainer = Map<String, ObjectTemplate>; // in original key is a tuple {id:Int, subid:Int}
 typedef TObjectTypeHandler = AObjectTypeHandler;
 
 class ObjectClassesHandler implements IHandlerBase {
@@ -69,6 +72,8 @@ class ObjectClassesHandler implements IHandlerBase {
 
     public function new() {
         handlerConstructors = new Map<String, Void->TObjectTypeHandler>();
+        customNames = new Map<Int, Array<String>>();
+        legacyTemplates = new TTemplatesContainer();
 
         // list of all known handlers, hardcoded for now since the only way to add new objects is via C++ code
         //Note: should be in sync with registerTypesMapObjectTypes function
@@ -145,11 +150,40 @@ class ObjectClassesHandler implements IHandlerBase {
     }
 
     public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
-        var ret:Array<Dynamic> = null;
-        //ToDo
+        var ret:Array<Dynamic> = [];
+
+        var parser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/OBJECTS.TXT"));
+        var totalNumber:Int = parser.length;
+
+        for(i in 0...totalNumber) {
+            var templ = new ObjectTemplate();
+            templ.readTxt(parser[i]);
+            var key = '${templ.id}-${templ.subid}';
+            legacyTemplates.set(key, templ);
+
+        }
+
+        var namesParser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/OBJNAMES.TXT"));
+        var ret:Array<Dynamic> = [];
+        for (i in 0...256) {
+            ret[i] = {name: namesParser[i]};
+        }
+
+        var cregen1Parser:Array<String> = Json.parse(H3mConfigData.data.get("DATA/CRGEN1.TXT"));
+        customNames.set(Obj.CREATURE_GENERATOR1, []);
+        for (s in cregen1Parser) {
+            customNames.get(Obj.CREATURE_GENERATOR1).push(s);
+        }
+
+        var cregen4Parser:Array<String> = Json.parse(H3mConfigData.data.get("DATA/CRGEN4.TXT"));
+        customNames.set(Obj.CREATURE_GENERATOR4, []);
+        for (s in cregen4Parser) {
+            customNames.get(Obj.CREATURE_GENERATOR4).push(s);
+        }
 
         return ret;
     }

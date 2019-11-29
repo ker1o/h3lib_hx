@@ -47,6 +47,8 @@ class ModHandler {
         // first - load virtual "core" mod that contains all data
         // TODO? move all data into real mods? RoE, AB, SoD, WoG
         content.preloadData(coreMod);
+
+        content.load(coreMod);
     }
 
     public static function normalizeIdentifier(scope:String, remoteScope:String, identifier:String):String {

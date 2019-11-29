@@ -96,7 +96,7 @@ class HeroHandler implements IHandlerBase {
         var armyObjsArr:Array<Dynamic> = node.field("army");
 
         for (i in 0...armyObjsArr.length) {
-            var source = armyObjsArr[i];
+            var source:Dynamic = armyObjsArr[i];
             var initialArmyStack = new InitialArmyStack();
             initialArmyStack.minAmount = (source.field("min"):UInt);
             initialArmyStack.maxAmount = (source.field("max"):UInt);
@@ -129,11 +129,13 @@ class HeroHandler implements IHandlerBase {
         hero.haveSpellBook = node.field("spellbook") != null;
 
         hero.spells = [];
-        var spellbookObjsArr:Array<Dynamic> = node.field("spellbook");
-        for(spell in spellbookObjsArr) {
-            VLC.instance.modh.identifiers.requestIdentifier("spell", spell, "core", function(spellId:Int) {
-                hero.spells.push((spellId:SpellId));
-            });
+        if(hero.haveSpellBook) {
+            var spellbookObjsArr:Array<Dynamic> = node.field("spellbook");
+            for(spell in spellbookObjsArr) {
+                VLC.instance.modh.identifiers.requestIdentifier("spell", spell, "core", function(spellId:Int) {
+                    hero.spells.push((spellId:SpellId));
+                });
+            }
         }
     }
 

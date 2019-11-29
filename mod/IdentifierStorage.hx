@@ -27,6 +27,9 @@ class IdentifierStorage {
 
     public function requestIdentifier(type:String, name:Dynamic, meta:String, callback:Int->Void) {
         var pair = (name:String).split(':'); // remoteScope:name
+        if (pair.length == 1) {
+            pair.unshift("");
+        }
 
         requestIdentifierByObjectCallback(new ObjectCallback(meta, pair[0], type, pair[1], callback, false));
     }
@@ -64,16 +67,16 @@ class IdentifierStorage {
             return true;
         }
 
-        if (request.optional && identifiers.length == 0) // failed to resolve optinal ID
-        {
+        if (request.optional && identifiers.length == 0) { // failed to resolve optinal ID
             return true;
         }
 
         // error found. Try to generate some debug info
-        if (identifiers.length == 0)
-            trace("Unknown identifier!");
-        else
+        if (identifiers.length == 0) {
+            trace('Unknown identifier! [${request.type}.${request.name}]');
+        } else {
             trace("Ambiguous identifier request!");
+        }
 
         trace('Request for ${request.type}. ${request.name} from mod ${request.localScope}');
 
@@ -86,13 +89,13 @@ class IdentifierStorage {
     public function getPossibleIdentifiers(request:ObjectCallback):Array<ObjectData> {
         var allowedScopes:Array<String> = [];
 
-        if (request.remoteScope == null) {
+        if (request.remoteScope == "") {
             // normally ID's from all required mods, own mod and virtual "core" mod are allowed
             if (request.localScope != "core" && request.localScope != "")
                 allowedScopes = VLC.instance.modh.getModData(request.localScope).dependencies;
 
-            allowedScopes.push(request.localScope);
-            allowedScopes.push("core");
+            if (allowedScopes.indexOf(request.localScope) == -1) allowedScopes.push(request.localScope);
+            if (allowedScopes.indexOf("core") == -1) allowedScopes.push("core");
         } else {
             //...unless destination mod was specified explicitly
             //note: getModData does not work for "core" by design
@@ -100,12 +103,12 @@ class IdentifierStorage {
             //for map format support core mod has access to any mod
             //TODO: better solution for access from map?
             if(request.localScope == "core" || request.localScope == "") {
-                allowedScopes.push(request.remoteScope);
+                if (allowedScopes.indexOf(request.remoteScope) == -1) allowedScopes.push(request.remoteScope);
             } else {
                 // allow only available to all core mod or dependencies
                 var myDeps = VLC.instance.modh.getModData(request.localScope).dependencies;
                 if(request.remoteScope == "core" || request.remoteScope == request.localScope || (myDeps.indexOf(request.remoteScope) > -1)) {
-                    allowedScopes.push(request.remoteScope);
+                    if (allowedScopes.indexOf(request.remoteScope) == -1) allowedScopes.push(request.remoteScope);
                 }
             }
         }

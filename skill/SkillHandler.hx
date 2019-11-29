@@ -27,7 +27,7 @@ class SkillHandler implements IHandlerBase {
             skillInfoTexts.push(skillInfoText);
         }
 
-        trace(skillNames.length == GameConstants.SKILL_QUANTITY);
+//        trace(skillNames.length == GameConstants.SKILL_QUANTITY);
 
         var legacyData:Array<Dynamic> = [];
         for (id in 0...GameConstants.SKILL_QUANTITY) {

@@ -38,7 +38,6 @@ class LibClasses {
         objtypeh = new ObjectClassesHandler();
         townh = new TownHandler();
         generaltexth = new GeneralTextHandler();
-        modh = new ModHandler();
         terviewh = new TerrainViewPatternConfig();
 //        tplh = new RmgTemplateStorage();
     }

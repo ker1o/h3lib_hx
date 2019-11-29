@@ -87,9 +87,9 @@ class ContentTypeHandler {
                 var index = (data.field("index"):Int);
 
                 if(originalData.length > index) {
-                    trace('found original data in loadMod($name) at index $index');
+//                    trace('found original data in loadMod($name) at index $index');
                     JsonUtils.merge(originalData, Std.string(index), data);
-                    modInfo.modData.setField(name, originalData[index]);
+                    data = originalData[index];
                     originalData[index] = null; // do not use same data twice (same ID)
                 } else {
                     trace('no original data in loadMod($name) at index $index');
@@ -102,6 +102,7 @@ class ContentTypeHandler {
                 performValidate(data, name);
                 handler.loadObject(modName, name, data);
             }
+            modInfo.modData.setField(name, data);
         }
         return result;
     }

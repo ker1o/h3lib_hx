@@ -1,5 +1,8 @@
 package lib.mapObjects;
 
+import lib.mod.ModHandler;
+import lib.mod.VLC;
+import utils.JsonUtils;
 import constants.Obj;
 import haxe.Json;
 import data.H3mConfigData;
@@ -53,7 +56,11 @@ import lib.mapObjects.misc.GCreature;
 import lib.mapObjects.misc.GResource;
 import lib.mod.IHandlerBase;
 
-typedef TTemplatesContainer = Map<String, ObjectTemplate>; // in original key is a tuple {id:Int, subid:Int}
+using Reflect;
+
+// in original key is a tuple {id:Int, subid:Int}
+// but here is '$id-$subid' string
+typedef TTemplatesContainer = Map<String, ObjectTemplate>;
 typedef TObjectTypeHandler = AObjectTypeHandler;
 
 class ObjectClassesHandler implements IHandlerBase {
@@ -69,6 +76,14 @@ class ObjectClassesHandler implements IHandlerBase {
     /// contains list of custom names for H3 objects (e.g. Dwellings), used to load H3 data
     /// format: customNames[primaryID][secondaryID] -> name
     private var customNames:Map<Int, Array<String>>;
+
+    // FIXME: move into inheritNode?
+    static function inheritNodeWithMeta(descendant:Dynamic, base:Dynamic):Void
+    {
+//        var oldMeta:String = descendant.meta;
+        JsonUtils.inherit(descendant, base);
+        //descendant.setMeta(oldMeta);
+    }
 
     public function new() {
         handlerConstructors = new Map<String, Void->TObjectTypeHandler>();
@@ -153,6 +168,74 @@ class ObjectClassesHandler implements IHandlerBase {
 
     }
 
+    public function loadSubObject(identifier:String, config:Dynamic, id:Int, ?subID:Null<Int>) {
+        if (config == null) {
+            trace("WTF???");
+            if (subID != null) {
+                config.setField("index", subID);
+            }
+        }
+
+        inheritNodeWithMeta(config, objects.get(id).base);
+        loadObjectEntry(identifier, config, objects.get(id));
+    }
+
+    private function loadObjectEntry(identifier:String, entry:Dynamic, obj:ObjectContainter) {
+        if (!handlerConstructors.exists(obj.handlerName)) {
+//            logGlobal.error("Handler with name %s was not found!", obj.handlerName);
+            return;
+        }
+
+        var convertedId:String = ModHandler.normalizeIdentifier(entry.field("meta"), "core", identifier);
+
+        var id:Int = selectNextID(entry.field("index"), obj.subObjects, 1000);
+
+        var handler:TObjectTypeHandler = handlerConstructors.get(obj.handlerName)();
+        handler.setType(obj.id, id);
+        handler.setTypeName(obj.identifier, convertedId);
+
+        if (customNames.exists(obj.id) && customNames.get(obj.id).length > id) {
+            handler.init(entry, customNames.get(obj.id)[id]);
+        } else {
+            handler.init(entry);
+        }
+
+        if (handler.getTemplates().length == 0) {
+            var key = '${obj.id}-$id';
+            var temp1 = legacyTemplates.get(key);
+            if (temp1 != null) {
+                handler.addTemplate(temp1);
+            }
+            legacyTemplates.remove(key);
+        }
+
+//        logGlobal.debug("Loaded object %s(%d)::%s(%d)", obj.identifier, obj.id, convertedId, id);
+        //assert(!obj.subObjects.count(id)); // DO NOT override
+        obj.subObjects[id] = handler;
+        obj.subIds[convertedId] = id;
+    }
+
+    private function selectNextID(fixedID:Dynamic, map:Map<Int, Dynamic>, defaultID:Int):Int {
+        if (fixedID != null && (fixedID:Int) < defaultID) {
+            return (fixedID:Int); // H3M object with fixed ID
+        }
+
+        if (!map.keys().hasNext()) {
+            return defaultID; // no objects loaded, keep gap for H3M objects
+        }
+
+        // not presented in the original
+        //get last key
+        var keysIterator = map.keys();
+        var lastKey = 0;
+        while (keysIterator.hasNext()) lastKey = keysIterator.next();
+        if (lastKey >= defaultID) {
+            return lastKey + 1; // some modded objects loaded, return next available
+        }
+
+        return defaultID; // some H3M objects loaded, first modded found
+    }
+
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var ret:Array<Dynamic> = [];
 
@@ -186,5 +269,20 @@ class ObjectClassesHandler implements IHandlerBase {
         }
 
         return ret;
+    }
+
+    public function getHandlerFor(type:Int, subtype:Int):TObjectTypeHandler {
+        if (objects.exists(type)) {
+            if (objects.get(type).subObjects.exists(subtype)) {
+                return objects.get(type).subObjects.get(subtype);
+            }
+        }
+        //logGlobal->error("Failed to find object of type %d:%d", type, subtype);
+        throw 'Object type handler not found';
+    }
+    public function removeSubObject(id:Int, subId:Int) {
+//        assert(objects.count(ID));
+//        assert(objects.at(ID)->subObjects.count(subID));
+        objects.get(id).subObjects.remove(subId); //TODO: cleanup string id map
     }
 }

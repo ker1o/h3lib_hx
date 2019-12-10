@@ -1,12 +1,20 @@
 package lib.creature;
 
+import constants.id.CreatureId;
+import lib.herobonus.Bonus;
 import constants.ArtifactId;
 import constants.CreatureType;
+import lib.herobonus.BonusDuration;
+import lib.herobonus.BonusSource;
+import lib.herobonus.BonusSystemNode;
+import lib.herobonus.BonusSystemNodeType;
+import lib.herobonus.BonusType;
+import lib.herobonus.BonusValue;
 import lib.res.ResourceSet;
 
 typedef Resources = ResourceSet;
 
-class Creature {
+class Creature extends BonusSystemNode {
     public var identifier:String;
 
     public var nameRef:String; // reference name, stringID
@@ -46,5 +54,37 @@ class Creature {
     public var warMachine:ArtifactId;
 
     public function new() {
+        super();
+
+        animation = new CreatureAnimation();
+        sounds = new CreatureBattleSounds();
+        upgrades = new Array<CreatureType>();
+
+        setNodeType(BonusSystemNodeType.CREATURE);
+        faction = 0;
+        level = 0;
+        fightValue = AIValue = growth = hordeGrowth = ammMin = ammMax = 0;
+        doubleWide = false;
+        special = true;
+        iconIndex = -1;
+    }
+
+    public function addBonus(val:Int, type:BonusType, subtype:Int = -1):Void {
+        var added = new Bonus(BonusDuration.PERMANENT, type, BonusSource.CREATURE_ABILITY, val, idNumber, subtype, BonusValue.BASE_NUMBER);
+        addNewBonus(added);
+    }
+
+    public function isMyUpgrade(anotherCreature:Creature):Bool {
+        return upgrades.indexOf(anotherCreature.idNumber) > -1;
+    }
+
+    public function setId(id:CreatureId) {
+        idNumber = id;
+        for(bonus in getExportedBonusList()) {
+            if(bonus.source == BonusSource.CREATURE_ABILITY) {
+                bonus.sid = id;
+            }
+        }
+        treeHasChanged();
     }
 }

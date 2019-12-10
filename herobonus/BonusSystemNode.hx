@@ -16,18 +16,76 @@ class BonusSystemNode {
     static private var cachingEnabled:Bool;
     private var cachedBonuses:BonusList;
     private var cachedLast:Int; // Int64
-    static private var treeChanged:Int;
+    private var treeChanged:Int;
 
     // Setting a value to cachingStr before getting any bonuses caches the result for later requests.
     // This string needs to be unique, that's why it has to be setted in the following manner:
     // [property key]_[value] => only for selector
     private var cachedRequests:Map<String, BonusList>;
     
-    public function new() {
+    public function new(nodeType:BonusSystemNodeType = BonusSystemNodeType.UNKNOWN, ?other:BonusSystemNode) {
+        if (other != null) {
+            // can we just assign? or copy?
+            bonuses = other.bonuses;
+            exportedBonuses = other.exportedBonuses;
+            this.nodeType = other.nodeType;
+            nodeDescription = other.nodeDescription;
+            parents = other.parents;
+            children = other.children;
+
+            //fixing bonus tree without recalculation
+
+            for(bonusSystemNode in parents) {
+                bonusSystemNode.children.remove(other);
+                bonusSystemNode.children.push(this);
+            }
+
+            for(bonusSystemNode in children) {
+                bonusSystemNode.parents.remove(other);
+                bonusSystemNode.parents.push(this);
+            }
+        } else {
+            bonuses = new BonusList();
+            exportedBonuses = new BonusList();
+            parents = new NodesVector();
+            children = new NodesVector();
+            this.nodeType = nodeType;
+            nodeDescription = "";
+        }
+        cachedLast = 0;
     }
 
-    public function setNodeType(type:BonusSystemNodeType) {
+    // ToDo: make getter
+    public function getBonusList():BonusList {
+        return bonuses;
+    }
+
+    public function getExportedBonusList():BonusList {
+        return exportedBonuses;
+    }
+
+    public function setDescription(description:String) {
+        nodeDescription = description;
+    }
+
+    public function detachFrom(parent:BonusSystemNode) {
+        if(parent.actsAsBonusSourceOnly()) {
+            parent.removedRedDescendant(this);
+        } else {
+            removedRedDescendant(parent);
+        }
+
+        parents.remove(parent);
+        parent.childDetached(this);
+        treeHasChanged();
+    }
+
+    public inline function setNodeType(type:BonusSystemNodeType) {
         nodeType = type;
+    }
+
+    public inline function getNodeType():BonusSystemNodeType {
+        return nodeType;
     }
 
     public function addNewBonus(b:Bonus) : Void {
@@ -56,17 +114,37 @@ class BonusSystemNode {
 //            logBonus->trace("#$# %s #propagated to# %s",  b->Description(), nodeName());
         }
 
-        for(bonusSystemNode in getRedChildren()) {
-            bonusSystemNode.propagateBonus(b);
+        forEachRedChild(function(child:BonusSystemNode) {
+            child.propagateBonus(b);
+        });
+    }
+
+    public function unpropagateBonus(b:Bonus) {
+        if(b.propagator.shouldBeAttached(this)) {
+            bonuses.remove(b);
+//            logBonus->trace("#$# %s #is no longer propagated to# %s",  b->Description(), nodeName());
         }
+
+        forEachRedChild(function(child:BonusSystemNode) {
+            child.unpropagateBonus(b);
+        });
     }
 
     public function newChildAttached(child:BonusSystemNode) {
         children.push(child);
-
     }
 
-    public static function treeHasChanged():Void {
+    public function childDetached(child:BonusSystemNode) {
+        if (children.indexOf(child) > -1) {
+            children.remove(child);
+        } else {
+//            logBonus->error("Error! %s #cannot be detached from# %s", child->nodeName(), nodeName());
+            throw "internal error";
+        }
+    }
+
+
+    public function treeHasChanged():Void {
         treeChanged++;
     }
 
@@ -112,6 +190,15 @@ class BonusSystemNode {
         });
     }
 
+    public function removedRedDescendant(descendant:BonusSystemNode):Void {
+        for (b in exportedBonuses) {
+            if(b.propagator != null) descendant.unpropagateBonus(b);
+        }
+
+        forEachRedParent(function(parent) {
+            parent.removedRedDescendant(descendant);
+        });
+    }
 
     public function getParents():Array<BonusSystemNode> {
         var out:Array<BonusSystemNode> = [];

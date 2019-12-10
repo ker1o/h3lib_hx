@@ -18,5 +18,9 @@ class AnimationInfo {
     public var projectile:Array<ProjectileInfo>;
 
     public function new() {
+        affect = new TAnimationQueue();
+        casting = new TAnimationQueue();
+        hit = new TAnimationQueue();
+        projectile = [];
     }
 }

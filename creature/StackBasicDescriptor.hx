@@ -8,4 +8,9 @@ class StackBasicDescriptor {
         this.type = creature;
         this.count = count;
     }
+
+    // ToDo: make as setter
+    public function setType(c:Creature) {
+        type = c;
+    }
 }

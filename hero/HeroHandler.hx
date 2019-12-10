@@ -83,7 +83,7 @@ class HeroHandler implements IHandlerBase {
         loadHeroSkills(hero, node);
         loadHeroSpecialty(hero, node);
 
-        VLC.instance.modh.identifiers.requestIdentifier("heroClass", node.field("class"), "core", function(classID:Int) {
+        VLC.instance.modh.identifiers.requestIdentifierByNodeName("heroClass", node.field("class"), "core", function(classID:Int) {
             hero.heroClass = classes.heroClasses[classID];
         });
 
@@ -102,7 +102,7 @@ class HeroHandler implements IHandlerBase {
             initialArmyStack.maxAmount = (source.field("max"):UInt);
             hero.initialArmy[i] = initialArmyStack;
 
-            VLC.instance.modh.identifiers.requestIdentifier("creature", source.field("creature"), "core", function(creature:Int) {
+            VLC.instance.modh.identifiers.requestIdentifierByNodeName("creature", source.field("creature"), "core", function(creature:Int) {
                 hero.initialArmy[i].creature = new CreatureId((creature:CreatureType));
             });
         }
@@ -117,7 +117,7 @@ class HeroHandler implements IHandlerBase {
                 var currentIndex:Int = hero.secSkillsInit.length;
                 hero.secSkillsInit.push({skill: (-1:SecondarySkill), level: skillLevel});
 
-                VLC.instance.modh.identifiers.requestIdentifier("skill", set.field("skill"), "core", function(id:Int) {
+                VLC.instance.modh.identifiers.requestIdentifierByNodeName("skill", set.field("skill"), "core", function(id:Int) {
                     hero.secSkillsInit[currentIndex].skill = (id:SecondarySkill);
                 });
             } else {
@@ -132,7 +132,7 @@ class HeroHandler implements IHandlerBase {
         if(hero.haveSpellBook) {
             var spellbookObjsArr:Array<Dynamic> = node.field("spellbook");
             for(spell in spellbookObjsArr) {
-                VLC.instance.modh.identifiers.requestIdentifier("spell", spell, "core", function(spellId:Int) {
+                VLC.instance.modh.identifiers.requestIdentifierByNodeName("spell", spell, "core", function(spellId:Int) {
                     hero.spells.push((spellId:SpellId));
                 });
             }
@@ -184,7 +184,7 @@ class HeroHandler implements IHandlerBase {
         } else {
                 //creature specialty - alias for simplicity
             if(specialtyNode.field("creature") != null) {
-                VLC.instance.modh.identifiers.requestIdentifier("creature", specialtyNode.field("creature"), "core", function(creature:Int) {
+                VLC.instance.modh.identifiers.requestIdentifierByNodeName("creature", specialtyNode.field("creature"), "core", function(creature:Int) {
                     // use legacy format for delayed conversion (must have all creature data loaded, also for upgrades)
                     var spec = new SpecialtyInfo();
                     spec.type = 1;

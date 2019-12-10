@@ -1,8 +1,12 @@
 package lib.herobonus;
 
-@:forward(push, iterator)
+@:forward(push, remove, length, iterator)
 abstract BonusList(Array<Bonus>) from Array<Bonus> to Array<Bonus>{
-  public function new() {
+    public inline function new() {
         this = [];
-  }
+    }
+
+    public function back():Bonus {
+        return this[this.length - 1];
+    }
 }

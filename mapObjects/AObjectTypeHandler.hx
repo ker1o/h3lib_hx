@@ -1,5 +1,6 @@
 package lib.mapObjects;
 
+import constants.Obj;
 class AObjectTypeHandler {
     public var typeName:String;
     public var subTypeName:String;
@@ -22,6 +23,7 @@ class AObjectTypeHandler {
     public function init(input:Dynamic, name:String = null) {
         base = input;
 
+        templates = [];
         //ToDo
     }
 
@@ -32,4 +34,23 @@ class AObjectTypeHandler {
         obj.subTypeName = subTypeName;
     }
 
+    public function setType(type:Int, subtype:Int) {
+        this.type = type;
+        this.subtype = subtype;
+    }
+
+    public function setTypeName(type:String, subtype:String) {
+        this.typeName = type;
+        this.subTypeName = subtype;
+    }
+
+    public function getTemplates():Array<ObjectTemplate> {
+        return templates;
+    }
+
+    public function addTemplate(templ:ObjectTemplate) {
+        templ.id = (type:Obj);
+        templ.subid = subtype;
+        templates.push(templ);
+    }
 }

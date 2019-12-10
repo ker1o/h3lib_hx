@@ -20,5 +20,7 @@ class LevelInfo {
     public var battleEffects:Dynamic;
 
     public function new() {
+        effects = [];
+        cumulativeEffects = [];
     }
 }

@@ -8,10 +8,10 @@ class ModHandler {
 
     public var settings:HardcodedFeatures;
     public var modules: {
-        var STACK_EXP:Bool;
-        var STACK_ARTIFACT:Bool;
-        var COMMANDERS:Bool;
-        var MITHRIL:Bool;
+        STACK_EXP:Bool,
+        STACK_ARTIFACT:Bool,
+        COMMANDERS:Bool,
+        MITHRIL:Bool
     };
 
     private var allMods:Map<String, ModInfo>;
@@ -49,6 +49,10 @@ class ModHandler {
         content.preloadData(coreMod);
 
         content.load(coreMod);
+
+//        content.loadCustom();
+//        VLC.instance.creh.loadCrExpBon();
+//        VLC.instance.creh.buildBonusTreeForTiers(); //do that after all new creatures are loaded
     }
 
     public static function normalizeIdentifier(scope:String, remoteScope:String, identifier:String):String {
@@ -72,11 +76,36 @@ class ModHandler {
     public inline function getModData(modId:String):ModInfo {
         var mod = allMods.get(modId);
 
-        if(mod == null)
-        {
+        if(mod == null) {
             throw 'Mod not found "$modId"';
         } else {
             return mod;
+        }
+    }
+
+    public static function makeFullIdentifier(scope:String, type:String, identifier:String) {
+        if(type == "") {
+            trace("Full identifier (%s %s) requires type name", scope, identifier);
+        }
+
+        var actualScope = scope;
+        var actualName = identifier;
+
+            //ignore scope if identifier is scoped
+        var scopeAndName = identifier.split(':');
+        if (scopeAndName.length == 1) {
+            scopeAndName.unshift("");
+        }
+
+        if(scopeAndName[0] != "") {
+            actualScope = scopeAndName[0];
+            actualName = scopeAndName[1];
+        }
+
+        if(actualScope == "") {
+            return actualName == "" ? type : type + "." + actualName;
+        } else {
+            return actualName == "" ? actualScope+ ":" + type : actualScope + ":" + type + "." + actualName;
         }
     }
 }

@@ -25,7 +25,29 @@ class IdentifierStorage {
         }
     }
 
-    public function requestIdentifier(type:String, name:Dynamic, meta:String, callback:Int->Void) {
+    public function requestIdentifier(scope:String, type:String, name:String, callback:Int->Void) {
+        var pair = name.split(':'); // remoteScope:name
+        if (pair.length == 1) {
+            pair.unshift("");
+        }
+
+        requestIdentifierByObjectCallback(new ObjectCallback(scope, pair[0], type, pair[1], callback, false));
+    }
+
+    public function requestIdentifierByFullName(scope:String, fullName:String, callback:Int->Void) {
+        var scopeAndFullName = fullName.split(':'); // remoteScope:name
+        if (scopeAndFullName.length == 1) {
+            scopeAndFullName.unshift("");
+        }
+        var typeAndName = scopeAndFullName[1].split(".");
+        if (typeAndName.length == 1) {
+            typeAndName.unshift("");
+        }
+
+        requestIdentifierByObjectCallback(new ObjectCallback(scope, scopeAndFullName[0], typeAndName[0], typeAndName[1], callback, false));
+    }
+
+    public function requestIdentifierByNodeName(type:String, name:Dynamic, meta:String, callback:Int->Void) {
         var pair = (name:String).split(':'); // remoteScope:name
         if (pair.length == 1) {
             pair.unshift("");

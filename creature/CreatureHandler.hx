@@ -99,6 +99,7 @@ class CreatureHandler implements IHandlerBase {
         expRanks = [];
         maxExpPerBattle = [];
 
+        creatures = [];
         expAfterUpgrade = 0;
         allCreatures = new BonusSystemNode();
         allCreatures.setDescription("All creatures");
@@ -192,7 +193,6 @@ class CreatureHandler implements IHandlerBase {
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var h3Data:Array<Dynamic> = [];
-        creatures = [];
         var parser:Array<Array<Dynamic>> = Json.parse(H3mConfigData.data.get("DATA/CRTRAITS.TXT"));
 
         for(i in 0...dataSize) {

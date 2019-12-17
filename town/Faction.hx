@@ -6,7 +6,7 @@ class Faction {
     public var name:String; //town name, by default - from TownName.txt
     public var identifier:String;
 
-    public var index:Faction;
+    public var index:Int;
 
     public var nativeTerrain:TerrainType;
     public var alignment:Alignment;

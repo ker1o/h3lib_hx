@@ -165,7 +165,34 @@ class ObjectClassesHandler implements IHandlerBase {
     }
 
     public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+        var object = loadFromJson(data, ModHandler.normalizeIdentifier(scope, "core", name));
+//        assert(objects[index] == nullptr); // ensure that this id was not loaded before
+        if (index == 0) {
+            index = object.id;
+        }
+        objects[index] = object;
+        VLC.instance.modh.identifiers.registerObject(scope, "object", name, object.id);
+    }
 
+    private function loadFromJson(json:Dynamic, name:String):ObjectContainter {
+        var obj = new ObjectContainter();
+        obj.identifier = name;
+        obj.name = json.field("name");
+        obj.handlerName = json.field("handler");
+        obj.base = json.field("base");
+        obj.id = selectNextID(json.field("index"), objects, 256);
+        if(json.hasField("defaultAiValue")) {
+            obj.groupDefaultAiValue = json.field("defaultAiValue");
+        } else {
+            obj.groupDefaultAiValue = null;
+        }
+
+        var typesObj:Dynamic = json.field("types");
+        for (entryKey in typesObj.fields()) {
+            loadObjectEntry(entryKey, typesObj.field(entryKey), obj);
+        }
+
+        return obj;
     }
 
     public function loadSubObject(identifier:String, config:Dynamic, id:Int, ?subID:Null<Int>) {

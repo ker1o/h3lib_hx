@@ -13,6 +13,9 @@ class HandlerBase<TObjectId, TObject:Dynamic> implements IHandlerBase {
         var object = loadFromJson(data, normalizeIdentifier(scope, "core", name), index);
 
 //        assert(objects[index] == nullptr); // ensure that this id was not loaded before
+        if(index == 0) {
+            index = objects.length;
+        }
         objects[index] = object;
 
         for(type_name in getTypeNames()) {

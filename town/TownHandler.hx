@@ -1,5 +1,6 @@
 package lib.town;
 
+import lib.mod.ModHandler;
 import haxe.Json;
 import data.H3mConfigData;
 import lib.mod.IHandlerBase;
@@ -20,10 +21,25 @@ class TownHandler implements IHandlerBase {
     public function new() {
         VLC.instance.townh = this;
 
+        factions = [];
         randomTown = new Town();
     }
 
     public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+        var object = loadFromJson(data, ModHandler.normalizeIdentifier(scope, "core", name));
+        if (index == 0) {
+            index = factions.length;
+        }
+        object.index = index;
+        factions[index] = factions;
+
+        // ToDo me
+    }
+
+    private function loadFromJson():Faction {
+        var faction = new Faction();
+        // ToDo me
+        return faction;
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
@@ -46,8 +62,6 @@ class TownHandler implements IHandlerBase {
             }
             return build;
         }
-
-        factions = [];
 
         var parser:Dynamic = Json.parse(H3mConfigData.data.get("DATA/BUILDING.TXT"));
 

@@ -6,9 +6,9 @@ import constants.ArtifactPosition;
 import lib.herobonus.BonusSystemNode;
 
 class Artifact extends BonusSystemNode { //container for artifacts
-    public var name(default, null):String;
-    public var description(default, null):String;
-    public var eventText(default, null):String;
+    public var name:String;
+    public var description:String;
+    public var eventText:String;
 
     public var identifier:String;
     public var image:String;
@@ -25,6 +25,9 @@ class Artifact extends BonusSystemNode { //container for artifacts
 
     public function new() {
         super();
+        possibleSlots = new Map<ArtBearer, Array<ArtifactPosition>>();
+        constituents = [];
+        constituentOf = [];
     }
 
     public inline function isBig():Bool {

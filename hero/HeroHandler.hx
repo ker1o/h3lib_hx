@@ -12,7 +12,6 @@ import constants.id.CreatureId;
 import constants.CreatureType;
 import lib.mod.ModHandler;
 import haxe.Json;
-import haxe.Json;
 import constants.GameConstants;
 import data.ConfigData;
 import data.H3mConfigData;
@@ -42,6 +41,7 @@ class HeroHandler implements IHandlerBase {
 
     public function new() {
         classes = new HeroClassHandler();
+        heroes = [];
 
         loadObstacles();
         loadTerrains();
@@ -54,6 +54,9 @@ class HeroHandler implements IHandlerBase {
 
     public function loadObject(scope:String, name:String, data:Dynamic, index:Int = 0) {
         var object = loadFromJson(data, ModHandler.normalizeIdentifier(scope, "core", name));
+        if (index == 0) {
+            index = heroes.length;
+        }
         object.ID = index;
         object.imageIndex = index;
 
@@ -285,7 +288,6 @@ class HeroHandler implements IHandlerBase {
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
-        heroes = [];
         var h3Data:Array<Dynamic> = [];
         var specParser = Json.parse(H3mConfigData.data.get("DATA/HEROSPEC.TXT"));
         var bioParser = Json.parse(H3mConfigData.data.get("DATA/HEROBIOS.TXT"));

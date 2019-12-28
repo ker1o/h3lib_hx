@@ -85,7 +85,7 @@ class ModHandler {
 
     public static function makeFullIdentifier(scope:String, type:String, identifier:String) {
         if(type == "") {
-            trace("Full identifier (%s %s) requires type name", scope, identifier);
+            trace('Full identifier ($scope $identifier) requires type name');
         }
 
         var actualScope = scope;

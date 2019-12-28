@@ -79,8 +79,8 @@ class IdentifierStorage {
     }
 
     public function requestIdentifierByObjectCallback(callback:ObjectCallback) {
-        checkIdentifier(callback.type);
-        checkIdentifier(callback.name);
+        checkIdentifier(callback.type, "type");
+        checkIdentifier(callback.name, "name");
 
         if(callback.localScope == null) {
             trace('Error!');
@@ -93,13 +93,14 @@ class IdentifierStorage {
         }
     }
 
-    public function checkIdentifier(ID:String) {
+    public function checkIdentifier(ID:String, t:String) {
         if (ID.charAt(ID.length - 1) == ".") {
-            trace("BIG WARNING: identifier %s seems to be broken!", ID);
+            trace('BIG WARNING: identifier $ID seems to be broken!');
         } else {
-            if (ID.toLowerCase() != ID) {
-                trace("Warning: identifier %s is not in camelCase!", ID);
-                ID = ID.toLowerCase();// Try to fix the ID
+            var firstCharacterLowerCase = ID.charAt(0).toLowerCase();
+            if (ID.charAt(0) != firstCharacterLowerCase) {
+                trace('Warning: identifier $ID is not in camelCase ($t)!');
+                ID = firstCharacterLowerCase + ID.substr(1);// Try to fix the ID
             }
         }
     }
@@ -125,7 +126,7 @@ class IdentifierStorage {
         trace('Request for ${request.type}. ${request.name} from mod ${request.localScope}');
 
         for (id in identifiers) {
-            trace("\tID is available in mod %s", id.scope);
+            trace('ID is available in mod ${id.scope}');
         }
         return false;
     }

@@ -313,13 +313,20 @@ class HeroHandler implements IHandlerBase {
                 var heroArmy:HeroArmyData = {
                     min: parserData[index],
                     max: parserData[index + 1],
-                    creature: parserData[index + 2]
+                    creature: genRefName(parserData[index + 2])
                 };
                 heroData.army.push(heroArmy);
             }
             h3Data.push(heroData);
         }
         return h3Data;
+    }
+
+    // convert h3-style ID (e.g. Gobin Wolf Rider) to vcmi (e.g. goblinWolfRider)
+    static function genRefName(input:String) {
+        input = StringTools.replace(input, " ", ""); //remove spaces
+        input = input.charAt(0).toLowerCase() + input.substr(1); // to camelCase
+        return input;
     }
 }
 

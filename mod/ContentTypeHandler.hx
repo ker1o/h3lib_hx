@@ -92,7 +92,7 @@ class ContentTypeHandler {
                     data = originalData[index];
                     originalData[index] = null; // do not use same data twice (same ID)
                 } else {
-                    trace('no original data in loadMod($name) at index $index');
+//                    trace('no original data in loadMod($name) at index $index');
                 }
                 performValidate(data, name);
                 handler.loadObject(modName, name, data, index);

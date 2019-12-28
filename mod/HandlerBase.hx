@@ -9,7 +9,7 @@ class HandlerBase<TObjectId, TObject:Dynamic> implements IHandlerBase {
         objects = [];
     }
 
-    public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+    public function loadObject(scope:String, name:String, data:Dynamic, index:Int = 0) {
         var object = loadFromJson(data, normalizeIdentifier(scope, "core", name), index);
 
 //        assert(objects[index] == nullptr); // ensure that this id was not loaded before

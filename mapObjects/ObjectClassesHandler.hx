@@ -89,6 +89,7 @@ class ObjectClassesHandler implements IHandlerBase {
         handlerConstructors = new Map<String, Void->TObjectTypeHandler>();
         customNames = new Map<Int, Array<String>>();
         legacyTemplates = new TTemplatesContainer();
+        objects = new Map<Int, ObjectContainter>();
 
         // list of all known handlers, hardcoded for now since the only way to add new objects is via C++ code
         //Note: should be in sync with registerTypesMapObjectTypes function

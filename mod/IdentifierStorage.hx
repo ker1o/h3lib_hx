@@ -25,10 +25,28 @@ class IdentifierStorage {
         }
     }
 
+    public function tryRequestIdentifier(scope:String, type:String, name:String, callback:Int->Void) {
+        var pair = name.split(':'); // remoteScope:name
+        if (pair.length == 1) {
+            pair.unshift("");
+        }
+
+        //?
+        if (scope == null) {
+            scope = "core";
+        }
+
+        requestIdentifierByObjectCallback(new ObjectCallback(scope, pair[0], type, pair[1], callback, true));
+    }
+
     public function requestIdentifier(scope:String, type:String, name:String, callback:Int->Void) {
         var pair = name.split(':'); // remoteScope:name
         if (pair.length == 1) {
             pair.unshift("");
+        }
+        //?
+        if (scope == null) {
+            scope = "core";
         }
 
         requestIdentifierByObjectCallback(new ObjectCallback(scope, pair[0], type, pair[1], callback, false));
@@ -42,6 +60,10 @@ class IdentifierStorage {
         var typeAndName = scopeAndFullName[1].split(".");
         if (typeAndName.length == 1) {
             typeAndName.unshift("");
+        }
+        //?
+        if (scope == null) {
+            scope = "core";
         }
 
         requestIdentifierByObjectCallback(new ObjectCallback(scope, scopeAndFullName[0], typeAndName[0], typeAndName[1], callback, false));

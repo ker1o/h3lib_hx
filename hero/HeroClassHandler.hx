@@ -81,7 +81,7 @@ class HeroClassHandler implements IHandlerBase {
             });
         }
 
-        VLC.instance.modh.identifiers.requestIdentifier("faction", node.field("faction"), "core", function(factionID:Int) {
+        VLC.instance.modh.identifiers.requestIdentifierByNodeName("faction", node.field("faction"), "core", function(factionID:Int) {
             heroClass.faction = factionID;
         });
 

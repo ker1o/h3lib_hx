@@ -17,8 +17,10 @@ class Building {
     public var bid:BuildingID; //structure ID
     public var upgrade:BuildingID; /// indicates that building "upgrade" can be improved by this, -1 = empty
 
-    private var name:String;
-    private var description:String;
+    public var mode:BuildMode;
+
+    public var name:String;
+    public var description:String;
 
     public function new() {
     }

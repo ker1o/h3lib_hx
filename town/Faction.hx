@@ -1,7 +1,8 @@
-
 package lib.town;
+
 import mapping.TerrainType;
 import constants.Alignment;
+
 class Faction {
     public var name:String; //town name, by default - from TownName.txt
     public var identifier:String;
@@ -16,6 +17,9 @@ class Faction {
     public var creatureBg120:String;
     public var creatureBg130:String;
 
+    public var puzzleMap:Array<PuzzleInfo>;
+
     public function new() {
+        puzzleMap = [];
     }
 }

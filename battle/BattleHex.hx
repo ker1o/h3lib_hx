@@ -1,10 +1,10 @@
 package lib.battle;
 
-class BattleHex {
-    public var hex:Int;
+@:enum abstract BattleHex(Int) from Int to Int {
     private static inline var INVALID:Int = -1;
 
-    public function new() {
+    public function new(hex:Int) {
+        this = hex;
     }
 }
 

@@ -32,7 +32,7 @@ class ArtHandler implements IHandlerBase {
         artifacts = [];
     }
 
-    public function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0) {
+    public function loadObject(scope:String, name:String, data:Dynamic, index:Int = 0) {
         var object = loadFromJson(data, ModHandler.normalizeIdentifier(scope, "core", name));
         if(index == 0) {
             index = artifacts.length;

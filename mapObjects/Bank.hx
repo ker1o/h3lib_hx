@@ -1,5 +1,6 @@
 package lib.mapObjects;
 
+@:keep
 class Bank extends ArmedInstance {
     public var bc:BankConfig;
     public var daycounter:Int;

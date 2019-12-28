@@ -17,8 +17,10 @@ class ObjectContainter {
 
     public var sounds:ObjectSounds;
 
-    public var groupDefaultAiValue: Null<Int>;
+    public var groupDefaultAiValue:Null<Int>;
 
     public function new() {
+        subObjects = new Map<Int, TObjectTypeHandler>();
+        subIds = new Map<String, Int>();
     }
 }

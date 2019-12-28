@@ -6,7 +6,7 @@ interface IHandlerBase {
     function loadLegacyData(dataSize:Int):Array<Dynamic>;
 
     /// loads single object into game. Scope is namespace of this object, same as name of source mod
-    function loadObject(scope:String, name:String, data:Dynamic, index:UInt = 0):Void;
+    function loadObject(scope:String, name:String, data:Dynamic, index:Int = 0):Void;
 
     /// allows handlers to alter object configuration before validation and actual load
 //    function beforeValidate(object:Dynamic):Void;

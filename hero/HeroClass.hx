@@ -30,5 +30,10 @@ class HeroClass {
     public var imageMapFemale:String;
 
     public function new() {
+        primarySkillInitial = [];
+        primarySkillLowLevel = [];
+        primarySkillHighLevel = [];
+        secSkillProbability = [];
+        selectionProbability = new Map<Int, Int>();
     }
 }

@@ -199,9 +199,10 @@ class ObjectClassesHandler implements IHandlerBase {
     public function loadSubObject(identifier:String, config:Dynamic, id:Int, ?subID:Null<Int>) {
         if (config == null) {
             trace("WTF???");
-            if (subID != null) {
-                config.setField("index", subID);
-            }
+        }
+
+        if (subID != null) {
+            config.setField("index", subID);
         }
 
         inheritNodeWithMeta(config, objects.get(id).base);
@@ -275,7 +276,6 @@ class ObjectClassesHandler implements IHandlerBase {
             templ.readTxt(parser[i]);
             var key = '${templ.id}-${templ.subid}';
             legacyTemplates.set(key, templ);
-
         }
 
         var namesParser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/OBJNAMES.TXT"));
@@ -305,8 +305,7 @@ class ObjectClassesHandler implements IHandlerBase {
                 return objects.get(type).subObjects.get(subtype);
             }
         }
-        //logGlobal->error("Failed to find object of type %d:%d", type, subtype);
-        throw 'Object type handler not found';
+        throw 'Failed to find object of type $type $subtype';
     }
     public function removeSubObject(id:Int, subId:Int) {
 //        assert(objects.count(ID));

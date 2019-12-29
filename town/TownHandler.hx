@@ -54,7 +54,6 @@ class TownHandler implements IHandlerBase {
                 // register town once objects are loaded
                 var config:Dynamic = data.field("town").field("mapObject");
                 config.setField("faction", name);
-                config.field("faction").setField("meta", scope);
                 if (!config.hasField("meta")) {// MODS COMPATIBILITY FOR 0.96
                     config.setField("meta", scope);
                 }

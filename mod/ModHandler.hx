@@ -50,9 +50,7 @@ class ModHandler {
 
         content.load(coreMod);
 
-//        content.loadCustom();
-//        VLC.instance.creh.loadCrExpBon();
-//        VLC.instance.creh.buildBonusTreeForTiers(); //do that after all new creatures are loaded
+        identifiers.finalize();
     }
 
     public static function normalizeIdentifier(scope:String, remoteScope:String, identifier:String):String {

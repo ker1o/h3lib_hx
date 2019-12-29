@@ -8,10 +8,31 @@ class IdentifierStorage {
 
     public function new() {
         registeredObjects = new Map<String, ObjectData>();
+        scheduledRequests = [];
+        state = LoadingState.LOADING;
+    }
+
+    public function finalize() {
+        state = LoadingState.FINALIZING;
+
+        var errorsFound = false;
+
+        //Note: we may receive new requests during resolution phase -> end may change -> range for can't be used
+        for (request in scheduledRequests) {
+            errorsFound = !resolveIdentifier(request) || errorsFound;
+        }
+
+        if (errorsFound) {
+            trace("[Warning] There was errors during identifiers resolving!");
+        }
+
         state = LoadingState.FINISHED;
     }
 
     public function registerObject(scope:String, type:String, name:String, identifier:Int) {
+        if (scope == null) {
+            scope = "core";
+        }
         var data = new ObjectData(identifier, scope);
 
         var fullID:String = type + '.' + name;
@@ -123,7 +144,7 @@ class IdentifierStorage {
             trace("Ambiguous identifier request!");
         }
 
-        trace('Request for ${request.type}. ${request.name} from mod ${request.localScope}');
+        trace('Request for ${request.type}.${request.name} from mod ${request.localScope}');
 
         for (id in identifiers) {
             trace('ID is available in mod ${id.scope}');

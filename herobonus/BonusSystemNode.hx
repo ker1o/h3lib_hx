@@ -100,6 +100,16 @@ class BonusSystemNode {
         treeHasChanged();
     }
 
+    public function removeBonus(b:Bonus) {
+        exportedBonuses.remove(b);
+        if(b.propagator != null) {
+            unpropagateBonus(b);
+        } else {
+            bonuses.remove(b);
+        }
+        treeHasChanged();
+    }
+
     public function exportBonus(b:Bonus) {
         if(b.propagator != null)
             propagateBonus(b);

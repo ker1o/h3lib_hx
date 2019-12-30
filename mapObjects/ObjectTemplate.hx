@@ -1,7 +1,10 @@
 package lib.mapObjects;
 
+import filesystem.BinaryReader;
 import constants.Obj;
 import mapping.TerrainType;
+
+using StringTools;
 
 class ObjectTemplate {
 
@@ -124,6 +127,69 @@ class ObjectTemplate {
             return true;
         }
         return false;
+    }
+
+    public function readMap(reader:BinaryReader) {
+        animationFile = reader.readString();
+
+        setSize(8, 6);
+        var blockMaskLength = 6;
+        var visitMaskLength = 6;
+        var blockMask:Array<Int> = [];
+        var visitMask:Array<Int> = [];
+        for (i in 0...blockMaskLength) {
+            blockMask[i] = reader.readUInt8();
+        }
+        for (i in 0...visitMaskLength) {
+            visitMask[i] = reader.readUInt8();
+        }
+
+        for (i in 0...6) {// 6 rows
+            for (j in 0...8) { // 8 columns
+                var tile = usedTiles[5 - i][7 - j];
+                tile = tile | VISIBLE; // assume that all tiles are visible
+                if (((blockMask[i] >> j) & 1 ) == 0) {
+                    tile = tile | BLOCKED;
+                }
+                if (((visitMask[i] >> j) & 1 ) != 0) {
+                    tile = tile | VISITABLE;
+                }
+            }
+        }
+
+        reader.readUInt16();
+        var terrMask = reader.readUInt16();
+        for (i in 0...9) {
+            if (((terrMask >> i) & 1 ) != 0) {
+                allowedTerrains.push((i:TerrainType));
+            }
+        }
+
+        id = (reader.readUInt32():Obj);
+        subid = reader.readUInt32();
+        var type:Int = reader.readUInt8();
+        printPriority = reader.readUInt8() * 100; // to have some space in future
+
+        if (isOnVisitableFromTopList(id, type)) {
+            visitDir = 0xff;
+        } else {
+            visitDir = (8|16|32|64|128);
+        }
+
+        reader.skip(16);
+        readMsk();
+
+        afterLoadFixup();
+    }
+
+    private function afterLoadFixup() {
+        if (id == Obj.EVENT) {
+            setSize(1,1);
+            usedTiles[0][0] = VISITABLE;
+            visitDir = 0xFF;
+        }
+        animationFile.replace("\\", "/");
+        editorAnimationFile.replace("\\", "/");
     }
 }
 

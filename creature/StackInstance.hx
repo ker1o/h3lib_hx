@@ -23,12 +23,18 @@ class StackInstance extends BonusSystemNode {
 
     private var _armyObj:ArmedInstance;
 
-    public function new(creatureId:CreatureId, creature:Creature = null, count:Int = 0) {
+    public function new(creatureId:CreatureId = -1, creature:Creature = null, count:Int = 0) {
         super();
         stackBasicDescriptor = new StackBasicDescriptor();
         artifactSet = new ArtifactSet();
 
         init();
+        if (creature != null) {
+            setType(creature);
+        } else if (creatureId != -1) {
+            setTypeById(creatureId);
+        }
+        stackBasicDescriptor.count = count;
     }
 
     private function init() {
@@ -87,6 +93,50 @@ class StackInstance extends BonusSystemNode {
                 i--;
             }
             return 0;
+        }
+    }
+
+    public function setTypeById(creId:CreatureId) {
+        var creIdInt:Int = creId;
+        if(creIdInt >= 0 && creIdInt < VLC.instance.creh.creatures.length) {
+            setType(VLC.instance.creh.creatures[creIdInt]);
+        } else {
+            setType(null);
+        }
+    }
+
+    public function setType(c:Creature) {
+        if(stackBasicDescriptor.type != null) {
+            detachFrom(stackBasicDescriptor.type);
+            if (stackBasicDescriptor.type.isMyUpgrade(c) && VLC.instance.modh.modules.STACK_EXP) {
+                experience = Std.int(experience * VLC.instance.creh.expAfterUpgrade / 100);
+            }
+        }
+
+        stackBasicDescriptor.setType(c);
+
+        if(stackBasicDescriptor.type != null) {
+            attachTo(stackBasicDescriptor.type);
+        }
+    }
+
+    public function setArmyObj(armyObject:ArmedInstance) {
+        if (_armyObj != null) {
+            detachFrom(_armyObj.bonusSystemNode);
+        }
+
+        _armyObj = armyObj;
+        if(armyObj != null) {
+            attachTo(_armyObj.bonusSystemNode);
+        }
+    }
+
+    public function valid(allowUnrandomized:Bool):Bool {
+        var isRand = (idRand != -1);
+        if(!isRand) {
+            return (stackBasicDescriptor.type != null && stackBasicDescriptor.type == VLC.instance.creh.creatures[stackBasicDescriptor.type.idNumber]);
+        } else {
+            return allowUnrandomized;
         }
     }
 }

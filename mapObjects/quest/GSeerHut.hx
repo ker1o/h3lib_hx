@@ -6,7 +6,7 @@ import lib.mapObjects.hero.GHeroInstance;
 class GSeerHut extends ArmedInstance implements IQuestObject {
     public var quest(default, null):Quest;
 
-    public var rewardType:RewardType;
+    public var rewardType:SeerHutRewardType;
     public var rID:Int; //reward ID
     public var rVal:Int; //reward value
     public var seerName:String;
@@ -33,7 +33,7 @@ class GSeerHut extends ArmedInstance implements IQuestObject {
     }
 }
 
-@:enum abstract RewardType(Int) from Int to Int {
+@:enum abstract SeerHutRewardType(Int) from Int to Int {
     public var NOTHING:Int = 0;
     public var EXPERIENCE:Int = 1;
     public var MANA_POINTS:Int = 2;

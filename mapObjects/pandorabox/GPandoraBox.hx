@@ -32,5 +32,7 @@ class GPandoraBox extends ArmedInstance {
         manaDiff = 0;
         moraleDiff = 0;
         luckDiff = 0;
+
+        primskills = [];
     }
 }

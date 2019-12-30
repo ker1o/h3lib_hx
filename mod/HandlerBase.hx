@@ -23,6 +23,10 @@ class HandlerBase<TObjectId, TObject:Dynamic> implements IHandlerBase {
         }
     }
 
+    public function size():Int {
+        return objects.length;
+    }
+
     public function loadFromJson(json:Dynamic, identifier:String, index:Int):TObject {
         throw "Must be overriden!";
     }

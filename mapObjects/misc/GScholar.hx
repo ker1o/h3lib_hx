@@ -1,7 +1,7 @@
 package lib.mapObjects.misc;
 
 class GScholar extends GObjectInstance {
-    public var bonusType:BonusType;
+    public var bonusType:ScholarBonusType;
     public var bonusID:UInt; //ID of skill/spell
 
     public function new() {
@@ -12,7 +12,7 @@ class GScholar extends GObjectInstance {
     }
 }
 
-@:enum abstract BonusType(Int) from Int to Int {
+@:enum abstract ScholarBonusType(Int) from Int to Int {
     public var PRIM_SKILL:Int = 0;
     public var SECONDARY_SKILL:Int = 1;
     public var SPELL:Int = 2;

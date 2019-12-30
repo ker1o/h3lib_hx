@@ -1,5 +1,7 @@
 package lib.mapObjects.hero;
 
+import utils.Int3;
+import constants.id.PlayerColor;
 import lib.herobonus.Bonus;
 import lib.herobonus.BonusValue;
 import constants.PrimarySkill;
@@ -55,8 +57,23 @@ class GHeroInstance extends ArmedInstance {
     public var spells:Array<SpellId>; //known spells (spell IDs)
     public var visitedObjects:Array<ObjectInstanceId>;
 
+    public var patrol:Patrol;
+
+    // toh3m = true: manifest->h3m; toh3m=false: h3m->manifest
+    public static function convertPosition(src:Int3, toh3m:Bool) {
+        if (toh3m) {
+            src.x += 1;
+            return src;
+        } else {
+            src.x -= 1;
+            return src;
+        }
+    }
+
     public function new() {
         super();
+
+        patrol = new Patrol();
     }
 
     public function pushPrimSkill(which:PrimarySkill, val:BonusValue):Void {
@@ -70,4 +87,5 @@ class GHeroInstance extends ArmedInstance {
     public function bearerType():ArtBearer {
         return ArtBearer.HERO;
     }
+
 }

@@ -22,4 +22,22 @@ class CreatureSet implements IArmyDescriptor {
     public function clear():Void {
         //ToDo
     }
+
+    public function putStack(slot:SlotId, stack:StackInstance) {
+        stacks[slot] = stack;
+        stack.setArmyObj(this);
+        armyChanged();
+    }
+
+    private function armyChanged() {
+
+    }
+
+    public function validTypes(allowUnrandomized:Bool) {
+        for(elem in stacks) {
+            if(!elem.valid(allowUnrandomized))
+                return false;
+        }
+        return true;
+    }
 }

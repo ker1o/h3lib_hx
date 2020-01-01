@@ -32,5 +32,13 @@ class GTownInstance extends GDwelling {
     
     public function new() {
         super();
+
+        forbiddenBuildings = [];
+        builtBuildings = [];
+        bonusingBuildings = [];
+        possibleSpells = [];
+        obligatorySpells = [];
+        spells = [];
+        events = [];
     }
 }

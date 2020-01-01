@@ -22,7 +22,9 @@ class ArtifactInstance extends BonusSystemNode {
     public function new(art:Artifact = null) {
         super();
         init();
-        setType(art);
+        if (art != null) {
+            setType(art);
+        }
     }
 
     private function init() {

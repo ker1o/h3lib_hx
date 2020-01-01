@@ -9,6 +9,8 @@ class DwellingInstanceConstructor extends DefaultObjectTypeHandler<GDwelling> {
 
     public function new() {
         super(GDwelling);
+
+        availableCreatures = [];
     }
 
     override public function create(objTempl:ObjectTemplate):GObjectInstance {

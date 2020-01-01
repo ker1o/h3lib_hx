@@ -52,6 +52,7 @@ class ObjectTemplate {
         subid = 0;
         printPriority = 0;
         stringID = "";
+        editorAnimationFile = "";
     }
 
     public function readTxt(s:String):Void {

@@ -12,6 +12,8 @@ class ArtifactSet {
     public var artifactsWorn:Map<ArtifactPosition, ArtSlotInfo>;
 
     public function new() {
+        artifactsInBackpack = [];
+        artifactsWorn = new Map<ArtifactPosition, ArtSlotInfo>();
     }
 
     public function eraseArtSlot(slot:ArtifactPosition) {

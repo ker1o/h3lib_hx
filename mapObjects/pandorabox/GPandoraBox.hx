@@ -27,6 +27,7 @@ class GPandoraBox extends ArmedInstance {
     public function new() {
         super();
 
+        resources = new Resources();
         hasGuardians = false;
         gainedExp = 0;
         manaDiff = 0;

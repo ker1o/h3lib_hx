@@ -6,5 +6,7 @@ class GWitchHut extends TeamVisited {
 
     public function new() {
         super();
+
+        allowedAbilities = [];
     }
 }

@@ -9,6 +9,7 @@ class CreatureSet implements IArmyDescriptor implements ICreatureSet {
     @:isVar public var formation(get, set):Bool; //false - wide, true - tight
 
     public function new() {
+        stacks = new TSlots();
         formation = false;
     }
 

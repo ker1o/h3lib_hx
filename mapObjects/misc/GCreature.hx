@@ -19,6 +19,8 @@ class GCreature extends ArmedInstance {
 
     public function new() {
         super();
+
+        resources = new Resources();
     }
 }
 

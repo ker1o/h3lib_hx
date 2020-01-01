@@ -73,6 +73,9 @@ class GHeroInstance extends ArmedInstance {
     public function new() {
         super();
 
+        secSkills = [];
+        spells = [];
+        visitedObjects = [];
         patrol = new Patrol();
     }
 

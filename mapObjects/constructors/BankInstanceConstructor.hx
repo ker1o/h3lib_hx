@@ -7,4 +7,6 @@ class BankInstanceConstructor extends DefaultObjectTypeHandler<Bank> {
     public function new() {
         super(Bank);
     }
+
+
 }

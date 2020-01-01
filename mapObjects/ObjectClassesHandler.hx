@@ -312,4 +312,17 @@ class ObjectClassesHandler implements IHandlerBase {
 //        assert(objects.at(ID)->subObjects.count(subID));
         objects.get(id).subObjects.remove(subId); //TODO: cleanup string id map
     }
+
+    public function knownSubObjects(primary:Int):Array<Int> {
+        var ret = [];
+
+        if (objects.exists(primary)) {
+            var subobjects:Map<Int, Dynamic> = objects[primary].subObjects;
+
+            for (key in subobjects.keys()) {
+                ret.push(key);
+            }
+        }
+        return ret;
+    }
 }

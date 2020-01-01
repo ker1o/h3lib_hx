@@ -1,6 +1,7 @@
 package lib.mapObjects;
 
 import constants.Obj;
+
 class AObjectTypeHandler {
     public var typeName:String;
     public var subTypeName:String;
@@ -52,5 +53,11 @@ class AObjectTypeHandler {
         templ.id = (type:Obj);
         templ.subid = subtype;
         templates.push(templ);
+    }
+
+    /// Creates object and set up core properties (like ID/subID). Object is NOT initialized
+    /// to allow creating objects before game start (e.g. map loading)
+    public function create(objTempl:ObjectTemplate):GObjectInstance {
+        throw "AObjectTypeHandler.create() must be overriden";
     }
 }

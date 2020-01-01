@@ -1,5 +1,6 @@
 package lib.herobonus;
 
+import lib.herobonus.selector.Selector.BonusSelector;
 typedef NodesVector = Array<BonusSystemNode>;
 
 class BonusSystemNode {
@@ -237,6 +238,11 @@ class BonusSystemNode {
         }
         parent.newChildAttached(this);
         treeHasChanged();
+    }
+
+    public function getAllBonuses(selector:BonusSelector, linit:BonusSelector, root:BonusSystemNode = null, cachingStr:String = ""):BonusList {
+        //ToDo
+        return new BonusList();
     }
 
     private inline function forEachParent(func:BonusSystemNode->Void) {

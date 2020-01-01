@@ -2,16 +2,30 @@ package lib.creature;
 
 import constants.CreatureType;
 import constants.id.SlotId;
+import lib.creature.ICreatureSet.TSlots;
 
-private typedef TSlots = Map<SlotId, StackInstance>;
-private typedef TSimpleSlots = Map<SlotId, {creatureId:CreatureType, quantity:Int}>;
-
-class CreatureSet implements IArmyDescriptor {
-    public var stacks:TSlots; //slots[slot_id]->> pair(creature_id,creature_quantity)
-    public var formation:Bool; //false - wide, true - tight
+class CreatureSet implements IArmyDescriptor implements ICreatureSet {
+    @:isVar public var stacks(get, set):TSlots; //slots[slot_id]->> pair(creature_id,creature_quantity)
+    @:isVar public var formation(get, set):Bool; //false - wide, true - tight
 
     public function new() {
         formation = false;
+    }
+
+    private function get_stacks():TSlots {
+        return stacks;
+    }
+
+    private function set_stacks(value:TSlots) {
+        return stacks = value;
+    }
+
+    private function get_formation():Bool {
+        return formation;
+    }
+
+    private function set_formation(value:Bool) {
+        return formation = value;
     }
 
     public function setCreature(slot:SlotId, cre:CreatureType, count:Int):Bool { /*slots 0 to 6 */
@@ -25,7 +39,6 @@ class CreatureSet implements IArmyDescriptor {
 
     public function putStack(slot:SlotId, stack:StackInstance) {
         stacks[slot] = stack;
-        stack.setArmyObj(this);
         armyChanged();
     }
 
@@ -33,7 +46,7 @@ class CreatureSet implements IArmyDescriptor {
 
     }
 
-    public function validTypes(allowUnrandomized:Bool) {
+    public function validTypes(allowUnrandomized:Bool):Bool {
         for(elem in stacks) {
             if(!elem.valid(allowUnrandomized))
                 return false;

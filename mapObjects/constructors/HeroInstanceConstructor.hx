@@ -12,4 +12,10 @@ class HeroInstanceConstructor extends DefaultObjectTypeHandler<GHeroInstance> {
     public function new() {
         super(GHeroInstance);
     }
+
+    override public function create(objTempl:ObjectTemplate):GObjectInstance {
+        var obj:GHeroInstance = createTyped(objTempl);
+        obj.type = null;
+        return obj;
+    }
 }

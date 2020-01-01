@@ -30,9 +30,9 @@ class StackInstance extends BonusSystemNode {
 
         init();
         if (creature != null) {
-            setType(creature);
+            setTypeByCreature(creature);
         } else if (creatureId != -1) {
-            setTypeById(creatureId);
+            setTypeByCreatureId(creatureId);
         }
         stackBasicDescriptor.count = count;
     }
@@ -46,7 +46,7 @@ class StackInstance extends BonusSystemNode {
         setNodeType(BonusSystemNodeType.STACK_INSTANCE);
     }
 
-    private function setTypeByCreatureId(creId:CreatureId) {
+    public function setTypeByCreatureId(creId:CreatureId) {
         if(((creId:Int) >= 0) && ((creId:Int) < VLC.instance.creh.creatures.length)) {
             setTypeByCreature(VLC.instance.creh.creatures[creId]);
         } else {
@@ -54,7 +54,7 @@ class StackInstance extends BonusSystemNode {
         }
     }
 
-    private function setTypeByCreature(c:Creature) {
+    public function setTypeByCreature(c:Creature) {
         if(stackBasicDescriptor.type != null) {
             detachFrom(stackBasicDescriptor.type);
             if (stackBasicDescriptor.type.isMyUpgrade(c) && VLC.instance.modh.modules.STACK_EXP) {
@@ -96,29 +96,8 @@ class StackInstance extends BonusSystemNode {
         }
     }
 
-    public function setTypeById(creId:CreatureId) {
-        var creIdInt:Int = creId;
-        if(creIdInt >= 0 && creIdInt < VLC.instance.creh.creatures.length) {
-            setType(VLC.instance.creh.creatures[creIdInt]);
-        } else {
-            setType(null);
-        }
-    }
 
-    public function setType(c:Creature) {
-        if(stackBasicDescriptor.type != null) {
-            detachFrom(stackBasicDescriptor.type);
-            if (stackBasicDescriptor.type.isMyUpgrade(c) && VLC.instance.modh.modules.STACK_EXP) {
-                experience = Std.int(experience * VLC.instance.creh.expAfterUpgrade / 100);
-            }
-        }
 
-        stackBasicDescriptor.setType(c);
-
-        if(stackBasicDescriptor.type != null) {
-            attachTo(stackBasicDescriptor.type);
-        }
-    }
 
     public function setArmyObj(armyObject:ArmedInstance) {
         if (_armyObj != null) {

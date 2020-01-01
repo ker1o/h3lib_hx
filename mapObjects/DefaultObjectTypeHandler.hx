@@ -15,4 +15,8 @@ class DefaultObjectTypeHandler<T:GObjectInstance> extends AObjectTypeHandler {
         obj.appearance = tmpl;
         return obj;
     }
+
+    override public function create(objTempl:ObjectTemplate):GObjectInstance {
+        return createTyped(objTempl);
+    }
 }

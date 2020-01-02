@@ -1,5 +1,7 @@
 package lib.mapObjects.hero;
 
+import constants.Obj;
+import mapping.MapBody;
 import utils.Int3;
 import constants.id.PlayerColor;
 import lib.herobonus.Bonus;
@@ -91,4 +93,9 @@ class GHeroInstance extends ArmedInstance {
         return ArtBearer.HERO;
     }
 
+    override public function afterAddToMap(map:MapBody) {
+        if(ID == Obj.HERO) {
+            map.heroesOnMap.push(this);
+        }
+    }
 }

@@ -48,6 +48,11 @@ class Quest {
         isCustomFirst = false;
         isCustomNext = false;
         isCustomComplete = false;
+
+        m2stats = [];
+        m5arts = [];
+        m6creatures = [];
+        m7resources = [];
     }
 
     public function checkQuest(h:GHeroInstance):Bool {

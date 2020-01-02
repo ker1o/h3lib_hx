@@ -1,5 +1,6 @@
 package lib.mapObjects.quest;
 
+import mapping.MapBody;
 import lib.mapObjects.hero.GHeroInstance;
 
 //army is used when giving reward
@@ -26,10 +27,15 @@ class GSeerHut extends ArmedInstance implements IQuestObject {
     }
 
     public function getVisitText():Void {
+        //ToDo
     }
 
     public function checkQuest(hero:GHeroInstance):Bool {
         return quest.checkQuest(hero);
+    }
+
+    override public function afterAddToMap(map:MapBody) {
+        map.addNewQuestInstance(quest);
     }
 }
 

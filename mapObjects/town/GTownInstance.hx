@@ -1,5 +1,7 @@
 package lib.mapObjects.town;
 
+import mapping.MapBody;
+import constants.Obj;
 import lib.mapping.CastleEvent;
 import lib.town.Town;
 import lib.artifacts.Artifact;
@@ -41,4 +43,11 @@ class GTownInstance extends GDwelling {
         spells = [];
         events = [];
     }
+
+    override public function afterAddToMap(map:MapBody) {
+        if(ID == Obj.TOWN) {
+            map.towns.push(this);
+        }
+    }
+
 }

@@ -10,4 +10,8 @@ class GKeys extends GObjectInstance {
     public function new() {
         super();
     }
+
+    public function wasMyColorVisited(player:PlayerColor) {
+        return playerKeyMap.exists(player) && playerKeyMap[player].indexOf(subID) > -1;
+    }
 }

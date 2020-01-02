@@ -67,13 +67,15 @@ class ObjectTemplate {
         setSize(8, 6);
         for (i in 0...6) { // 6 rows
             for (j in 0...8) { // 8 columns
-                var tile = usedTiles[i][j];
-                tile = tile | VISIBLE; // assume that all tiles are visible
-                if (blockStr.charAt(i*8 + j) == '0')
+                var tile = VISIBLE; // assume that all tiles are visible
+                if (blockStr.charAt(i*8 + j) == '0') {
                     tile = tile | BLOCKED;
+                }
 
-                if (visitStr.charAt(i*8 + j) == '1')
+                if (visitStr.charAt(i*8 + j) == '1') {
                     tile = tile | VISITABLE;
+                }
+                usedTiles[i][j] = tile;
             }
         }
 

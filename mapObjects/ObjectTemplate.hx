@@ -113,6 +113,10 @@ class ObjectTemplate {
             for (j in oldHeight...height) {
                 usedTiles.push([]);
             }
+        } else {
+            for (j in height...oldHeight) {
+                usedTiles.pop();
+            }
         }
 
         var oldWidth = usedTiles[0].length;
@@ -132,15 +136,15 @@ class ObjectTemplate {
     }
 
     public function readMsk() {
-        var mskFileName = animationFile.substr(0, animationFile.length - 3) + "msk";
+        var mskFileName = animationFile.substr(0, animationFile.length - 3).toLowerCase() + "msk";
 //        var resID = new ResourceID("SPRITES/" + animationFile, ResType.MASK);
-        trace('ToDo: read $mskFileName');
-
 
         if (FileCache.instance.existsSpriteResource(mskFileName)) {
+//            trace('Reading $mskFileName');
             var msk = FileCache.instance.getCahedFile(mskFileName);
             setSize(msk.get(0), msk.get(1));
         } else {//maximum possible size of H3 object //TODO: remove hardcode and move this data into modding system
+            trace('Can\'t find $mskFileName');
             setSize(8, 6);
         }
     }
@@ -218,19 +222,15 @@ class ObjectTemplate {
         editorAnimationFile.replace("\\", "/");
     }
 
-    public function getHeight() {
+    public inline function getHeight() {
         //TODO: Use 2D array
         return usedTiles.length;
     }
 
-    public function getWidth() {
+    public inline function getWidth() {
         //TODO: Use 2D array
         //TODO: better precalculate and store constant value
-        var ret = 0;
-        for (row in usedTiles) {//copy is expensive
-            ret = Std.int(Math.max(ret, row.length));
-        }
-        return ret;
+        return usedTiles.length > 0 ? usedTiles[0].length : 0;
     }
 
     public function isWithin(x:Int, y:Int):Bool {
@@ -243,14 +243,7 @@ class ObjectTemplate {
 
     public function isVisitableAt(x:Int, y:Int):Bool {
         if (isWithin(x, y)) {
-            var res = false;
-            try {
-                res = usedTiles[x][y] & VISITABLE > 0;
-            }
-            catch(e:Dynamic) {
-                trace("!");
-            }
-            return res;
+            return usedTiles[y][x] & VISITABLE > 0;
         }
         return false;
     }

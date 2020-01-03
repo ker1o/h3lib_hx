@@ -318,4 +318,37 @@ class ArtHandler implements IHandlerBase {
         return h3Data;
     }
 
+    public function initAllowedArtifactsList(allowed:Array<Bool>) {
+        allowedArtifacts = [];
+        treasures = [];
+        minors = [];
+        majors = [];
+        relics = [];
+
+        for (i in (ArtifactId.SPELLBOOK:Int)...(ArtifactId.ART_SELECTION:Int)) 	{
+            //check artifacts allowed on a map
+            //TODO: This line will be different when custom map format is implemented
+            if (allowed[i] && legalArtifact(i)) {
+                allowedArtifacts.push(artifacts[i]);
+            }
+        }
+        for (i in (ArtifactId.ART_SELECTION:Int)...(artifacts.length)) { //try to allow all artifacts added by mods
+            if (legalArtifact((i:ArtifactId))) {
+                allowedArtifacts.push(artifacts[i]);
+                //keep in mind that artifact can be worn by more than one type of bearer
+            }
+        }
+    }
+
+    public function legalArtifact(id:ArtifactId):Bool {
+        var art = artifacts[id];
+        //assert ( (!art.constituents) || art.constituents.lrngth ); //artifacts is not combined or has some components
+        return ((art.possibleSlots[ArtBearer.HERO].length > 0 ||
+                (art.possibleSlots[ArtBearer.COMMANDER].length > 0 && VLC.instance.modh.modules.COMMANDERS) ||
+                (art.possibleSlots[ArtBearer.CREATURE].length > 0 && VLC.instance.modh.modules.STACK_ARTIFACT)) &&
+                !(art.constituents.length > 0) && //no combo artifacts spawning
+                (art.aClass:Int) >= (ArtClass.ART_TREASURE:Int) &&
+                (art.aClass:Int) <= (ArtClass.ART_RELIC:Int));
+    }
+
 }

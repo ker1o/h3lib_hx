@@ -1,5 +1,7 @@
 package lib.mapObjects;
 
+import filesystem.FileCache;
+import utils.Int3;
 import filesystem.BinaryReader;
 import constants.Obj;
 import mapping.TerrainType;
@@ -45,14 +47,15 @@ class ObjectTemplate {
     private var allowedTerrains:Array<TerrainType>;
 
     public function new() {
-        allowedTerrains = [];
-
         visitDir = 8|16|32|64|128; // all but top
         id = Obj.NO_OBJ;
         subid = 0;
         printPriority = 0;
         stringID = "";
         editorAnimationFile = "";
+
+        usedTiles = [];
+        allowedTerrains = [];
     }
 
     public function readTxt(s:String):Void {
@@ -104,22 +107,42 @@ class ObjectTemplate {
     }
 
     public function setSize(width:UInt, height:UInt) {
-        usedTiles = [];
-        for (j in 0...height) {
-            usedTiles.push([for (i in 0...width) 0]);
+        // don't initiate new one, cut it!
+        var oldHeight = usedTiles.length;
+        if (oldHeight < height) {
+            for (j in oldHeight...height) {
+                usedTiles.push([]);
+            }
+        }
+
+        var oldWidth = usedTiles[0].length;
+        if (oldWidth < width) {
+            for (j in 0...height) {
+                for (i in oldWidth...width) {
+                    usedTiles[j].push(0);
+                }
+            }
+        } else {
+            for (j in 0...height) {
+                for (i in width...oldWidth) {
+                    usedTiles[j].pop();
+                }
+            }
         }
     }
 
     public function readMsk() {
-        trace('ToDo: read SPRITES/$animationFile, ResType.MASK');
+        var mskFileName = animationFile.substr(0, animationFile.length - 3) + "msk";
 //        var resID = new ResourceID("SPRITES/" + animationFile, ResType.MASK);
-//
-//        if (ResourceHandler.get().existsResource(resID)) {
-//            var msk = CResourceHandler.get().load(resID).readAll();
-//            setSize(msk.first.get()[0], msk.first.get()[1]);
-//        } else {//maximum possible size of H3 object //TODO: remove hardcode and move this data into modding system
-//            setSize(8, 6);
-//        }
+        trace('ToDo: read $mskFileName');
+
+
+        if (FileCache.instance.existsSpriteResource(mskFileName)) {
+            var msk = FileCache.instance.getCahedFile(mskFileName);
+            setSize(msk.get(0), msk.get(1));
+        } else {//maximum possible size of H3 object //TODO: remove hardcode and move this data into modding system
+            setSize(8, 6);
+        }
     }
 
     private function isOnVisitableFromTopList(id:Int, type:Int) {
@@ -193,6 +216,62 @@ class ObjectTemplate {
         }
         animationFile.replace("\\", "/");
         editorAnimationFile.replace("\\", "/");
+    }
+
+    public function getHeight() {
+        //TODO: Use 2D array
+        return usedTiles.length;
+    }
+
+    public function getWidth() {
+        //TODO: Use 2D array
+        //TODO: better precalculate and store constant value
+        var ret = 0;
+        for (row in usedTiles) {//copy is expensive
+            ret = Std.int(Math.max(ret, row.length));
+        }
+        return ret;
+    }
+
+    public function isWithin(x:Int, y:Int):Bool {
+        if (x < 0 || y < 0) return false;
+        if (x >= getWidth() || y >= getHeight()) {
+            return false;
+        }
+        return true;
+    }
+
+    public function isVisitableAt(x:Int, y:Int):Bool {
+        if (isWithin(x, y)) {
+            var res = false;
+            try {
+                res = usedTiles[x][y] & VISITABLE > 0;
+            }
+            catch(e:Dynamic) {
+                trace("!");
+            }
+            return res;
+        }
+        return false;
+    }
+
+    public function isBlockedAt(x:Int, y:Int):Bool {
+        if (isWithin(x, y)) {
+            return usedTiles[y][x] & BLOCKED > 0;
+        }
+        return false;
+    }
+
+    public function getVisitableOffset():Int3 {
+        for (y in 0...getHeight()) {
+            for (x in 0...getWidth()) {
+                if (isVisitableAt(x, y))
+                    return new Int3(x, y, 0);
+            }
+        }
+
+        //logGlobal->warn("Warning: getVisitableOffset called on non-visitable obj!");
+        return new Int3(0,0,0);
     }
 }
 

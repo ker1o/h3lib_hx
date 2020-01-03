@@ -266,6 +266,22 @@ class ObjectTemplate {
         //logGlobal->warn("Warning: getVisitableOffset called on non-visitable obj!");
         return new Int3(0,0,0);
     }
+
+    public function isVisitableFrom(x:Int, y:Int) {
+        // visitDir uses format
+        // 1 2 3
+        // 8   4
+        // 7 6 5
+        var dirMap = [ visitDir &   1, visitDir &   2, visitDir &   4 ,
+                       visitDir & 128,        1      , visitDir &   8 ,
+                       visitDir &  64, visitDir &  32, visitDir &  16 ];
+
+        // map input values to range 0..2
+        var dx:Int = x < 0 ? 0 : x == 0 ? 1 : 2;
+        var dy:Int = y < 0 ? 0 : y == 0 ? 1 : 2;
+
+        return dirMap[dy * 3 + dx] != 0;
+    }
 }
 
 @:enum abstract BlockMapBits(Int) from Int to Int {

@@ -1,8 +1,6 @@
 package lib.mapping;
 
-import haxe.Json;
-import data.ConfigData;
-
+import filesystem.FileCache;
 using Reflect;
 using StringTools;
 
@@ -24,7 +22,7 @@ class TerrainViewPatternConfig {
         terrainViewPatterns = new Map<TerrainGroup, Array<TVPVector>>();
         terrainTypePatterns = new Map<String, TVPVector>();
 
-        var config:Dynamic = Json.parse(ConfigData.data.get("config/terrainViewPatterns.json"));
+        var config:Dynamic = FileCache.instance.getConfig("config/terrainViewPatterns.json");
         var patternTypes = ["terrainView", "terrainType"];
         for(patternType in patternTypes) {
             var patternsVec:Array<Dynamic> = config.field(patternType);

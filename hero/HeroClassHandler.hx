@@ -1,10 +1,9 @@
 package lib.hero;
 
-import lib.mod.VLC;
-import lib.mod.ModHandler;
-import haxe.Json;
-import data.H3mConfigData;
+import filesystem.FileCache;
 import lib.mod.IHandlerBase;
+import lib.mod.ModHandler;
+import lib.mod.VLC;
 
 using Reflect;
 
@@ -90,7 +89,7 @@ class HeroClassHandler implements IHandlerBase {
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var h3Data:Array<Dynamic> = [];
-        var parser = Json.parse(H3mConfigData.data.get("DATA/HCTRAITS.TXT"));
+        var parser = FileCache.instance.getConfig("DATA/HCTRAITS.TXT");
 
         for(i in 0...dataSize) {
             var parserData = parser[i];

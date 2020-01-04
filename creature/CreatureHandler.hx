@@ -1,28 +1,25 @@
 package lib.creature;
 
-import data.ConfigData;
-import constants.GameConstants;
-import lib.herobonus.BonusSystemNode;
-import constants.Obj;
-import lib.mod.VLC;
-import lib.mod.ModHandler;
-import lib.mod.HandlerBase;
-import constants.id.CreatureId;
-import lib.herobonus.LimitEffect;
-import lib.herobonus.BonusDuration;
-import lib.herobonus.BonusSource;
-import utils.JsonUtils;
-import lib.herobonus.RankRangeLimiter;
-import constants.PrimarySkill;
-import lib.herobonus.BonusType;
+import filesystem.FileCache;
 import constants.CreatureType;
-import data.H3mConfigData;
-import haxe.Json;
+import constants.GameConstants;
+import constants.id.CreatureId;
+import constants.Obj;
+import constants.PrimarySkill;
 import lib.herobonus.Bonus;
+import lib.herobonus.BonusDuration;
 import lib.herobonus.BonusList;
+import lib.herobonus.BonusSource;
+import lib.herobonus.BonusSystemNode;
+import lib.herobonus.BonusType;
+import lib.herobonus.LimitEffect;
+import lib.herobonus.RankRangeLimiter;
 import lib.mod.IHandlerBase;
+import lib.mod.ModHandler;
+import lib.mod.VLC;
 import lib.res.ResourceSet;
 import Reflect;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -113,7 +110,7 @@ class CreatureHandler implements IHandlerBase {
     }
 
     private function loadCommanders() {
-        var data:Dynamic = Json.parse(ConfigData.data.get("config/commanders.json"));
+        var data:Dynamic = FileCache.instance.getConfig("config/commanders.json");
         data.setField("meta", "core"); // assume that commanders are in core mod (for proper bonuses resolution)
 
         var config:Dynamic = data; // switch to const data accessors
@@ -193,7 +190,7 @@ class CreatureHandler implements IHandlerBase {
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var h3Data:Array<Dynamic> = [];
-        var parser:Array<Array<Dynamic>> = Json.parse(H3mConfigData.data.get("DATA/CRTRAITS.TXT"));
+        var parser:Array<Array<Dynamic>> = FileCache.instance.getConfig("DATA/CRTRAITS.TXT");
 
         for(i in 0...dataSize) {
             var parserData = parser[i];
@@ -416,7 +413,7 @@ class CreatureHandler implements IHandlerBase {
     }
 
     private function loadAnimationInfo(h3Data:Array<Dynamic>, dataSize:Int) {
-        var parser:Array<Array<Dynamic>> = Json.parse(H3mConfigData.data.get("DATA/CRANIM.TXT"));
+        var parser:Array<Array<Dynamic>> = FileCache.instance.getConfig("DATA/CRANIM.TXT");
 
 //        for(dd in 0...VLC.instance.modh.settings.data.get("textData")["creature"]) {
         for(creatureIndex in 0...dataSize) {

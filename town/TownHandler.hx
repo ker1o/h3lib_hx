@@ -1,17 +1,16 @@
 package lib.town;
 
-import lib.res.ResType;
-import lib.battle.BattleHex;
-import constants.id.CreatureId;
+import filesystem.FileCache;
 import constants.Alignment;
 import constants.BuildingID;
-import data.H3mConfigData;
+import constants.id.CreatureId;
 import gui.geometries.Point;
-import haxe.Json;
+import lib.battle.BattleHex;
 import lib.creature.Creature.Resources;
 import lib.mod.IHandlerBase;
 import lib.mod.ModHandler;
 import lib.mod.VLC;
+import lib.res.ResType;
 import lib.StringConstants;
 import mapping.TerrainType;
 
@@ -460,7 +459,7 @@ class TownHandler implements IHandlerBase {
             return build;
         }
 
-        var parser:Dynamic = Json.parse(H3mConfigData.data.get("DATA/BUILDING.TXT"));
+        var parser:Dynamic = FileCache.instance.getConfig("DATA/BUILDING.TXT");
 
         //Unique buildings
         var specialsObj = parser.field("unique");
@@ -496,7 +495,7 @@ class TownHandler implements IHandlerBase {
             }
         }
 
-        parser = Json.parse(H3mConfigData.data.get("DATA/BLDGNEUT.TXT"));
+        parser = FileCache.instance.getConfig("DATA/BLDGNEUT.TXT");
         var pos:Int = 0;
         for (building in 0...15) {
             var name:String  = parser[pos][0];
@@ -529,7 +528,7 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        parser = Json.parse(H3mConfigData.data.get("DATA/BLDGSPEC.TXT"));
+        parser = FileCache.instance.getConfig("DATA/BLDGSPEC.TXT");
         pos = 0;
         for(town in 0...dataSize) {
             for(build in 0...9) {
@@ -547,7 +546,7 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        parser = Json.parse(H3mConfigData.data.get("DATA/DWELLING.TXT"));
+        parser = FileCache.instance.getConfig("DATA/DWELLING.TXT");
         pos = 0;
         for(town in 0...dataSize) {
             for(build in 0...14) {
@@ -558,8 +557,8 @@ class TownHandler implements IHandlerBase {
         }
 
 
-        var typeParser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/TOWNTYPE.TXT"));
-        var nameParser = Json.parse(H3mConfigData.data.get("DATA/TOWNNAME.TXT"));
+        var typeParser:Array<Dynamic> = FileCache.instance.getConfig("DATA/TOWNTYPE.TXT");
+        var nameParser = FileCache.instance.getConfig("DATA/TOWNNAME.TXT");
         pos = 0;
         var townID = 0;
         var nameIndex = 0;

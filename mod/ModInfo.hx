@@ -1,7 +1,7 @@
 package lib.mod;
 
+import filesystem.FileCache;
 import haxe.Json;
-import data.ModData;
 
 using Reflect;
 
@@ -32,13 +32,14 @@ class ModInfo {
 
         //Not presented in the original
         config = new Map<String, Dynamic>();
-        for (keyName in ModData.data.keys()) {
-            var configStr = ModData.data.get(keyName);
+        var modData:Dynamic = FileCache.instance.getConfig("mod");
+        for (keyName in modData.fields()) {
+            var configData = modData.field(keyName);
             try {
-                config.set(keyName, Json.parse(configStr));
+                config.set(keyName, configData);
             }
             catch(e:Dynamic) {
-                trace(keyName);
+                trace('Error loading mod data for $keyName');
             }
         }
     }

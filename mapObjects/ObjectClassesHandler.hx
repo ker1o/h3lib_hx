@@ -1,43 +1,7 @@
 package lib.mapObjects;
 
-import lib.mod.ModHandler;
-import lib.mod.VLC;
-import utils.JsonUtils;
+import filesystem.FileCache;
 import constants.Obj;
-import haxe.Json;
-import data.H3mConfigData;
-import lib.mapObjects.misc.GWitchHut;
-import lib.mapObjects.rewardable.GVisitableOPH;
-import lib.mapObjects.market.GUniversity;
-import lib.mapObjects.misc.GWhirlpool;
-import lib.mapObjects.misc.GSubterraneanGate;
-import lib.mapObjects.misc.GMonolith;
-import lib.mapObjects.misc.GSirens;
-import lib.mapObjects.misc.GSignBottle;
-import lib.mapObjects.misc.GShrine;
-import lib.mapObjects.misc.GShipyard;
-import lib.mapObjects.rewardable.GVisitableOPW;
-import lib.mapObjects.quest.GSeerHut;
-import lib.mapObjects.misc.GScholar;
-import lib.mapObjects.quest.GQuestGuard;
-import lib.mapObjects.rewardable.GPickable;
-import lib.mapObjects.pandorabox.GPandoraBox;
-import lib.mapObjects.rewardable.GOnceVisitable;
-import lib.mapObjects.misc.GObservatory;
-import lib.mapObjects.misc.GObelisk;
-import lib.mapObjects.misc.GMine;
-import lib.mapObjects.misc.GMagicWell;
-import lib.mapObjects.rewardable.GMagicSpring;
-import lib.mapObjects.misc.GMagi;
-import lib.mapObjects.misc.GLighthouse;
-import lib.mapObjects.quest.GKeymasterTent;
-import lib.mapObjects.hero.GHeroPlaceholder;
-import lib.mapObjects.misc.GGarrison;
-import lib.mapObjects.pandorabox.GEvent;
-import lib.mapObjects.misc.GDenOfthieves;
-import lib.mapObjects.quest.GBorderGuard;
-import lib.mapObjects.quest.GBorderGate;
-import lib.mapObjects.rewardable.GBonusingObject;
 import lib.mapObjects.constructors.BankInstanceConstructor;
 import lib.mapObjects.constructors.DwellingInstanceConstructor;
 import lib.mapObjects.constructors.HeroInstanceConstructor;
@@ -45,16 +9,51 @@ import lib.mapObjects.constructors.ObstacleConstructor;
 import lib.mapObjects.constructors.RewardableConstructor;
 import lib.mapObjects.constructors.TownInstanceConstructor;
 import lib.mapObjects.hero.GHeroInstance;
+import lib.mapObjects.hero.GHeroPlaceholder;
 import lib.mapObjects.market.GBlackMarket;
 import lib.mapObjects.market.GMarket;
-import lib.mapObjects.town.GDwelling;
-import lib.mapObjects.town.GTownInstance;
+import lib.mapObjects.market.GUniversity;
 import lib.mapObjects.misc.Cartographer;
 import lib.mapObjects.misc.GArtifact;
 import lib.mapObjects.misc.GBoat;
 import lib.mapObjects.misc.GCreature;
+import lib.mapObjects.misc.GDenOfthieves;
+import lib.mapObjects.misc.GGarrison;
+import lib.mapObjects.misc.GLighthouse;
+import lib.mapObjects.misc.GMagi;
+import lib.mapObjects.misc.GMagicWell;
+import lib.mapObjects.misc.GMine;
+import lib.mapObjects.misc.GMonolith;
+import lib.mapObjects.misc.GObelisk;
+import lib.mapObjects.misc.GObservatory;
 import lib.mapObjects.misc.GResource;
+import lib.mapObjects.misc.GScholar;
+import lib.mapObjects.misc.GShipyard;
+import lib.mapObjects.misc.GShrine;
+import lib.mapObjects.misc.GSignBottle;
+import lib.mapObjects.misc.GSirens;
+import lib.mapObjects.misc.GSubterraneanGate;
+import lib.mapObjects.misc.GWhirlpool;
+import lib.mapObjects.misc.GWitchHut;
+import lib.mapObjects.pandorabox.GEvent;
+import lib.mapObjects.pandorabox.GPandoraBox;
+import lib.mapObjects.quest.GBorderGate;
+import lib.mapObjects.quest.GBorderGuard;
+import lib.mapObjects.quest.GKeymasterTent;
+import lib.mapObjects.quest.GQuestGuard;
+import lib.mapObjects.quest.GSeerHut;
+import lib.mapObjects.rewardable.GBonusingObject;
+import lib.mapObjects.rewardable.GMagicSpring;
+import lib.mapObjects.rewardable.GOnceVisitable;
+import lib.mapObjects.rewardable.GPickable;
+import lib.mapObjects.rewardable.GVisitableOPH;
+import lib.mapObjects.rewardable.GVisitableOPW;
+import lib.mapObjects.town.GDwelling;
+import lib.mapObjects.town.GTownInstance;
 import lib.mod.IHandlerBase;
+import lib.mod.ModHandler;
+import lib.mod.VLC;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -268,7 +267,7 @@ class ObjectClassesHandler implements IHandlerBase {
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var ret:Array<Dynamic> = [];
 
-        var parser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/OBJECTS.TXT"));
+        var parser:Array<Dynamic> = FileCache.instance.getConfig("DATA/OBJECTS.TXT");
         var totalNumber:Int = parser.length;
 
         for(i in 0...totalNumber) {
@@ -278,19 +277,19 @@ class ObjectClassesHandler implements IHandlerBase {
             legacyTemplates.set(key, templ);
         }
 
-        var namesParser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/OBJNAMES.TXT"));
+        var namesParser:Array<Dynamic> = FileCache.instance.getConfig("DATA/OBJNAMES.TXT");
         var ret:Array<Dynamic> = [];
         for (i in 0...256) {
             ret[i] = {name: namesParser[i]};
         }
 
-        var cregen1Parser:Array<String> = Json.parse(H3mConfigData.data.get("DATA/CRGEN1.TXT"));
+        var cregen1Parser:Array<String> = FileCache.instance.getConfig("DATA/CRGEN1.TXT");
         customNames.set(Obj.CREATURE_GENERATOR1, []);
         for (s in cregen1Parser) {
             customNames.get(Obj.CREATURE_GENERATOR1).push(s);
         }
 
-        var cregen4Parser:Array<String> = Json.parse(H3mConfigData.data.get("DATA/CRGEN4.TXT"));
+        var cregen4Parser:Array<String> = FileCache.instance.getConfig("DATA/CRGEN4.TXT");
         customNames.set(Obj.CREATURE_GENERATOR4, []);
         for (s in cregen4Parser) {
             customNames.get(Obj.CREATURE_GENERATOR4).push(s);

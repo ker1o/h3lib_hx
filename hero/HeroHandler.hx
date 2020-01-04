@@ -1,25 +1,23 @@
 package lib.hero;
 
-import lib.herobonus.BonusSource;
-import lib.herobonus.BonusDuration;
-import lib.herobonus.Bonus;
-import utils.JsonUtils;
-import lib.herobonus.BonusList;
-import constants.SpellId;
+import filesystem.FileCache;
+import constants.CreatureType;
+import constants.GameConstants;
+import constants.id.CreatureId;
 import constants.SecondarySkill;
 import constants.SecSkillLevel;
-import constants.id.CreatureId;
-import constants.CreatureType;
-import lib.mod.ModHandler;
-import haxe.Json;
-import constants.GameConstants;
-import data.ConfigData;
-import data.H3mConfigData;
+import constants.SpellId;
 import lib.hero.BallisticsLevelInfo;
 import lib.hero.Hero;
 import lib.hero.ObstacleInfo;
+import lib.herobonus.Bonus;
+import lib.herobonus.BonusDuration;
+import lib.herobonus.BonusList;
+import lib.herobonus.BonusSource;
 import lib.mod.IHandlerBase;
+import lib.mod.ModHandler;
 import lib.mod.VLC;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -238,7 +236,7 @@ class HeroHandler implements IHandlerBase {
     private function loadBallistics() {
         ballistics = [];
 
-        var ballisticsRawData:Array<Array<Int>> = Json.parse(H3mConfigData.data.get("DATA/BALLIST.TXT"));
+        var ballisticsRawData:Array<Array<Int>> = FileCache.instance.getConfig("DATA/BALLIST.TXT");
 
         for(levelData in ballisticsRawData) {
             var bli = new BallisticsLevelInfo();
@@ -256,7 +254,7 @@ class HeroHandler implements IHandlerBase {
     }
 
     private function loadTerrains() {
-        var config:Dynamic = Json.parse(ConfigData.data.get("config/terrains.json"));
+        var config:Dynamic = FileCache.instance.getConfig("config/terrains.json");
         terrCosts = [];
         for(name in StringConstants.TERRAIN_NAMES) {
             terrCosts.push(config.field(name).field("moveCost"));
@@ -282,16 +280,16 @@ class HeroHandler implements IHandlerBase {
             return out;
         }
 
-        var config:Dynamic = Json.parse(ConfigData.data.get("config/obstacles.json"));
+        var config:Dynamic = FileCache.instance.getConfig("config/obstacles.json");
         obstacles = local_loadObstacles(config.field("obstacles"), false);
         absoluteObstacles = local_loadObstacles(config.field("absoluteObstacles"), true);
     }
 
     public function loadLegacyData(dataSize:Int):Array<Dynamic> {
         var h3Data:Array<Dynamic> = [];
-        var specParser = Json.parse(H3mConfigData.data.get("DATA/HEROSPEC.TXT"));
-        var bioParser = Json.parse(H3mConfigData.data.get("DATA/HEROBIOS.TXT"));
-        var parser = Json.parse(H3mConfigData.data.get("DATA/HOTRAITS.TXT"));
+        var specParser = FileCache.instance.getConfig("DATA/HEROSPEC.TXT");
+        var bioParser = FileCache.instance.getConfig("DATA/HEROBIOS.TXT");
+        var parser = FileCache.instance.getConfig("DATA/HOTRAITS.TXT");
 
         for(i in 0...GameConstants.HEROES_QUANTITY) {
             var parserData:Dynamic = parser[i];

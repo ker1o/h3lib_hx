@@ -1,18 +1,17 @@
 package lib.spells;
 
-import lib.herobonus.BonusSource;
-import utils.JsonUtils;
-import lib.spells.Spell.ProjectileInfo;
-import lib.herobonus.BonusType;
-import lib.mod.VLC;
+import filesystem.FileCache;
 import Array;
 import constants.GameConstants;
 import constants.SpellId;
-import data.H3mConfigData;
-import haxe.Json;
+import lib.herobonus.BonusSource;
+import lib.herobonus.BonusType;
 import lib.mod.HandlerBase;
 import lib.mod.IHandlerBase;
+import lib.mod.VLC;
+import lib.spells.Spell.ProjectileInfo;
 import Reflect;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -82,7 +81,7 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
 
         var legacyData:Array<Dynamic> = [];
 
-        var parser = Json.parse(H3mConfigData.data.get("DATA/SPTRAITS.TXT"));
+        var parser = FileCache.instance.getConfig("DATA/SPTRAITS.TXT");
 
         read(false, false, legacyData, parser); //read adventure map spells
         read(true, false, legacyData, parser); //read battle spells

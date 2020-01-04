@@ -1,11 +1,10 @@
 package lib.skill;
 
-import constants.SecondarySkill;
-import utils.JsonUtils;
+import filesystem.FileCache;
 import constants.GameConstants;
-import data.H3mConfigData;
-import haxe.Json;
+import constants.SecondarySkill;
 import lib.mod.HandlerBase;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -49,7 +48,7 @@ class SkillHandler extends HandlerBase<SecondarySkill, Skill> {
     }
 
     override public function loadLegacyData(dataSize:Int):Array<Dynamic> {
-        var parser:Array<Dynamic> = Json.parse(H3mConfigData.data.get("DATA/SSTRAITS.TXT"));
+        var parser:Array<Dynamic> = FileCache.instance.getConfig("DATA/SSTRAITS.TXT");
 
         var skillNames:Array<String> = [];
         var skillInfoTexts:Array<Array<String>> = [];

@@ -1,7 +1,7 @@
 package lib.town;
 
-import mapping.TerrainType;
-import constants.Alignment;
+import lib.mapping.TerrainType;
+import lib.constants.Alignment;
 
 class Faction {
     public var name:String; //town name, by default - from TownName.txt

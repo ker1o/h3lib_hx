@@ -1,8 +1,8 @@
 package lib.artifacts;
 
 import lib.artifacts.Artifact.ArtBearer;
-import constants.GameConstants;
-import constants.ArtifactPosition;
+import lib.constants.GameConstants;
+import lib.constants.ArtifactPosition;
 
 class ArtifactSet {
     //hero's artifacts from bag

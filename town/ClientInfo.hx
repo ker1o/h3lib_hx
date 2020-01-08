@@ -1,7 +1,7 @@
 package lib.town;
 
-import constants.BuildingID;
-import constants.id.CreatureId;
+import lib.constants.BuildingID;
+import lib.constants.id.CreatureId;
 import gui.geometries.Point;
 
 // Client-only data. Should be moved away from lib

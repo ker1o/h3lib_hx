@@ -1,7 +1,7 @@
 package lib;
 
-import constants.id.SlotId;
-import constants.id.PlayerColor;
+import lib.constants.id.SlotId;
+import lib.constants.id.PlayerColor;
 import lib.battle.BattleHex;
 import lib.creature.Creature;
 import lib.creature.StackInstance;

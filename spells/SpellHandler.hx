@@ -1,9 +1,9 @@
 package lib.spells;
 
-import filesystem.FileCache;
+import lib.filesystem.FileCache;
 import Array;
-import constants.GameConstants;
-import constants.SpellId;
+import lib.constants.GameConstants;
+import lib.constants.SpellId;
 import lib.herobonus.BonusSource;
 import lib.herobonus.BonusType;
 import lib.mod.HandlerBase;
@@ -11,7 +11,7 @@ import lib.mod.IHandlerBase;
 import lib.mod.VLC;
 import lib.spells.Spell.ProjectileInfo;
 import Reflect;
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

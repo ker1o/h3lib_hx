@@ -1,7 +1,7 @@
 package lib.mapObjects.quest;
 
 import lib.mapObjects.hero.GHeroInstance;
-import mapping.MapBody;
+import lib.mapping.MapBody;
 
 class GBorderGuard extends GKeys implements IQuestObject {
     public var quest(default, null):Quest;

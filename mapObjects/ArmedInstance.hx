@@ -1,7 +1,7 @@
 package lib.mapObjects;
 
-import constants.CreatureType;
-import constants.id.SlotId;
+import lib.constants.CreatureType;
+import lib.constants.id.SlotId;
 import lib.battle.BattleInfo;
 import lib.creature.CreatureSet;
 import lib.creature.ICreatureSet;

@@ -1,11 +1,11 @@
 package lib.netpacks;
 
-import constants.ArtifactPosition;
+import lib.constants.ArtifactPosition;
 import lib.artifacts.ArtifactSet;
 import lib.creature.StackInstance;
 import lib.herobonus.BonusSystemNode;
 import lib.mapObjects.hero.GHeroInstance;
-import utils.OneOf;
+import lib.utils.OneOf;
 
 typedef TArtHolder = OneOf<GHeroInstance, StackInstance>;
 

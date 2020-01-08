@@ -1,9 +1,9 @@
 package lib.creature;
 
-import constants.id.CreatureId;
+import lib.constants.id.CreatureId;
 import lib.herobonus.Bonus;
-import constants.ArtifactId;
-import constants.CreatureType;
+import lib.constants.ArtifactId;
+import lib.constants.CreatureType;
 import lib.herobonus.BonusDuration;
 import lib.herobonus.BonusSource;
 import lib.herobonus.BonusSystemNode;

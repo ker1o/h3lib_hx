@@ -1,11 +1,11 @@
 package lib.creature;
 
-import filesystem.FileCache;
-import constants.CreatureType;
-import constants.GameConstants;
-import constants.id.CreatureId;
-import constants.Obj;
-import constants.PrimarySkill;
+import lib.filesystem.FileCache;
+import lib.constants.CreatureType;
+import lib.constants.GameConstants;
+import lib.constants.id.CreatureId;
+import lib.constants.Obj;
+import lib.constants.PrimarySkill;
 import lib.herobonus.Bonus;
 import lib.herobonus.BonusDuration;
 import lib.herobonus.BonusList;
@@ -19,7 +19,7 @@ import lib.mod.ModHandler;
 import lib.mod.VLC;
 import lib.res.ResourceSet;
 import Reflect;
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

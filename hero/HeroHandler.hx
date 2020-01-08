@@ -1,12 +1,12 @@
 package lib.hero;
 
-import filesystem.FileCache;
-import constants.CreatureType;
-import constants.GameConstants;
-import constants.id.CreatureId;
-import constants.SecondarySkill;
-import constants.SecSkillLevel;
-import constants.SpellId;
+import lib.filesystem.FileCache;
+import lib.constants.CreatureType;
+import lib.constants.GameConstants;
+import lib.constants.id.CreatureId;
+import lib.constants.SecondarySkill;
+import lib.constants.SecSkillLevel;
+import lib.constants.SpellId;
 import lib.hero.BallisticsLevelInfo;
 import lib.hero.Hero;
 import lib.hero.ObstacleInfo;
@@ -17,7 +17,7 @@ import lib.herobonus.BonusSource;
 import lib.mod.IHandlerBase;
 import lib.mod.ModHandler;
 import lib.mod.VLC;
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

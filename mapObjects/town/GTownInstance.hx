@@ -1,13 +1,13 @@
 package lib.mapObjects.town;
 
-import mapping.MapBody;
-import constants.Obj;
+import lib.mapping.MapBody;
+import lib.constants.Obj;
 import lib.mapping.CastleEvent;
 import lib.town.Town;
 import lib.artifacts.Artifact;
 import lib.mapObjects.hero.GHeroInstance;
-import constants.SpellId;
-import constants.BuildingID;
+import lib.constants.SpellId;
+import lib.constants.BuildingID;
 
 class GTownInstance extends GDwelling {
     public var townAndVis:TownAndVisitingHero;

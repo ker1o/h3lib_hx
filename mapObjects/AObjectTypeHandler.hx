@@ -1,6 +1,6 @@
 package lib.mapObjects;
 
-import constants.Obj;
+import lib.constants.Obj;
 
 class AObjectTypeHandler {
     public var typeName:String;

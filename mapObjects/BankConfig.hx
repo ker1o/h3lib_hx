@@ -1,7 +1,7 @@
 package lib.mapObjects;
 
-import constants.ArtifactId;
-import constants.SpellId;
+import lib.constants.ArtifactId;
+import lib.constants.SpellId;
 import lib.creature.StackBasicDescriptor;
 import lib.res.ResourceSet;
 

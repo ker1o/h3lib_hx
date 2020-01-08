@@ -1,6 +1,6 @@
 package lib.mapObjects.misc;
 
-import constants.id.ObjectInstanceId;
+import lib.constants.id.ObjectInstanceId;
 
 class TeleportChannel {
     public var entrances:Array<ObjectInstanceId>;

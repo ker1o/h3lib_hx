@@ -1,6 +1,6 @@
 package lib.mapObjects.town;
 
-import constants.BuildingID;
+import lib.constants.BuildingID;
 
 ///basic class for town structures handled as map objects
 class GTownBuilding implements IObjectInterface {

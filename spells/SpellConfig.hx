@@ -1,8 +1,8 @@
 package lib.spells;
 
-import constants.SecondarySkill;
+import lib.constants.SecondarySkill;
 import lib.herobonus.BonusType;
-import constants.SpellSchool;
+import lib.constants.SpellSchool;
 
 typedef SchoolInfo = {
     id:SpellSchool, //backlink

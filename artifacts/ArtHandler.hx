@@ -1,15 +1,15 @@
 package lib.artifacts;
 
-import constants.ArtifactId;
-import constants.Obj;
+import lib.constants.ArtifactId;
+import lib.constants.Obj;
 import lib.mod.ModHandler;
 import lib.artifacts.Artifact.ArtClass;
 import lib.artifacts.Artifact.ArtBearer;
-import constants.ArtifactPosition;
-import constants.CreatureType;
+import lib.constants.ArtifactPosition;
+import lib.constants.CreatureType;
 import lib.herobonus.Bonus;
-import constants.id.CreatureId;
-import utils.JsonUtils;
+import lib.constants.id.CreatureId;
+import lib.utils.JsonUtils;
 import lib.mod.VLC;
 import data.H3mConfigData;
 import haxe.Json;

@@ -1,10 +1,10 @@
 package lib.skill;
 
-import filesystem.FileCache;
-import constants.GameConstants;
-import constants.SecondarySkill;
+import lib.filesystem.FileCache;
+import lib.constants.GameConstants;
+import lib.constants.SecondarySkill;
 import lib.mod.HandlerBase;
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

@@ -2,9 +2,9 @@ package lib.town;
 
 import lib.res.ResType;
 import lib.battle.BattleHex;
-import constants.CreatureType;
-import constants.BuildingID;
-import constants.ArtifactId;
+import lib.constants.CreatureType;
+import lib.constants.BuildingID;
+import lib.constants.ArtifactId;
 
 class Town {
     public static var defaultMoatHexes:Array<BattleHex> = [11, 28, 44, 61, 77, 111, 129, 146, 164, 181];

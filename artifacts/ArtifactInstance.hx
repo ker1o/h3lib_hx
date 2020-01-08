@@ -1,19 +1,19 @@
 package lib.artifacts;
 
-import constants.GameConstants;
-import constants.ArtifactPosition;
+import lib.constants.GameConstants;
+import lib.constants.ArtifactPosition;
 import lib.netpacks.ArtifactLocation;
 import lib.herobonus.BonusSystemNode;
 import lib.herobonus.BonusSource;
 import lib.herobonus.BonusDuration;
-import constants.ArtifactId;
+import lib.constants.ArtifactId;
 import lib.spells.Spell;
 import lib.herobonus.BonusType;
 import lib.herobonus.Bonus;
 import lib.mod.VLC;
-import constants.SpellId;
-import mapping.MapBody;
-import constants.id.ArtifactInstanceID;
+import lib.constants.SpellId;
+import lib.mapping.MapBody;
+import lib.constants.id.ArtifactInstanceID;
 
 class ArtifactInstance extends BonusSystemNode {
     public var artType:Artifact;

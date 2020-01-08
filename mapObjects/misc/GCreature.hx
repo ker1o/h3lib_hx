@@ -2,7 +2,7 @@ package lib.mapObjects.misc;
 
 //creatures on map
 import lib.creature.Creature.Resources;
-import constants.ArtifactId;
+import lib.constants.ArtifactId;
 import lib.mapObjects.ArmedInstance;
 
 class GCreature extends ArmedInstance {

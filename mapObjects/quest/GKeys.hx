@@ -1,6 +1,6 @@
 package lib.mapObjects.quest;
 
-import constants.id.PlayerColor;
+import lib.constants.id.PlayerColor;
 
 //Base class for Keymaster and guards
 class GKeys extends GObjectInstance {

@@ -1,6 +1,6 @@
 package lib.mod;
 
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

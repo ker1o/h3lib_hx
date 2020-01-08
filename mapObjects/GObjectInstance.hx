@@ -1,10 +1,10 @@
 package lib.mapObjects;
 
-import mapping.MapBody;
-import constants.id.ObjectInstanceId;
-import constants.Obj;
-import utils.Int3;
-import constants.id.PlayerColor;
+import lib.mapping.MapBody;
+import lib.constants.id.ObjectInstanceId;
+import lib.constants.Obj;
+import lib.utils.Int3;
+import lib.constants.id.PlayerColor;
 
 class GObjectInstance implements IObjectInterface {
     /// Position of bottom-right corner of object on map

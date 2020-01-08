@@ -3,8 +3,8 @@ package lib.mapObjects.rewardable;
 /// Limiters of rewards. Rewards will be granted to hero only if he satisfies requirements
 /// Note: for this is only a test - it won't remove anything from hero (e.g. artifacts or creatures)
 /// NOTE: in future should (partially) replace seer hut/quest guard quests checks
-import constants.ArtifactId;
-import constants.SecondarySkill;
+import lib.constants.ArtifactId;
+import lib.constants.SecondarySkill;
 import lib.creature.Creature.Resources;
 import lib.creature.StackBasicDescriptor;
 

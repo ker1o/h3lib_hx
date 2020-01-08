@@ -1,7 +1,7 @@
 package lib.mapObjects.misc;
 
-import mapping.MapBody;
-import constants.Obj;
+import lib.mapping.MapBody;
+import lib.constants.Obj;
 import lib.artifacts.ArtifactInstance;
 
 class GArtifact extends ArmedInstance {

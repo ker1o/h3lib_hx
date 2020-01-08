@@ -1,6 +1,6 @@
 package lib.mapping;
 
-import filesystem.FileCache;
+import lib.filesystem.FileCache;
 using Reflect;
 using StringTools;
 

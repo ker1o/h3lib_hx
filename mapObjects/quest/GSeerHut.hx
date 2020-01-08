@@ -1,6 +1,6 @@
 package lib.mapObjects.quest;
 
-import mapping.MapBody;
+import lib.mapping.MapBody;
 import lib.mapObjects.hero.GHeroInstance;
 
 //army is used when giving reward

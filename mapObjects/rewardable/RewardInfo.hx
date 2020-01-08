@@ -2,9 +2,9 @@ package lib.mapObjects.rewardable;
 
 /// Reward that can be granted to a hero
 /// NOTE: eventually should replace seer hut rewards and events/pandoras
-import constants.ArtifactId;
-import constants.SecondarySkill;
-import constants.SpellId;
+import lib.constants.ArtifactId;
+import lib.constants.SecondarySkill;
+import lib.constants.SpellId;
 import lib.creature.Creature.Resources;
 import lib.creature.StackBasicDescriptor;
 import lib.herobonus.Bonus;

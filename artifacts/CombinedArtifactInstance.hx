@@ -1,6 +1,6 @@
 package lib.artifacts;
 
-import constants.ArtifactPosition;
+import lib.constants.ArtifactPosition;
 
 class CombinedArtifactInstance extends ArtifactInstance {
 

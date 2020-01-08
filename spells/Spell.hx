@@ -2,8 +2,8 @@ package lib.spells;
 
 import lib.mod.ModHandler;
 import lib.herobonus.BonusType;
-import constants.SpellSchool;
-import constants.SpellId;
+import lib.constants.SpellSchool;
+import lib.constants.SpellId;
 
 using Reflect;
 

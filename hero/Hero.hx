@@ -1,9 +1,9 @@
 package lib.hero;
 
 import lib.herobonus.BonusList;
-import constants.SpellId;
-import constants.SecondarySkill;
-import constants.id.HeroTypeId;
+import lib.constants.SpellId;
+import lib.constants.SecondarySkill;
+import lib.constants.id.HeroTypeId;
 
 class Hero {
 

@@ -1,7 +1,7 @@
 package lib.hero;
 
-import constants.BFieldType;
-import mapping.TerrainType;
+import lib.constants.BFieldType;
+import lib.mapping.TerrainType;
 
 class ObstacleInfo {
 

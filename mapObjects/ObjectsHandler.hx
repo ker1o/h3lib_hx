@@ -1,6 +1,6 @@
 package lib.mapObjects;
 
-import filesystem.FileCache;
+import lib.filesystem.FileCache;
 import Reflect;
 
 class ObjectsHandler {

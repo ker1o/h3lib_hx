@@ -1,8 +1,8 @@
 package lib.town;
 
-import constants.BuildingID;
+import lib.constants.BuildingID;
 import lib.creature.Creature.Resources;
-import utils.logicalexpression.LogicalExpression;
+import lib.utils.logicalexpression.LogicalExpression;
 
 /// a typical building encountered in every castle ;]
 /// this is structure available to both client and server

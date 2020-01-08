@@ -1,24 +1,24 @@
 package lib.mapObjects.hero;
 
-import constants.Obj;
-import mapping.MapBody;
-import utils.Int3;
-import constants.id.PlayerColor;
+import lib.constants.Obj;
+import lib.mapping.MapBody;
+import lib.utils.Int3;
+import lib.constants.id.PlayerColor;
 import lib.herobonus.Bonus;
 import lib.herobonus.BonusValue;
-import constants.PrimarySkill;
+import lib.constants.PrimarySkill;
 import lib.herobonus.BonusSource;
 import lib.herobonus.BonusType;
 import lib.herobonus.BonusDuration;
 import lib.netpacks.ArtifactLocation;
 import lib.artifacts.ArtifactInstance;
-import constants.ArtifactPosition;
+import lib.constants.ArtifactPosition;
 import lib.artifacts.Artifact.ArtBearer;
 import lib.artifacts.ArtifactSet;
 import lib.mapObjects.misc.GBoat;
-import constants.id.ObjectInstanceId;
-import constants.SecondarySkill;
-import constants.SpellId;
+import lib.constants.id.ObjectInstanceId;
+import lib.constants.SecondarySkill;
+import lib.constants.SpellId;
 import lib.hero.Hero;
 import lib.mapObjects.town.GTownInstance;
 

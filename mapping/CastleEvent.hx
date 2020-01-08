@@ -1,6 +1,6 @@
 package lib.mapping;
 
-import constants.BuildingID;
+import lib.constants.BuildingID;
 import lib.mapObjects.town.GTownInstance;
 
 class CastleEvent extends MapEvent {

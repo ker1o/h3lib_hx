@@ -1,7 +1,7 @@
 package lib.creature;
 
-import constants.CreatureType;
-import constants.id.SlotId;
+import lib.constants.CreatureType;
+import lib.constants.id.SlotId;
 
 typedef TSlots = Map<SlotId, StackInstance>;
 typedef TSimpleSlots = Map<SlotId, {creatureId:CreatureType, quantity:Int}>;

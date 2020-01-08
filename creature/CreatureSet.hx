@@ -1,7 +1,7 @@
 package lib.creature;
 
-import constants.CreatureType;
-import constants.id.SlotId;
+import lib.constants.CreatureType;
+import lib.constants.id.SlotId;
 import lib.creature.ICreatureSet.TSlots;
 
 class CreatureSet implements IArmyDescriptor implements ICreatureSet {

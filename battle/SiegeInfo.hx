@@ -1,6 +1,6 @@
 package lib.battle;
 
-import constants.GateState;
+import lib.constants.GateState;
 
 class SiegeInfo {
     public var wallState:Array<Int>;

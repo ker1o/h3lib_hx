@@ -1,6 +1,6 @@
 package lib.creature;
 
-import constants.id.CreatureId;
+import lib.constants.id.CreatureId;
 import lib.herobonus.BonusSystemNodeType;
 import lib.mapObjects.ArmedInstance;
 import lib.artifacts.ArtifactSet;

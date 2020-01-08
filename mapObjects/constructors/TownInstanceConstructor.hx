@@ -1,10 +1,10 @@
 package lib.mapObjects.constructors;
 
-import constants.id.PlayerColor;
+import lib.constants.id.PlayerColor;
 import lib.town.Faction;
-import constants.BuildingID;
+import lib.constants.BuildingID;
 import lib.mapObjects.town.GTownInstance;
-import utils.logicalexpression.LogicalExpression;
+import lib.utils.logicalexpression.LogicalExpression;
 
 class TownInstanceConstructor extends DefaultObjectTypeHandler<GTownInstance> {
     public var faction:Faction;

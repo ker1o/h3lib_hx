@@ -1,9 +1,9 @@
 package lib.town;
 
-import filesystem.FileCache;
-import constants.Alignment;
-import constants.BuildingID;
-import constants.id.CreatureId;
+import lib.filesystem.FileCache;
+import lib.constants.Alignment;
+import lib.constants.BuildingID;
+import lib.constants.id.CreatureId;
 import gui.geometries.Point;
 import lib.battle.BattleHex;
 import lib.creature.Creature.Resources;
@@ -12,7 +12,7 @@ import lib.mod.ModHandler;
 import lib.mod.VLC;
 import lib.res.ResType;
 import lib.StringConstants;
-import mapping.TerrainType;
+import lib.mapping.TerrainType;
 
 using Reflect;
 

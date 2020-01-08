@@ -1,6 +1,6 @@
 package lib.hero;
 
-import constants.id.CreatureId;
+import lib.constants.id.CreatureId;
 
 class InitialArmyStack {
 

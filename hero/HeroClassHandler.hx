@@ -1,6 +1,6 @@
 package lib.hero;
 
-import filesystem.FileCache;
+import lib.filesystem.FileCache;
 import lib.mod.IHandlerBase;
 import lib.mod.ModHandler;
 import lib.mod.VLC;

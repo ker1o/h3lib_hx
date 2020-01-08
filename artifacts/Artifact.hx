@@ -1,8 +1,8 @@
 package lib.artifacts;
 
-import constants.ArtifactId;
-import constants.CreatureType;
-import constants.ArtifactPosition;
+import lib.constants.ArtifactId;
+import lib.constants.CreatureType;
+import lib.constants.ArtifactPosition;
 import lib.herobonus.BonusSystemNode;
 
 class Artifact extends BonusSystemNode { //container for artifacts

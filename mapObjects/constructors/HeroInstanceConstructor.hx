@@ -1,9 +1,9 @@
 package lib.mapObjects.constructors;
 
-import constants.id.HeroTypeId;
+import lib.constants.id.HeroTypeId;
 import lib.hero.HeroClass;
 import lib.mapObjects.hero.GHeroInstance;
-import utils.logicalexpression.LogicalExpression;
+import lib.utils.logicalexpression.LogicalExpression;
 
 class HeroInstanceConstructor extends DefaultObjectTypeHandler<GHeroInstance> {
     public var heroClass:HeroClass;

@@ -1,6 +1,6 @@
 package lib.mapObjects.hero;
 
-import utils.Int3;
+import lib.utils.Int3;
 
 class Patrol {
     public var patrolling:Bool;

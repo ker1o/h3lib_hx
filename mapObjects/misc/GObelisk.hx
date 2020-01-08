@@ -1,6 +1,6 @@
 package lib.mapObjects.misc;
 
-import mapping.TeamID;
+import lib.mapping.TeamID;
 
 class GObelisk extends TeamVisited {
     static public var OBJPROP_INC:Int = 20;

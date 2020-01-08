@@ -1,9 +1,9 @@
 package lib.battle;
 
-import constants.BFieldType;
+import lib.constants.BFieldType;
 import lib.mapObjects.town.GTownInstance;
-import mapping.TerrainType;
-import utils.Int3;
+import lib.mapping.TerrainType;
+import lib.utils.Int3;
 
 class BattleInfo {
     public var attacker:SideInBattle;

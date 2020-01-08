@@ -1,10 +1,10 @@
 package lib.mapObjects;
 
-import filesystem.FileCache;
-import utils.Int3;
-import filesystem.BinaryReader;
-import constants.Obj;
-import mapping.TerrainType;
+import lib.filesystem.FileCache;
+import lib.utils.Int3;
+import lib.filesystem.BinaryReader;
+import lib.constants.Obj;
+import lib.mapping.TerrainType;
 
 using StringTools;
 

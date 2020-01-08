@@ -1,6 +1,6 @@
 package lib.town;
 
-import utils.Int3;
+import lib.utils.Int3;
 
 /// This is structure used only by client
 /// Consists of all gui-related data about town structures

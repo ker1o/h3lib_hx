@@ -1,7 +1,7 @@
 package lib.mapObjects;
 
-import filesystem.FileCache;
-import constants.Obj;
+import lib.filesystem.FileCache;
+import lib.constants.Obj;
 import lib.mapObjects.constructors.BankInstanceConstructor;
 import lib.mapObjects.constructors.DwellingInstanceConstructor;
 import lib.mapObjects.constructors.HeroInstanceConstructor;
@@ -53,7 +53,7 @@ import lib.mapObjects.town.GTownInstance;
 import lib.mod.IHandlerBase;
 import lib.mod.ModHandler;
 import lib.mod.VLC;
-import utils.JsonUtils;
+import lib.utils.JsonUtils;
 
 using Reflect;
 

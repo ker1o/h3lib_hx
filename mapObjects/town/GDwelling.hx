@@ -1,6 +1,6 @@
 package lib.mapObjects.town;
 
-import constants.CreatureType;
+import lib.constants.CreatureType;
 
 private typedef CreaturesSet = Array<{id:Int, creatures:Array<CreatureType>}>;
 

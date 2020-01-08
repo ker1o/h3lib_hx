@@ -1,7 +1,7 @@
 package lib.skill;
 
 import lib.herobonus.BonusDuration;
-import constants.SecondarySkill;
+import lib.constants.SecondarySkill;
 import lib.herobonus.Bonus;
 import lib.herobonus.BonusSource;
 

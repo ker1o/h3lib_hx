@@ -1,6 +1,6 @@
 package lib.mod;
 
-import filesystem.FileCache;
+import lib.filesystem.FileCache;
 import haxe.Json;
 
 using Reflect;

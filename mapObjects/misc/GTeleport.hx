@@ -1,6 +1,6 @@
 package lib.mapObjects.misc;
 
-import constants.id.TeleportChannelId;
+import lib.constants.id.TeleportChannelId;
 
 class GTeleport extends GObjectInstance {
     public var channel:TeleportChannelId;

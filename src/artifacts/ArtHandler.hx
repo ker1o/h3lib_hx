@@ -1,19 +1,18 @@
 package artifacts;
 
-import constants.ArtifactId;
-import constants.Obj;
-import mod.ModHandler;
-import artifacts.Artifact.ArtClass;
+import filesystem.FileCache;
 import artifacts.Artifact.ArtBearer;
+import artifacts.Artifact.ArtClass;
+import constants.ArtifactId;
 import constants.ArtifactPosition;
 import constants.CreatureType;
-import herobonus.Bonus;
 import constants.id.CreatureId;
-import utils.JsonUtils;
-import mod.VLC;
-import data.H3mConfigData;
+import constants.Obj;
 import haxe.Json;
 import mod.IHandlerBase;
+import mod.ModHandler;
+import mod.VLC;
+import utils.JsonUtils;
 
 using Reflect;
 
@@ -290,8 +289,8 @@ class ArtHandler implements IHandlerBase {
         ];
         var artSlots = ["SPELLBOOK", "MACH4", "MACH3", "MACH2", "MACH1", "MISC5", "MISC4", "MISC3", "MISC2", "MISC1", "FEET", "LEFT_RING", "RIGHT_RING", "TORSO", "LEFT_HAND", "RIGHT_HAND", "NECK", "SHOULDERS", "HEAD"];
 
-        var parser:Array<Array<Dynamic>> = Json.parse(H3mConfigData.data.get("DATA/ARTRAITS.TXT"));
-        var events:Array<String> = Json.parse(H3mConfigData.data.get("DATA/ARTEVENT.TXT"));
+        var parser:Array<Array<Dynamic>> = FileCache.instance.getConfig("DATA/ARTRAITS.TXT");
+        var events:Array<String> = FileCache.instance.getConfig("DATA/ARTEVENT.TXT");
 
         for(i in 0...dataSize) {
             var parserData = parser[i];

@@ -1,0 +1,12 @@
+{
+	"name" : "h3lib",
+	"url" : "",
+	"license" : "MIT",
+	"description" : "Heroes 3 common library",
+	"version" : "0.0.1",
+	"releasenote" : "",
+	"classPath" : "src",
+	"contributors" : [
+		"Kirill Asyamolov"
+	]
+}

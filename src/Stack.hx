@@ -1,4 +1,4 @@
-package lib;
+package;
 
 import constants.id.SlotId;
 import constants.id.PlayerColor;

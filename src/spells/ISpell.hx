@@ -1,0 +1,4 @@
+package spells;
+
+interface ISpell {
+}

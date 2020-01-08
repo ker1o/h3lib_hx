@@ -1,0 +1,4 @@
+package mapObjects;
+
+interface IObjectInterface {
+}

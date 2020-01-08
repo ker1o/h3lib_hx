@@ -1,0 +1,5 @@
+package spells;
+
+interface IAdventureSpellMechanics {
+
+}

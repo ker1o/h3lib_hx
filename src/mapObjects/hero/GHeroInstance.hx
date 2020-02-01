@@ -34,7 +34,7 @@ class GHeroInstance extends ArmedInstance {
     public var moveDir:Int; //format:	123
                             //  		8 4
                             //  		765
-    public var isStanding:Int;
+    public var isStanding:Bool;
     public var tacticFormationEnabled:Int;
 
     //////////////////////////////////////////////////////////////////////////

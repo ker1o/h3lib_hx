@@ -1,0 +1,5 @@
+package gameinterface;
+
+interface IBattleEventsReceiver {
+
+}

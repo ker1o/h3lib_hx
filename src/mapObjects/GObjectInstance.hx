@@ -56,4 +56,16 @@ class GObjectInstance implements IObjectInterface {
     public function blockingAt(x:Int, y:Int):Bool {
         return appearance.isBlockedAt(pos.x - x, pos.y - y);
     }
+
+    public function isVisitable() {
+        return appearance.isVisitable();
+    }
+
+    public function coveringAt(x:Int, y:Int) {
+        return appearance.isVisibleAt(pos.x - x, pos.y - y);
+    }
+
+    public function visitablePos():Int3 {
+        return Int3.substraction(pos, getVisitableOffset());
+    }
 }

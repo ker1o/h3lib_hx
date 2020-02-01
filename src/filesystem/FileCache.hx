@@ -163,7 +163,13 @@ class FileCache {
     }
 
     private function getInputStream(name:String):InputStream {
-        var entry:ArchiveEntry = bitmaps.get(name);
+        // fix key
+        var keyName = name.toLowerCase();
+        if (keyName.indexOf(".") == -1) {
+            keyName += ".def";
+        }
+
+        var entry:ArchiveEntry = bitmaps.get(keyName);
         if(entry == null) throw '$name resource is not found';
 
         if (entry.compressedSize != 0) {

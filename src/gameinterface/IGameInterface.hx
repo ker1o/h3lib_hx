@@ -1,5 +1,5 @@
-package ;
+package gameinterface;
 
-interface IGameInterface {
-    
+interface IGameInterface extends BattleGameInterface {
+    function init():Void;
 }

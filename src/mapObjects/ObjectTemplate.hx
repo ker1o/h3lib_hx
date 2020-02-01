@@ -184,6 +184,7 @@ class ObjectTemplate {
                 if (((visitMask[i] >> j) & 1 ) != 0) {
                     tile = tile | VISITABLE;
                 }
+                usedTiles[5 - i][7 - j] = tile;
             }
         }
 
@@ -281,6 +282,20 @@ class ObjectTemplate {
         var dy:Int = y < 0 ? 0 : y == 0 ? 1 : 2;
 
         return dirMap[dy * 3 + dx] != 0;
+    }
+
+    public function isVisitable() {
+        for (line in usedTiles)
+            for (tile in line)
+                if (tile & VISITABLE > 0)
+                    return true;
+        return false;
+    }
+
+    public function isVisibleAt(x:Int, y:Int) {
+        if (isWithin(x, y))
+            return usedTiles[y][x] & VISIBLE > 0;
+        return false;
     }
 }
 

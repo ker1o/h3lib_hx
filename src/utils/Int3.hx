@@ -23,10 +23,18 @@ class Int3 {
         return new Int3(a.x + b.x, a.y + b.y, a.z + b.z);
     }
 
+    public static function substraction(a:Int3, b:Int3) {
+        return new Int3(a.x - b.x, a.y - b.y, a.z - b.z);
+    }
+
     public inline function addComponents(xc:Int, yc:Int, zc:Int) {
         x += xc;
         y += yc;
         z += zc;
+    }
+
+    public function copy() {
+        return new Int3(x, y, z);
     }
 
 }

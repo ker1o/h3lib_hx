@@ -18,6 +18,10 @@ class FileCache {
 
     public static var instance(default, null) = new FileCache();
 
+    private static var CONFIGS_ROOT_PATH = "configs";
+    private static var MAPS_ROOT_PATH = "maps";
+    private static var H3BIN_ROOT_PATH = "h3bin";
+
     private var bitmaps = new Map<String, ArchiveEntry>();
     private var fileBytes:Bytes;
     private var mapBytes:Bytes;
@@ -35,7 +39,7 @@ class FileCache {
             if (_spriteList != null) {
                 resolve(_spriteList);
             } else {
-                loadBinaryByUrl("H3sprite.lod").then(function(bytes:Bytes) {
+                loadBinaryByUrl(H3BIN_ROOT_PATH + "/H3sprite.lod").then(function(bytes:Bytes) {
                     fileBytes = bytes;
                     parseLod(fileBytes);
                     _spriteList = [for (key in bitmaps.keys()) key];
@@ -47,7 +51,7 @@ class FileCache {
 
     public function initMapAsync(name:String):Promise<Bool> {
         return new Promise(function (resolve, reject) {
-            loadBinaryByUrl(name).then(function(bytes:Bytes) {
+            loadBinaryByUrl(MAPS_ROOT_PATH + "/" + name).then(function(bytes:Bytes) {
                 mapBytes = bytes;
                 resolve(true);
             });
@@ -72,7 +76,7 @@ class FileCache {
 
     public function loadConfig(url:String):Promise<Bool> {
         return new Promise(function (resolve, reject) {
-            loadTextByUrl(url).then(function(json:String) {
+            loadTextByUrl(CONFIGS_ROOT_PATH + "/" + url).then(function(json:String) {
                 _configs[url] = Json.parse(json);
                 resolve(true);
             });
@@ -92,7 +96,7 @@ class FileCache {
 #else
     public function initGraphics() {
         // use it for local checks in neko
-        fileBytes = loadBinary("H3sprite.lod");
+        fileBytes = loadBinary(H3BIN_ROOT_PATH + "/H3sprite.lod");
         parseLod(fileBytes);
     }
 

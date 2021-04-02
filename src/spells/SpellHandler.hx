@@ -7,7 +7,6 @@ import constants.SpellId;
 import herobonus.BonusSource;
 import herobonus.BonusType;
 import mod.HandlerBase;
-import mod.IHandlerBase;
 import mod.VLC;
 import spells.Spell.ProjectileInfo;
 import Reflect;
@@ -15,7 +14,7 @@ import utils.JsonUtils;
 
 using Reflect;
 
-class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
+class SpellHandler extends HandlerBase<SpellId, Spell> {
 
     private static var LEVEL_NAMES = ["none", "basic", "advanced", "expert"];
 
@@ -67,7 +66,7 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
 
                 var aiVals = [for (i in 0...GameConstants.SPELL_SCHOOL_LEVELS) parseObject[pos++]];
 
-                var descriptions:Array<String> = [for (i in 0...GameConstants.SPELL_SCHOOL_LEVELS) parseObject[pos++]];
+                var descriptions = [for (i in 0...GameConstants.SPELL_SCHOOL_LEVELS) parseObject[pos++]];
 
                 pos++; //ignore attributes. All data present in JSON
 
@@ -258,15 +257,15 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
 
         var loadAnimationQueue = function(jsonName:String, q:Array<AnimationItem>) {
             if (animationNode != null && animationNode.hasField(jsonName)) {
-                var queueNode:Array<Dynamic> = animationNode.field(jsonName);
+                var queueNode = (animationNode.field(jsonName):Array<Dynamic>);
                 for(item in queueNode) {
                     var newItem = new AnimationItem();
 
-                    if(Std.is(item, String)) {
-                        newItem.resourceName = (item:String);
-                    } else if(Std.is(item, Float)) {
+                    if(Std.isOfType(item, String)) {
+                        newItem.resourceName = item;
+                    } else if(Std.isOfType(item, Float)) {
                         newItem.pause = item;
-                    } else if(Std.is(item, Dynamic)) {
+                    } else if(Std.isOfType(item, Dynamic)) {
                         newItem.resourceName = item.field("defName");
 
                         var vPosStr:String = item.field("verticalPosition");
@@ -353,5 +352,4 @@ class SpellHandler extends HandlerBase<SpellId, Spell> implements IHandlerBase {
         }
         return spell;
     }
-
 }

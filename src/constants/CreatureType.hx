@@ -1,6 +1,6 @@
 package constants;
 
-@:enum abstract CreatureType(Int) from Int to Int {
+enum abstract CreatureType(Int) from Int to Int {
     public var NONE:Int = -1;
     public var CAVALIER:Int = 10;
     public var CHAMPION:Int = 11;

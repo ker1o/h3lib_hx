@@ -3,7 +3,7 @@ package filesystem;
 #if js
 import haxe.Json;
 import js.html.XMLHttpRequestResponseType;
-import js.lib.Promise;
+import js.Promise;
 import utils.js.JsLoader;
 #end
 import filesystem.FileInputStream;
@@ -50,11 +50,9 @@ class FileCache {
     }
 
     public function initMapAsync(name:String):Promise<Bool> {
-        return new Promise(function (resolve, reject) {
-            loadBinaryByUrl(MAPS_ROOT_PATH + "/" + name).then(function(bytes:Bytes) {
-                mapBytes = bytes;
-                resolve(true);
-            });
+        return loadBinaryByUrl(MAPS_ROOT_PATH + "/" + name).then(function(bytes:Bytes) {
+            mapBytes = bytes;
+            return true;
         });
     }
 
@@ -63,23 +61,17 @@ class FileCache {
     }
 
     public function loadConfigs():Promise<Bool> {
-        return new Promise(function (resolve, reject) {
-            loadConfig('config.json').then(function(success:Bool) {
-                loadConfig('h3mconfig.json').then(function(success:Bool) {
-                    loadConfig('modData.json').then(function(success:Bool) {
-                        resolve(true);
-                    });
-                });
-            });
+        return loadConfig('config.json').then(function(success:Bool) {
+            return loadConfig('h3mconfig.json');
+        }).then(function(success:Bool) {
+            return loadConfig('modData.json');
         });
     }
 
     public function loadConfig(url:String):Promise<Bool> {
-        return new Promise(function (resolve, reject) {
-            loadTextByUrl(CONFIGS_ROOT_PATH + "/" + url).then(function(json:String) {
-                _configs[url] = Json.parse(json);
-                resolve(true);
-            });
+        return loadTextByUrl(CONFIGS_ROOT_PATH + "/" + url).then(function(json:String) {
+            _configs[url] = Json.parse(json);
+            return true;
         });
     }
 
@@ -116,20 +108,14 @@ class FileCache {
 
 #if js
     private function loadBinaryByUrl(url:String):Promise<Bytes> {
-        return new Promise(function (resolve, reject) {
-            var jsLoader = new JsLoader(url);
-            jsLoader.load().then(function(bytes:Bytes) {
-                resolve(bytes);
-            });
+        return new JsLoader(url).load().then(function(bytes:Bytes) {
+            return bytes;
         });
     }
 
     private function loadTextByUrl(url:String):Promise<String> {
-        return new Promise(function (resolve, reject) {
-            var jsLoader = new JsLoader(url, XMLHttpRequestResponseType.TEXT);
-            jsLoader.load().then(function(text:String) {
-                resolve(text);
-            });
+        return new JsLoader(url, XMLHttpRequestResponseType.TEXT).load().then(function(text:String) {
+            return text;
         });
     }
 

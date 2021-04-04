@@ -4,7 +4,7 @@ package utils.js;
 import haxe.io.Bytes;
 import js.html.XMLHttpRequest;
 import js.html.XMLHttpRequestResponseType;
-import js.Promise;
+import js.lib.Promise;
 
 class JsLoader {
 

@@ -3,7 +3,7 @@ package filesystem;
 #if js
 import haxe.Json;
 import js.html.XMLHttpRequestResponseType;
-import js.Promise;
+import js.lib.Promise;
 import utils.js.JsLoader;
 #end
 import filesystem.FileInputStream;

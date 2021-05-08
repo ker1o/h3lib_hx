@@ -1,5 +1,6 @@
 package mapObjects;
 
+import utils.Array2D;
 import filesystem.FileCache;
 import utils.Int3;
 import filesystem.BinaryReader;
@@ -40,7 +41,7 @@ class ObjectTemplate {
     ];
 
     /// tiles that are covered by this object, uses EBlockMapBits enum as flags
-    private var usedTiles:Array<Array<Int>>;
+    private var usedTiles:Array2D<BlockMapBits>;
     /// directions from which object can be entered, format same as for moveDir in CGHeroInstance(but 0 - 7)
     private var visitDir:Int;
     /// list of terrains on which this object can be placed
@@ -54,7 +55,7 @@ class ObjectTemplate {
         stringID = "";
         editorAnimationFile = "";
 
-        usedTiles = [];
+        usedTiles = new Array2D<BlockMapBits>();
         allowedTerrains = [];
     }
 
@@ -78,7 +79,7 @@ class ObjectTemplate {
                 if (visitStr.charAt(i*8 + j) == '1') {
                     tile = tile | VISITABLE;
                 }
-                usedTiles[i][j] = tile;
+                usedTiles.set(i, j, tile);
             }
         }
 
@@ -107,32 +108,7 @@ class ObjectTemplate {
     }
 
     public function setSize(width:UInt, height:UInt) {
-        // don't initiate new one, cut it!
-        var oldHeight = usedTiles.length;
-        if (oldHeight < height) {
-            for (j in oldHeight...height) {
-                usedTiles.push([]);
-            }
-        } else {
-            for (j in height...oldHeight) {
-                usedTiles.pop();
-            }
-        }
-
-        var oldWidth = usedTiles[0].length;
-        if (oldWidth < width) {
-            for (j in 0...height) {
-                for (i in oldWidth...width) {
-                    usedTiles[j].push(0);
-                }
-            }
-        } else {
-            for (j in 0...height) {
-                for (i in width...oldWidth) {
-                    usedTiles[j].pop();
-                }
-            }
-        }
+        usedTiles.reset(width, height);
     }
 
     public function readMsk() {
@@ -176,7 +152,7 @@ class ObjectTemplate {
 
         for (i in 0...6) {// 6 rows
             for (j in 0...8) { // 8 columns
-                var tile = usedTiles[5 - i][7 - j];
+                var tile = usedTiles.get(5 - i, 7 - j);
                 tile = tile | VISIBLE; // assume that all tiles are visible
                 if (((blockMask[i] >> j) & 1 ) == 0) {
                     tile = tile | BLOCKED;
@@ -184,7 +160,7 @@ class ObjectTemplate {
                 if (((visitMask[i] >> j) & 1 ) != 0) {
                     tile = tile | VISITABLE;
                 }
-                usedTiles[5 - i][7 - j] = tile;
+                usedTiles.set(5 - i, 7 - j, tile);
             }
         }
 
@@ -216,7 +192,7 @@ class ObjectTemplate {
     private function afterLoadFixup() {
         if (id == Obj.EVENT) {
             setSize(1,1);
-            usedTiles[0][0] = VISITABLE;
+            usedTiles.set(0, 0, VISITABLE);
             visitDir = 0xFF;
         }
         animationFile.replace("\\", "/");
@@ -224,14 +200,11 @@ class ObjectTemplate {
     }
 
     public inline function getHeight() {
-        //TODO: Use 2D array
-        return usedTiles.length;
+        return usedTiles.rows;
     }
 
     public inline function getWidth() {
-        //TODO: Use 2D array
-        //TODO: better precalculate and store constant value
-        return usedTiles.length > 0 ? usedTiles[0].length : 0;
+        return usedTiles.cols;
     }
 
     public function isWithin(x:Int, y:Int):Bool {
@@ -244,14 +217,14 @@ class ObjectTemplate {
 
     public function isVisitableAt(x:Int, y:Int):Bool {
         if (isWithin(x, y)) {
-            return usedTiles[y][x] & VISITABLE > 0;
+            return usedTiles.get(y, x) & VISITABLE > 0;
         }
         return false;
     }
 
     public function isBlockedAt(x:Int, y:Int):Bool {
         if (isWithin(x, y)) {
-            return usedTiles[y][x] & BLOCKED > 0;
+            return usedTiles.get(y, x) & BLOCKED > 0;
         }
         return false;
     }
@@ -285,16 +258,15 @@ class ObjectTemplate {
     }
 
     public function isVisitable() {
-        for (line in usedTiles)
-            for (tile in line)
-                if (tile & VISITABLE > 0)
-                    return true;
+        for (tile in usedTiles.data)
+            if (tile & VISITABLE > 0)
+                return true;
         return false;
     }
 
     public function isVisibleAt(x:Int, y:Int) {
         if (isWithin(x, y))
-            return usedTiles[y][x] & VISIBLE > 0;
+            return usedTiles.get(y, x) & VISIBLE > 0;
         return false;
     }
 }

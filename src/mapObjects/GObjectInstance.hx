@@ -41,6 +41,14 @@ class GObjectInstance implements IObjectInterface {
         return appearance.getVisitableOffset();
     }
 
+    public function getLeft():Int {
+        return pos.x - getWidth() + 1;
+    }
+
+    public function getTop():Int {
+        return pos.y - getHeight() + 1;
+    }
+
     public function getWidth():Int {
         return appearance.getWidth();
     }

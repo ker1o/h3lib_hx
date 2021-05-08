@@ -1,5 +1,6 @@
 package startinfo;
 
+import mapping.campaign.CampaignState;
 import constants.id.PlayerColor;
 
 typedef TPlayerInfos = Map<PlayerColor, PlayerSettings>;
@@ -16,7 +17,16 @@ class StartInfo {
     public var turnTime:Int; //in minutes, 0=unlimited
     public var mapname:String; // empty for random map, otherwise name of the map or savegame
 
+    public var campState:CampaignState;
+
     public function new() {
         playerInfos = new TPlayerInfos();
+    }
+
+    public function getIthPlayersSettings(player:PlayerColor) {
+        if(!playerInfos.exists(player)) {
+            throw "Cannot find info about player";
+        }
+        return playerInfos[player];
     }
 }

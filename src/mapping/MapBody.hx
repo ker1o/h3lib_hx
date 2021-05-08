@@ -215,4 +215,10 @@ class MapBody extends MapHeader {
         }
     }
 
+    public function getEditManager() {
+        if (editManager == null) {
+            editManager = new MapEditManager(this);
+        }
+        return editManager;
+    }
 }

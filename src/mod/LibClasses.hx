@@ -4,7 +4,7 @@ import artifacts.ArtHandler;
 import creature.CreatureHandler;
 import hero.HeroHandler;
 import mapObjects.ObjectClassesHandler;
-import mapObjects.ObjectsHandler;
+import mapObjects.ObjectHandler;
 import mapping.TerrainViewPatternConfig;
 import skill.SkillHandler;
 import spells.SpellHandler;
@@ -17,7 +17,7 @@ class LibClasses {
     public var creh:CreatureHandler;
     public var spellh:SpellHandler;
     public var skillh:SkillHandler;
-    public var objh:ObjectsHandler;
+    public var objh:ObjectHandler;
     public var objtypeh:ObjectClassesHandler;
     public var townh:TownHandler;
     public var generaltexth:GeneralTextHandler;
@@ -34,7 +34,7 @@ class LibClasses {
         creh = new CreatureHandler();
         spellh = new SpellHandler();
         skillh = new SkillHandler();
-        objh = new ObjectsHandler();
+        objh = new ObjectHandler();
         objtypeh = new ObjectClassesHandler();
         townh = new TownHandler();
         generaltexth = new GeneralTextHandler();

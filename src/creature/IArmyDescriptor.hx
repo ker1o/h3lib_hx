@@ -1,9 +1,9 @@
 package creature;
 
-import constants.CreatureType;
+import constants.id.CreatureId;
 import constants.id.SlotId;
 
 interface IArmyDescriptor {
-    function setCreature(slot:SlotId, cre:CreatureType, count:Int):Bool;
+    function setCreature(slot:SlotId, type:CreatureId, quantity:Int):Bool;
     function clear():Void;
 }

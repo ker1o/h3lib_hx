@@ -21,6 +21,8 @@ class StackInstance extends BonusSystemNode {
     public var armyObj:ArmedInstance; //stack must be part of some army, army must be part of some object
     public var experience:Int;//commander needs same amount of exp as hero
 
+//    public var type(get, null):Int;
+
     private var _armyObj:ArmedInstance;
 
     public function new(creatureId:CreatureId = -1, creature:Creature = null, count:Int = 0) {
@@ -97,8 +99,6 @@ class StackInstance extends BonusSystemNode {
     }
 
 
-
-
     public function setArmyObj(armyObject:ArmedInstance) {
         if (_armyObj != null) {
             detachFrom(_armyObj.bonusSystemNode);
@@ -117,5 +117,17 @@ class StackInstance extends BonusSystemNode {
         } else {
             return allowUnrandomized;
         }
+    }
+
+    public function getQuantityID():Int {
+        return Creature.getQuantityID(stackBasicDescriptor.count);
+    }
+
+    public inline function get_type() {
+        return stackBasicDescriptor.type;
+    }
+
+    public function getPower() {
+        return stackBasicDescriptor.type.AIValue * stackBasicDescriptor.count;
     }
 }

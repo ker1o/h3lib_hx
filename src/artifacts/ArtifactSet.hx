@@ -75,4 +75,14 @@ class ArtifactSet {
 
         return null;
     }
+
+    public function getArt(pos:ArtifactPosition, excludeLocked:Bool = false) {
+        var si:ArtSlotInfo = getSlot(pos);
+        if (si != null) {
+            if (si.artifact != null && (!excludeLocked || !si.locked))
+                return si.artifact;
+        }
+
+        return null;
+    }
 }

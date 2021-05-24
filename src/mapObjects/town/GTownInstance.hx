@@ -1,5 +1,6 @@
 package mapObjects.town;
 
+import res.ResourceSet.TResources;
 import mapping.MapBody;
 import constants.Obj;
 import mapping.CastleEvent;
@@ -8,6 +9,8 @@ import artifacts.Artifact;
 import mapObjects.hero.GHeroInstance;
 import constants.SpellId;
 import constants.BuildingID;
+
+using Lambda;
 
 class GTownInstance extends GDwelling {
     public var townAndVis:TownAndVisitingHero;
@@ -50,4 +53,58 @@ class GTownInstance extends GDwelling {
         }
     }
 
+    public function getUpperArmy():ArmedInstance {
+        if (garrisonHero != null) {
+            return garrisonHero;
+        }
+        return this;
+    }
+
+    public function dailyIncome() {
+        var ret:TResources = new TResources();
+
+        for (buildingId1 in town.buildings.keys()) {
+            var building1 = town.buildings[buildingId1];
+            var buildingUpgrade:BuildingID = BuildingID.NONE;
+
+            for (buildingId2 in town.buildings.keys()) {
+                var building2 = town.buildings[buildingId2];
+                if (building2.upgrade == buildingId1) {
+                    buildingUpgrade = buildingId2;
+                }
+            }
+
+            if (!hasBuilt(buildingUpgrade) && hasBuilt(buildingId1)) {
+                ret.add(building1.produce);
+            }
+        }
+
+        return ret;
+    }
+
+    public function hasBuilt(buildingID:BuildingID) {
+        return builtBuildings.contains(buildingID);
+    }
+
+    public function hallLevel():Int { // -1 - none, 0 - village, 1 - town, 2 - city, 3 - capitol
+        if (hasBuilt(BuildingID.CAPITOL))
+            return 3;
+        if (hasBuilt(BuildingID.CITY_HALL))
+            return 2;
+        if (hasBuilt(BuildingID.TOWN_HALL))
+            return 1;
+        if (hasBuilt(BuildingID.VILLAGE_HALL))
+            return 0;
+        return -1;
+    }
+
+    public function fortLevel():FortLevel { //0 - none, 1 - fort, 2 - citadel, 3 - castle
+        if (hasBuilt(BuildingID.CASTLE))
+            return FortLevel.CASTLE;
+        if (hasBuilt(BuildingID.CITADEL))
+            return FortLevel.CITADEL;
+        if (hasBuilt(BuildingID.FORT))
+            return FortLevel.FORT;
+        return FortLevel.NONE;
+    }
 }

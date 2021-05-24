@@ -1,5 +1,7 @@
 package creature;
 
+import constants.GameConstants.TQuantity;
+import constants.id.CreatureId;
 import constants.CreatureType;
 import constants.id.SlotId;
 
@@ -13,4 +15,6 @@ interface ICreatureSet {
     function clear():Void;
     function putStack(slot:SlotId, stack:StackInstance):Void;
     function validTypes(allowUnrandomized:Bool):Bool;
+    function slotEmpty(slot:SlotId):Bool;
+    function addToSlot(slot:SlotId, cre:CreatureId, count:TQuantity, allowMerging:Bool = false):Void;
 }

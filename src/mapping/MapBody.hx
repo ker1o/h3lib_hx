@@ -194,7 +194,7 @@ class MapBody extends MapHeader {
         obj.afterAddToMap(this);
     }
 
-    private function addBlockVisTiles(obj:GObjectInstance) {
+    public function addBlockVisTiles(obj:GObjectInstance) {
         for (fx in 0...obj.getWidth()) {
             for (fy in 0...obj.getHeight()) {
                 var xVal:Int = obj.pos.x - fx;
@@ -209,6 +209,27 @@ class MapBody extends MapHeader {
                     if (obj.blockingAt(xVal, yVal)) {
                         curt.blockingObjects.push(obj);
                         curt.blocked = true;
+                    }
+                }
+            }
+        }
+    }
+
+    public function removeBlockVisTiles(obj:GObjectInstance, total:Bool) {
+        for (fx in 0...obj.getWidth()) {
+            for(fy in 0...obj.getHeight()) {
+                var xVal = obj.pos.x - fx;
+                var yVal = obj.pos.y - fy;
+                var zVal = obj.pos.z;
+                if (xVal >= 0 && xVal < width && yVal >= 0 && yVal < height) {
+                    var curt:TerrainTile = _terrain[xVal][yVal][zVal];
+                    if(total || obj.visitableAt(xVal, yVal)) {
+                        curt.visitableObjects.remove(obj);
+                        curt.visitable = curt.visitableObjects.length > 0;
+                    }
+                    if(total || obj.blockingAt(xVal, yVal)) {
+                        curt.blockingObjects.remove(obj);
+                        curt.blocked = curt.blockingObjects.length > 0;
                     }
                 }
             }

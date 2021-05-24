@@ -3,7 +3,7 @@ package mapObjects;
 import filesystem.FileCache;
 import Reflect;
 
-class ObjectsHandler {
+class ObjectHandler {
     public var resVals:Array<Int>; //default values of resources in gold
 
     public function new() {

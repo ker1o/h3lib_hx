@@ -1,5 +1,6 @@
 package mapObjects;
 
+import mapping.TerrainType;
 import constants.Obj;
 
 class AObjectTypeHandler {
@@ -49,6 +50,24 @@ class AObjectTypeHandler {
         return templates;
     }
 
+    public function getTemplatesForTerrain(terrainType:Int) {
+        var templates:Array<ObjectTemplate> = getTemplates();
+        var filtered:Array<ObjectTemplate> = [];
+
+        for (template in templates) {
+            if (template.canBePlacedAt((terrainType:TerrainType))) {
+                filtered.push(template);
+            }
+        };
+            // H3 defines allowed terrains in a weird way - artifacts, monsters and resources have faulty masks here
+            // Perhaps we should re-define faulty templates and remove this workaround (already done for resources)
+        if (type == Obj.ARTIFACT || type == Obj.MONSTER) {
+            return templates;
+        } else {
+            return filtered;
+        }
+    }
+
     public function addTemplate(templ:ObjectTemplate) {
         templ.id = (type:Obj);
         templ.subid = subtype;
@@ -59,5 +78,9 @@ class AObjectTypeHandler {
     /// to allow creating objects before game start (e.g. map loading)
     public function create(objTempl:ObjectTemplate):GObjectInstance {
         throw "AObjectTypeHandler.create() must be overriden";
+    }
+
+    public function getCustomName() {
+        return objectName;
     }
 }

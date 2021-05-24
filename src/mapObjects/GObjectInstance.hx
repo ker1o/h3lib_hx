@@ -1,5 +1,8 @@
 package mapObjects;
 
+import gamecallback.GameCallback;
+import mod.VLC;
+import mapping.TerrainTile;
 import mapping.MapBody;
 import constants.id.ObjectInstanceId;
 import constants.Obj;
@@ -25,6 +28,8 @@ class GObjectInstance implements IObjectInterface {
     public var instanceName:String;
     public var typeName:String;
     public var subTypeName:String;
+
+    public static var cb:GameCallback;
 
     public function new() {
     }
@@ -75,5 +80,30 @@ class GObjectInstance implements IObjectInterface {
 
     public function visitablePos():Int3 {
         return Int3.substraction(pos, getVisitableOffset());
+    }
+
+    public function setType(ID:Int, subID:Int) {
+        var tile:TerrainTile = cb.gameState().map.getTileByInt3(visitablePos());
+
+        this.ID = (ID:Obj);
+        this.subID = subID;
+
+        //recalculate blockvis tiles - new appearance might have different blockmap than before
+        cb.gameState().map.removeBlockVisTiles(this, true);
+        var handler = VLC.instance.objtypeh.getHandlerFor(ID, subID);
+        if(handler == null) {
+            trace("Unknown object type %d:%d at %s", ID, subID, visitablePos().toString());
+            return;
+        }
+        if (handler.getTemplatesForTerrain(tile.terType).length > 0) {
+            appearance = handler.getTemplatesForTerrain(tile.terType)[0];
+        } else {
+            appearance = handler.getTemplates()[0]; // get at least some appearance since alternative is crash
+        }
+        cb.gameState().map.addBlockVisTiles(this);
+    }
+
+    public function getObjectName() {
+        return VLC.instance.objtypeh.getObjectName(ID, subID);
     }
 }

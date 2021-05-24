@@ -1,5 +1,6 @@
 package hero;
 
+import constants.SecondarySkill;
 import creature.Creature;
 
 class HeroClass {
@@ -8,7 +9,7 @@ class HeroClass {
     //double aggression; // not used in vcmi.
     public var faction:Int;
     public var id:Int;
-    public var affinity:Int; // affility, using EClassAffinity enum
+    public var affinity:ClassAffinity; // affility, using EClassAffinity enum
 
     // default chance for hero of specific class to appear in tavern, if field "tavern" was not set
     // resulting chance = sqrt(town.chance * heroClass.chance)
@@ -35,5 +36,29 @@ class HeroClass {
         primarySkillHighLevel = [];
         secSkillProbability = [];
         selectionProbability = new Map<Int, Int>();
+    }
+
+    //picks secondary skill out from given possibilities
+    public function chooseSecSkill(possibles:Array<SecondarySkill>):SecondarySkill {
+        var totalProb = 0;
+        for(possible in possibles) {
+            totalProb += secSkillProbability[possible];
+        }
+        // may trigger if set contains only banned skills (0 probability)
+        if (totalProb != 0) {
+            var ran = Std.random(totalProb - 1);
+            for (possible in possibles) {
+                ran -= secSkillProbability[possible];
+                if (ran < 0) {
+                    return possible;
+                }
+            }
+        }
+        // FIXME: select randomly? How H3 handles such rare situation?
+        return possibles[0];
+    }
+
+    public function isMagicHero() {
+        return affinity == ClassAffinity.MAGIC;
     }
 }

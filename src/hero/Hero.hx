@@ -39,4 +39,8 @@ class Hero {
 
     public function new() {
     }
+
+    public function copy() {
+        //ToDo
+    }
 }

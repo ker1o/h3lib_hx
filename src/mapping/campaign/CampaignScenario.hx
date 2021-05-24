@@ -1,6 +1,9 @@
 package mapping.campaign;
 
+import mapObjects.hero.GHeroInstance;
 import constants.id.HeroTypeId;
+
+using Lambda;
 
 class CampaignScenario {
     public var mapName:String; //*.h3m
@@ -21,5 +24,23 @@ class CampaignScenario {
     public var placedCrossoverHeroes:Array<Dynamic>; // contains all placed crossover heroes defined by hero placeholders when the scenario was started
     
     public function new() {
+    }
+
+    public function getLostCrossoverHeroes() {
+        var lostCrossoverHeroes:Array<GHeroInstance> = [];
+        if (conquered) {
+            for (node2 in placedCrossoverHeroes) {
+                var hero = CampaignState.crossoverDeserialize(node2);
+                var exists = crossoverHeroes.exists(function(node) {
+                    var h = CampaignState.crossoverDeserialize(node);
+                    var result = hero.subID == h.subID;
+                    return result;
+                });
+                if (exists) {
+                    lostCrossoverHeroes.push(hero);
+                }
+            }
+        }
+        return lostCrossoverHeroes;
     }
 }

@@ -41,7 +41,7 @@ class ArtifactInstance extends BonusSystemNode {
         return canBePutAtPosition(al.getHolderArtSet(), al.slot, assumeDestRemoved);
     }
 
-    public function canBePutAtPosition(artSet:ArtifactSet, slot:ArtifactPosition, assumeDestRemoved:Bool) {
+    public function canBePutAtPosition(artSet:ArtifactSet, slot:ArtifactPosition, assumeDestRemoved:Bool = false) {
         if((slot:Int) >= GameConstants.BACKPACK_START) {
             if(artType.isBig()) {
                 return false;
@@ -128,6 +128,25 @@ class ArtifactInstance extends BonusSystemNode {
         if((al.slot:Int) < GameConstants.BACKPACK_START) {
             al.getHolderNode().attachTo(this);
         }
+    }
+
+    public function firstAvailableSlot(h:ArtifactSet) {
+        for (slot in artType.possibleSlots.get(h.bearerType())) {
+            if(canBePutAtPosition(h, slot)) { //if(artType.fitsAt(h.artifWorn, slot))
+                //we've found a free suitable slot.
+                return slot;
+            }
+        }
+
+        //if haven't find proper slot, use backpack
+        return firstBackpackSlot(h);
+    }
+
+    public function firstBackpackSlot(h:ArtifactSet) {
+        if (!artType.isBig()) //discard big artifact
+            return ((GameConstants.BACKPACK_START + h.artifactsInBackpack.length):ArtifactPosition);
+
+        return ArtifactPosition.PRE_FIRST;
     }
 
 }

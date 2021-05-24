@@ -23,4 +23,15 @@ class DwellingInstanceConstructor extends DefaultObjectTypeHandler<GDwelling> {
         }
         return obj;
     }
+
+    public function producesCreature(crea:Creature) {
+        for (entry in availableCreatures) {
+            for (cre in entry) {
+                if (crea == cre) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }

@@ -9,4 +9,13 @@ class TravelBonus {
     public function new() {
 
     }
+
+    public function isBonusForHero() {
+        return type == TravelBonusType.SPELL
+            || type == TravelBonusType.MONSTER
+            || type == TravelBonusType.ARTIFACT
+            || type == TravelBonusType.SPELL_SCROLL
+            || type == TravelBonusType.PRIMARY_SKILL
+            || type == TravelBonusType.SECONDARY_SKILL;
+    }
 }

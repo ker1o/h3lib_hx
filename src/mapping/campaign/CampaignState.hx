@@ -1,5 +1,10 @@
 package mapping.campaign;
 
+import constants.Obj;
+import mapObjects.hero.GHeroInstance;
+
+using Reflect;
+
 class CampaignState {
     public var camp:Campaign;
     public var campaignName:String;
@@ -11,6 +16,14 @@ class CampaignState {
 
     public function new() {
 
+    }
+
+    public static function crossoverDeserialize(jsonNode:Dynamic):GHeroInstance {
+        var hero = new GHeroInstance();
+        hero.ID = Obj.HERO;
+        // deserialize?
+//        hero.serializeJsonOptions(jsonNode);
+        return hero;
     }
 
     public function getBonusForCurrentMap():TravelBonus {

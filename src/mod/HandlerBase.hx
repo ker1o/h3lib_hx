@@ -39,6 +39,17 @@ class HandlerBase<TObjectId, TObject:Dynamic> implements IHandlerBase {
         throw "Must be overriden!";
     }
 
+    public function getAt(id:TObjectId):TObject {
+        var raw_id = cast(id, Int);
+
+        if (raw_id < 0 || raw_id >= objects.length) {
+            trace('${getTypeNames()[0]} id ${raw_id} is invalid');
+            throw "internal error";
+        }
+
+        return objects[raw_id];
+    }
+
     private inline function normalizeIdentifier(scope:String, remoteScope:String, identifier:String) {
         return ModHandler.normalizeIdentifier(scope, remoteScope, identifier);
     }

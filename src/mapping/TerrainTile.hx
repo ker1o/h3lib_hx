@@ -45,4 +45,13 @@ class TerrainTile {
         return terType != TerrainType.ROCK && ((allowSea && terType == TerrainType.WATER) || (allowLand && terType != TerrainType.WATER));
     }
 
+    public function topVisitableObj(excludeTop:Bool):GObjectInstance {
+        if (visitableObjects.length == 0 || (excludeTop && visitableObjects.length == 1))
+            return null;
+
+        if (excludeTop)
+            return visitableObjects[visitableObjects.length - 2];
+
+        return visitableObjects[visitableObjects.length - 1];
+    }
 }

@@ -1,9 +1,10 @@
 package herobonus;
 
+import constants.PrimarySkill;
 import herobonus.selector.Selector.BonusSelector;
 typedef NodesVector = Array<BonusSystemNode>;
 
-class BonusSystemNode {
+class BonusSystemNode implements IBonusBearer {
 
     private var bonuses:BonusList; //wielded bonuses (local or up-propagated here)
     private var exportedBonuses:BonusList; //bonuses coming from this node (wielded or propagated away)
@@ -23,8 +24,12 @@ class BonusSystemNode {
     // This string needs to be unique, that's why it has to be setted in the following manner:
     // [property key]_[value] => only for selector
     private var cachedRequests:Map<String, BonusList>;
+
+    private var _bonusBearer:BonusBearer;
     
     public function new(nodeType:BonusSystemNodeType = BonusSystemNodeType.UNKNOWN, ?other:BonusSystemNode) {
+        _bonusBearer = new BonusBearer();
+
         if (other != null) {
             // can we just assign? or copy?
             bonuses = other.bonuses;
@@ -220,6 +225,10 @@ class BonusSystemNode {
         return out;
     }
 
+    public function getChildrenNodes() {
+        return children;
+    }
+
     public function actsAsBonusSourceOnly():Bool {
         return switch(nodeType) {
             case BonusSystemNodeType.CREATURE | BonusSystemNodeType.ARTIFACT | BonusSystemNodeType.ARTIFACT_INSTANCE:
@@ -240,11 +249,6 @@ class BonusSystemNode {
         treeHasChanged();
     }
 
-    public function getAllBonuses(selector:BonusSelector, linit:BonusSelector, root:BonusSystemNode = null, cachingStr:String = ""):BonusList {
-        //ToDo
-        return new BonusList();
-    }
-
     private inline function forEachParent(func:BonusSystemNode->Void) {
         for(pname in getParents()) {
             func(pname);
@@ -263,4 +267,47 @@ class BonusSystemNode {
         }
     }
 
+    public function getBonusLocalFirst(selector:BonusSelector) {
+        var ret = bonuses.getFirst(selector);
+        if (ret != null) {
+            return ret;
+        }
+
+        for(pname in getParents()) {
+            ret = pname.getBonusLocalFirst(selector);
+            if (ret != null) {
+                return ret;
+            }
+        };
+
+        return null;
+    }
+
+    public function removeBonuses(selector:BonusSelector) {
+        var toRemove:BonusList = new BonusList();
+        exportedBonuses.getBonuses(toRemove, selector, BonusSelector.getAll());
+        for (bonus in toRemove)
+            removeBonus(bonus);
+    }
+
+    // IBonusBearer
+    public function getAllBonuses(selector:BonusSelector, limit:BonusSelector, root:BonusSystemNode = null, cachingStr:String = ""):BonusList {
+        return _bonusBearer.getAllBonuses(selector, limit, root, cachingStr);
+    }
+
+    public function getPrimSkillLevel(id:PrimarySkill):Int {
+        return _bonusBearer.getPrimSkillLevel(id);
+    }
+
+    public function getBonuses(selector:BonusSelector, cachingStr:String):BonusList {
+        return _bonusBearer.getBonuses(selector, cachingStr);
+    }
+
+    public function hasBonus(selector:BonusSelector, cachingStr:String = null):Bool {
+        return _bonusBearer.hasBonus(selector, cachingStr);
+    }
+
+    public function manaLimit():Int {
+        return _bonusBearer.manaLimit();
+    }
 }

@@ -28,6 +28,7 @@ class PlayerState extends BonusSystemNode {
     public var daysWithoutCastle:Int;
 
     public function new() {
+        super();
 
     }
 }

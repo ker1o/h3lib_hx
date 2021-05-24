@@ -1,5 +1,7 @@
 package constants;
 
+typedef TQuantity = Int;
+
 class GameConstants {
     public static inline var MAX_HERO_LEVEL = 70; // 872895685	exp (limited by Int.MAX_VALUE)
 

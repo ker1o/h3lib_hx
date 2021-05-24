@@ -23,7 +23,7 @@ class StartInfo {
         playerInfos = new TPlayerInfos();
     }
 
-    public function getIthPlayersSettings(player:PlayerColor) {
+    public function getIthPlayersSettings(player:PlayerColor):PlayerSettings {
         if(!playerInfos.exists(player)) {
             throw "Cannot find info about player";
         }

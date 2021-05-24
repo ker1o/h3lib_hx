@@ -16,4 +16,19 @@ class Utils {
         var r = (bitColor & 0x000000FF);
         return '$r $g $b $a';
     }
+
+    public static function shuffleArray<T>(arr:Array<T>) {
+        var i = arr.length - 1;
+        while (i > 0) {
+            var j = Math.floor(Math.random() * (i + 1));
+            swap(arr, i , j);
+            i--;
+        }
+    }
+
+    public static function swap<T>(data:Array<T>, p1:Int, p2:Int) {
+        var temp:T = data[p1];
+        data[p1] = data[p2];
+        data[p2] = temp;
+    }
 }

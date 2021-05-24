@@ -350,4 +350,97 @@ class ArtHandler implements IHandlerBase {
                 (art.aClass:Int) <= (ArtClass.ART_RELIC:Int));
     }
 
+    public function pickRandomArtifact(flags:Int) {
+        return pickRandomArtifactInternal(flags, function(id:ArtifactId){return true;});
+    }
+
+    function pickRandomArtifactInternal(flags:Int, accepts:ArtifactId->Bool):ArtifactId {
+        var getAllowedArts = function(out:Array<Artifact>, arts:Array<Artifact>, flag:ArtClass)
+        {
+            if (arts.length == 0) {//restock available arts
+                fillList(arts, flag);
+            }
+
+            for (arts_i in arts) {
+                if (accepts(arts_i.id)) {
+                    out.push(arts_i);
+                }
+            }
+        };
+
+        var getAllowed = function(out:Array<Artifact>) {
+            if (flags & ArtClass.ART_TREASURE > 0) {
+                getAllowedArts (out, treasures, ArtClass.ART_TREASURE);
+            }
+            if (flags & ArtClass.ART_MINOR > 0) {
+                getAllowedArts (out, minors, ArtClass.ART_MINOR);
+            }
+            if (flags & ArtClass.ART_MAJOR > 0) {
+                getAllowedArts (out, majors, ArtClass.ART_MAJOR);
+            }
+            if (flags & ArtClass.ART_RELIC > 0) {
+                getAllowedArts (out, relics, ArtClass.ART_RELIC);
+            }
+            if (out.length == 0) {//no artifact of specified rarity, we need to take another one
+                getAllowedArts (out, treasures, ArtClass.ART_TREASURE);
+                getAllowedArts (out, minors, ArtClass.ART_MINOR);
+                getAllowedArts (out, majors, ArtClass.ART_MAJOR);
+                getAllowedArts (out, relics, ArtClass.ART_RELIC);
+            }
+            if (out.length == 0) {//no arts are available at all
+                for (i in 0...64) {
+                    out.push(artifacts[2]); //Give Grail - this can't be banned (hopefully)
+                }
+            }
+        };
+
+        var out:Array<Artifact> = [];
+        getAllowed(out);
+        var artID:ArtifactId = out[out.length - 1].id;
+        erasePickedArt(artID);
+        return artID;
+    }
+
+    function erasePickedArt(id:ArtifactId) {
+        var art:Artifact = artifacts[id];
+
+        var artifactList = listFromClass(art.aClass);
+        if (artifactList != null) {
+            if(artifactList.length == 0) {
+                fillList(artifactList, art.aClass);
+            }
+
+            var index = artifactList.indexOf(art);
+            if (index != -1) {
+                artifactList.splice(index, 1);
+            } else {
+                trace('Problem: cannot erase artifact ${art.name} from list, it was not present');
+            }
+        } else {
+            trace('Problem: cannot find list for artifact ${art.name}, strange class. (special?)');
+        }
+    }
+
+    function fillList(listToBeFilled:Array<Artifact>, artifactClass:ArtClass) {
+        for (elem in allowedArtifacts) {
+            if (elem.aClass == artifactClass) {
+                listToBeFilled.push(elem);
+            }
+        }
+    }
+
+    function listFromClass(artifactClass:ArtClass):Array<Artifact> {
+        switch(artifactClass) {
+            case ArtClass.ART_TREASURE:
+                return treasures;
+            case ArtClass.ART_MINOR:
+                return minors;
+            case ArtClass.ART_MAJOR:
+                return majors;
+            case ArtClass.ART_RELIC:
+                return relics;
+            default: //special artifacts should not be erased
+                return [];
+        }
+    }
 }

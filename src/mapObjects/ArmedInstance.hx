@@ -1,5 +1,7 @@
 package mapObjects;
 
+import constants.GameConstants.TQuantity;
+import constants.id.CreatureId;
 import constants.CreatureType;
 import constants.id.SlotId;
 import battle.BattleInfo;
@@ -16,7 +18,7 @@ class ArmedInstance extends GObjectInstance implements ICreatureSet {
 
     // multiple inheritance in VCMI
     public var bonusSystemNode(default, null):BonusSystemNode;
-    private var _creatureSet(default, null):ICreatureSet;
+    private var _creatureSet(default, null):CreatureSet;
 
     public function new() {
         super();
@@ -57,5 +59,13 @@ class ArmedInstance extends GObjectInstance implements ICreatureSet {
 
     public function validTypes(allowUnrandomized:Bool):Bool {
         return _creatureSet.validTypes(allowUnrandomized);
+    }
+
+    public function slotEmpty(slot:SlotId):Bool {
+        return _creatureSet.slotEmpty(slot);
+    }
+
+    public function addToSlot(slot:SlotId, cre:CreatureId, count:TQuantity, allowMerging:Bool = false):Void {
+        return _creatureSet.addToSlot(slot, cre, count, allowMerging);
     }
 }

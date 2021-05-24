@@ -1,6 +1,6 @@
 package startinfo;
 
-@:enum abstract PlayerSettingsBonus(Int) {
+@:enum abstract PlayerSettingsBonus(Int) from Int to Int {
     var NONE:Int = -2;
     var RANDOM:Int = -1;
     var ARTIFACT:Int = 0;

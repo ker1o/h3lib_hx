@@ -1,5 +1,7 @@
 package mapping;
 
+import utils.Utils;
+import mapping.editmanager.MapOperation;
 import filesystem.FileCache;
 using Reflect;
 using StringTools;
@@ -108,11 +110,6 @@ class TerrainViewPatternConfig {
     }
 
     public function flipPattern(pattern:TerrainViewPattern, flip:Int) {
-        function swap<T>(data:Array<T>, p1:Int, p2:Int) {
-            var temp:T = data[p1];
-            data[p1] = data[p2];
-            data[p2] = temp;
-        }
         //flip in place to avoid expensive constructor. Seriously.
         if (flip == 0) {
             return;
@@ -121,12 +118,12 @@ class TerrainViewPatternConfig {
         //always flip horizontal
         for (i in 0...3) {
             var y = i * 3;
-            swap(pattern.data, y, y + 2);
+            Utils.swap(pattern.data, y, y + 2);
         }
         //flip vertical only at 2nd step
         if (flip == MapOperation.FLIP_PATTERN_VERTICAL) {
             for (i in 0...3) {
-                swap(pattern.data, i, 6 + i);
+                Utils.swap(pattern.data, i, 6 + i);
             }
         }
     }

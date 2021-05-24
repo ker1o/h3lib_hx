@@ -451,4 +451,32 @@ class CreatureHandler implements IHandlerBase {
 
         return graphicsObj;
     }
+
+    public function pickRandomMonster(tier:Int = 0):CreatureId {
+        var r:Int = 0;
+        if(tier == -1) {//pick any allowed creature
+            do
+            {
+                r = creatures[Std.random(creatures.length - 1)].idNumber;
+            } while (VLC.instance.creh.creatures[r] != null && VLC.instance.creh.creatures[r].special != null); // find first "not special" creature
+        } else {
+            var allowed:Array<CreatureId> = [];
+            for (b in creaturesOfLevel[tier].getChildrenNodes()) {
+                var crea:Creature = cast b;
+                if(crea != null && !crea.special)
+                    allowed.push(crea.idNumber);
+            }
+
+            if(allowed.length == 0)
+            {
+                trace("Cannot pick a random creature of tier %d!", tier);
+                return (CreatureType.NONE:CreatureId);
+            }
+
+            return allowed[Std.random(allowed.length - 1)];
+        }
+        //assert (r >= 0); //should always be, but it crashed
+        return (r:CreatureId);
+    }
+
 }

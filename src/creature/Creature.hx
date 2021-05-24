@@ -87,4 +87,24 @@ class Creature extends BonusSystemNode {
         }
         treeHasChanged();
     }
+
+    public static function getQuantityID(quantity:Int) {
+        if (quantity<5)
+            return 1;
+        if (quantity<10)
+            return 2;
+        if (quantity<20)
+            return 3;
+        if (quantity<50)
+            return 4;
+        if (quantity<100)
+            return 5;
+        if (quantity<250)
+            return 6;
+        if (quantity<500)
+            return 7;
+        if (quantity<1000)
+            return 8;
+        return 9;
+    }
 }

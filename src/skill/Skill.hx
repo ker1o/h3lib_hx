@@ -35,4 +35,9 @@ class Skill {
     public function getLevelInfoFor(level:Int) {
         return levels[level - 1];
     }
+
+    public function at(level:Int):LevelInfo {
+//        assert(1 <= level && level < SecondarySkill::levels.size());
+        return levels[level - 1];
+    }
 }

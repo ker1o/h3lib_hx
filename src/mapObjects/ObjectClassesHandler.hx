@@ -324,4 +324,21 @@ class ObjectClassesHandler implements IHandlerBase {
         }
         return ret;
     }
+
+    public function getObjectName(type:Int, subtype:Int) {
+        if (knownSubObjects(type).indexOf(subtype) > -1) {
+            var name = getHandlerFor(type, subtype).getCustomName();
+            if (name != null)
+                return name;
+        }
+        return getObjectNameByType(type);
+    }
+
+    public function getObjectNameByType(type:Int) {
+        if (objects.exists(type)) {
+            return objects.get(type).name;
+        }
+        trace("Access to non existing object of type %d", type);
+        return "";
+    }
 }

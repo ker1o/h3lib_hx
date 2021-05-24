@@ -326,6 +326,18 @@ class HeroHandler implements IHandlerBase {
         input = input.charAt(0).toLowerCase() + input.substr(1); // to camelCase
         return input;
     }
+
+    public function reqExp(level:Int) {
+        if(level == 0)
+            return 0;
+
+        if (level <= expPerLevel.length) {
+            return expPerLevel[level-1];
+        } else {
+            trace("A hero has reached unsupported amount of experience");
+            return expPerLevel[expPerLevel.length - 1];
+        }
+    }
 }
 
 typedef HeroData = {

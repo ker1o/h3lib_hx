@@ -269,6 +269,10 @@ class ObjectTemplate {
             return usedTiles.get(y, x) & VISIBLE > 0;
         return false;
     }
+
+    public function canBePlacedAt(terrain:TerrainType) {
+        return allowedTerrains.indexOf(terrain) != -1;
+    }
 }
 
 @:enum abstract BlockMapBits(Int) from Int to Int {

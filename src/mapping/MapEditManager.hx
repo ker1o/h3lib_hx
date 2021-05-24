@@ -1,6 +1,9 @@
 package mapping;
 
+import mapObjects.GObjectInstance;
+import mapping.editmanager.MapOperation;
 import mapping.editmanager.InsertObjectOperation;
+
 class MapEditManager {
     var _map:MapBody;
 //    var _undoManager:MapUndoManager;
@@ -11,8 +14,8 @@ class MapEditManager {
         _map = map;
     }
 
-    public function insertObject() {
-        execute(new InsertObjectOperation(_map, _obj));
+    public function insertObject(obj:GObjectInstance) {
+        execute(new InsertObjectOperation(_map, obj));
     }
 
     function execute(operation:MapOperation) {

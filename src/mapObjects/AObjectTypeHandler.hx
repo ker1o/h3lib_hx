@@ -1,7 +1,10 @@
 package mapObjects;
 
+import utils.JsonUtils;
 import mapping.TerrainType;
 import constants.Obj;
+
+using Reflect;
 
 class AObjectTypeHandler {
     public var typeName:String;
@@ -20,13 +23,71 @@ class AObjectTypeHandler {
     public function new() {
         type = -1;
         subtype = -1;
+
+        rmgInfo = new RandomMapInfo();
+        sounds = new ObjectSounds();
     }
 
     public function init(input:Dynamic, name:String = null) {
-        base = input;
-
         templates = [];
-        //ToDo
+
+        base = input.field("base");
+
+        if (input.hasField("rmg")) {
+            var rmg:Dynamic = input.field("rmg");
+            rmgInfo.value =     rmg.field("value");
+            rmgInfo.mapLimit =  loadJsonOrMax(rmg, "mapLimit");
+            rmgInfo.zoneLimit = loadJsonOrMax(rmg, "zoneLimit");
+            rmgInfo.rarity =    rmg.field("rarity");
+        } // else block is not needed - set in constructor
+
+        var templatesObj:Array<String> = input.field("templates");
+        var templateField = templatesObj.fields();
+        for (entryName in templateField) {
+            var entry = templatesObj.field(entryName);
+            JsonUtils.inherit(entry, base);
+
+            var tmpl = new ObjectTemplate();
+            tmpl.id = (type:Obj);
+            tmpl.subid = subtype;
+            tmpl.stringID = entryName; // FIXME: create "fullID" - type.object.template?
+            tmpl.readJson(entry);
+            templates.push(tmpl);
+        }
+
+        if (!input.hasField("name")) {
+            objectName = name;
+        } else {
+            objectName = input.field("name");
+        }
+
+        var ambientSounds:Array<Dynamic> = input.field("sounds").field("ambient");
+        if (ambientSounds != null) {
+            for (node in ambientSounds) {
+                sounds.ambient.push(Std.string(node));
+            }
+        }
+
+        var visitSounds:Array<Dynamic> = input.field("sounds").field("visit");
+        if (visitSounds != null) {
+            for (node in visitSounds)
+                sounds.visit.push(Std.string(node));
+        }
+
+        var removalSounds:Array<Dynamic> = input.field("sounds").field("removal");
+        if (removalSounds != null) {
+            for(node in removalSounds) {
+                sounds.removal.push(Std.string(node));
+            }
+        }
+
+        if (!input.hasField("aiValue")) {
+            aiValue = null;
+        } else {
+            aiValue = (input.field("aiValue"):Int);
+        }
+
+        initTypeData(input);
     }
 
     function preInitObject(obj:GObjectInstance) {
@@ -34,6 +95,10 @@ class AObjectTypeHandler {
         obj.subID = subtype;
         obj.typeName = typeName;
         obj.subTypeName = subTypeName;
+    }
+
+    function initTypeData(input:Dynamic) {
+        // empty implementation for overrides
     }
 
     public function setType(type:Int, subtype:Int) {
@@ -82,5 +147,9 @@ class AObjectTypeHandler {
 
     public function getCustomName() {
         return objectName;
+    }
+
+    static function loadJsonOrMax(obj:Dynamic, name:String):Int {
+        return obj.hasField(name) ? obj.field(name) : 2147483647;
     }
 }

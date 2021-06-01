@@ -1,5 +1,6 @@
 package playerstate;
 
+import herobonus.BonusSystemNodeType;
 import constants.PlayerStatus;
 import creature.Creature.Resources;
 import mapObjects.town.GDwelling;
@@ -15,12 +16,12 @@ class PlayerState extends BonusSystemNode {
     public var human:Bool; //true if human controlled player, false for AI
     public var team:TeamID;
     public var resources:Resources;
-    public var visitedObjects:Array<ObjectInstanceId>; // as a std::set, since most accesses here will be from visited status checks
-    public var heroes:Array<GHeroInstance>;
-    public var towns:Array<GTownInstance>;
-    public var availableHeroes:Array<GHeroInstance>; //heroes available in taverns
-    public var dwellings:Array<GDwelling>; //used for town growth
-//    public var quests:Array<QuestInfo>; //store info about all received quests
+    public var visitedObjects:Array<ObjectInstanceId> = []; // as a std::set, since most accesses here will be from visited status checks
+    public var heroes:Array<GHeroInstance> = [];
+    public var towns:Array<GTownInstance> = [];
+    public var availableHeroes:Array<GHeroInstance> = []; //heroes available in taverns
+    public var dwellings:Array<GDwelling> = []; //used for town growth
+//    public var quests:Array<QuestInfo> = []; //store info about all received quests
 
     public var enteredWinningCheatCode:Bool;
     public var enteredLosingCheatCode:Bool; //if true, this player has entered cheat codes for loss / victory
@@ -30,5 +31,8 @@ class PlayerState extends BonusSystemNode {
     public function new() {
         super();
 
+        color = new PlayerColor(-1);
+        status = PlayerStatus.INGAME;
+        setNodeType(BonusSystemNodeType.PLAYER);
     }
 }

@@ -1,5 +1,8 @@
 package mapObjects.town;
 
+import mapObjects.GObjectInstance;
+import playerstate.PlayerState;
+import mapObjects.misc.GShipyard;
 import res.ResourceSet.TResources;
 import mapping.MapBody;
 import constants.Obj;
@@ -12,39 +15,37 @@ import constants.BuildingID;
 
 using Lambda;
 
-class GTownInstance extends GDwelling {
+class GTownInstance extends GDwelling implements IShipyard {
     public var townAndVis:TownAndVisitingHero;
     public var town:Town;
     public var name:String; // name of town
-    public var builded:Int; //how many buildings has been built this turn
-    public var destroyed:Int; //how many buildings has been destroyed this turn
+    public var builded:Int = 0; //how many buildings has been built this turn
+    public var destroyed:Int = 0; //how many buildings has been destroyed this turn
     public var garrisonHero:GHeroInstance;
     public var visitingHero:GHeroInstance;
-    public var identifier:Int; //special identifier from h3m (only > RoE maps)
-    public var alignment:Int;
-    public var forbiddenBuildings:Array<BuildingID>;
-    public var builtBuildings:Array<BuildingID>;
-    public var bonusingBuildings:Array<GTownBuilding>;
-    public var possibleSpells:Array<SpellId>;
-    public var obligatorySpells:Array<SpellId>;
-    public var spells:Array<Array<SpellId>>; //spells[level] -> vector of spells, first will be available in guild
-    public var events:Array<CastleEvent>;
+    public var identifier:Int = 0; //special identifier from h3m (only > RoE maps)
+    public var alignment:Int = 255;
+    public var forbiddenBuildings:Array<BuildingID> = [];
+    public var builtBuildings:Array<BuildingID> = [];
+    public var bonusingBuildings:Array<GTownBuilding> = [];
+    public var possibleSpells:Array<SpellId> = [];
+    public var obligatorySpells:Array<SpellId> = [];
+    public var spells:Array<Array<SpellId>> = []; //spells[level] -> vector of spells, first will be available in guild
+    public var events:Array<CastleEvent> = [];
     public var bonusValue:{town:Int, bonuses:Int};//var to store town bonuses (rampart = resources from mystic pond);
 
     //////////////////////////////////////////////////////////////////////////
-    static public var merchantArtifacts:Array<Artifact>; //vector of artifacts available at Artifact merchant, NULLs possible (for making empty space when artifact is bought)
-    static public var universitySkills:Array<Int>;//skills for university of magic
+    static public var merchantArtifacts:Array<Artifact> = []; //vector of artifacts available at Artifact merchant, NULLs possible (for making empty space when artifact is bought)
+    static public var universitySkills:Array<Int> = [];//skills for university of magic
+
+    private var _shipyard:GShipyard;
     
     public function new() {
         super();
 
-        forbiddenBuildings = [];
-        builtBuildings = [];
-        bonusingBuildings = [];
-        possibleSpells = [];
-        obligatorySpells = [];
-        spells = [];
-        events = [];
+        _shipyard = new GShipyard(this);
+
+        townAndVis = new TownAndVisitingHero();
     }
 
     override public function afterAddToMap(map:MapBody) {
@@ -106,5 +107,35 @@ class GTownInstance extends GDwelling {
         if (hasBuilt(BuildingID.FORT))
             return FortLevel.FORT;
         return FortLevel.NONE;
+    }
+
+    public function shipyardStatus() {
+        return _shipyard.shipyardStatus();
+    }
+
+    public function getBoatCost() {
+        return _shipyard.getBoatCost();
+    }
+
+    public function deserializationFix() {
+        bonusSystemNode.attachTo(townAndVis);
+    }
+
+    public function setVisitingHero(h:GHeroInstance) {
+        if (h != null) {
+            var p:PlayerState = GObjectInstance.cb.gameState().getPlayer(h.tempOwner);
+//            assert(p);
+            h.bonusSystemNode.detachFrom(p);
+            h.bonusSystemNode.attachTo(townAndVis);
+            visitingHero = h;
+            h.visitedTown = this;
+            h.inTownGarrison = false;
+        } else {
+            var p:PlayerState = GObjectInstance.cb.gameState().getPlayer(visitingHero.tempOwner);
+            visitingHero.visitedTown = null;
+            visitingHero.bonusSystemNode.detachFrom(townAndVis);
+            visitingHero.bonusSystemNode.attachTo(p);
+            visitingHero = null;
+        }
     }
 }

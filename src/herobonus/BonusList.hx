@@ -2,7 +2,7 @@ package herobonus;
 
 import herobonus.selector.Selector.BonusSelector;
 
-@:forward(push, remove, length, iterator)
+@:forward(push, remove, length, iterator, splice, indexOf, sort)
 abstract BonusList(Array<Bonus>) from Array<Bonus> to Array<Bonus>{
     public inline function new() {
         this = [];
@@ -104,5 +104,59 @@ abstract BonusList(Array<Bonus>) from Array<Bonus> to Array<Bonus>{
                 return b;
         }
         return null;
+    }
+
+    public function erase(position:Int) {
+        changed();
+        return this.splice(position, 1);
+    }
+
+    function changed() {
+//        if(belongsToTree)
+//            BonusSystemNode.treeHasChanged();
+    }
+
+    public function getAllBonuses(out:BonusList) {
+        for (b in this)
+            out.push(b);
+    }
+
+    public function stackBonuses() {
+        this.sort(function(b1:Bonus, b2:Bonus) {
+            if(b1 == b2)
+                return 0;
+            var result = false;
+            if (b1.stacking != b2.stacking) result = b1.stacking < b2.stacking;
+            if (b1.type != b2.type) result = (b1.type:Int) < (b2.type:Int);
+            if (b1.subtype != b2.subtype) result = b1.subtype < b2.subtype;
+            if (b1.valType != b2.valType) result = (b1.valType:Int) < (b2.valType:Int);
+            result = b1.val > b2.val;
+            //ToDo: check
+            return result ? -1 : 1;
+        });
+
+        // remove non-stacking
+        var next = 1;
+        while(next < this.length) {
+            var remove = false;
+            var last = this[next-1];
+            var current = this[next];
+
+            if (current.stacking.length == 0)
+                remove = current == last;
+            else if(current.stacking == "ALWAYS")
+                remove = false;
+            else
+                remove = current.stacking == last.stacking
+                && current.type == last.type
+                && current.subtype == last.subtype
+                && current.valType == last.valType;
+
+            if(remove)
+                erase(next);
+            else
+                next++;
+        }
+
     }
 }

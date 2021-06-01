@@ -9,7 +9,7 @@ import mapObjects.GObjectInstance;
 import utils.Int3;
 import constants.Obj;
 
-class GameCallback extends PrivilegedInfoCallback {
+class GameCallback extends PrivilegedInfoCallback implements IGameCallback {
     private var gameEventCallback:GameEventCallback;
 
     public function new() {

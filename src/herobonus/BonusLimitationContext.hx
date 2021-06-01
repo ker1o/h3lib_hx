@@ -6,6 +6,10 @@ class BonusLimitationContext {
     public var alreadyAccepted:BonusList;
     public var stillUndecided:BonusList;
 
-    public function new() {
+    public function new(b:Bonus, node:BonusSystemNode, alreadyAccepted:BonusList, stillUndecided:BonusList) {
+        this.b = b;
+        this.node = node;
+        this.alreadyAccepted = alreadyAccepted;
+        this.stillUndecided = stillUndecided;
     }
 }

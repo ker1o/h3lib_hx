@@ -1,5 +1,7 @@
 package mapObjects;
 
+import constants.id.PlayerColor;
+import gamestate.GameState;
 import constants.GameConstants.TQuantity;
 import constants.id.CreatureId;
 import constants.CreatureType;
@@ -67,5 +69,21 @@ class ArmedInstance extends GObjectInstance implements ICreatureSet {
 
     public function addToSlot(slot:SlotId, cre:CreatureId, count:TQuantity, allowMerging:Bool = false):Void {
         return _creatureSet.addToSlot(slot, cre, count, allowMerging);
+    }
+
+    public function getStack(slot:SlotId) {
+        return _creatureSet.getStack(slot);
+    }
+
+    public function whatShouldBeAttached():BonusSystemNode {
+        return bonusSystemNode;
+    }
+
+    public function whereShouldBeAttached(gs:GameState):BonusSystemNode {
+        if (tempOwner.getNum() < PlayerColor.PLAYER_LIMIT) {
+            return gs.getPlayer(tempOwner);
+        } else {
+            return gs.globalEffects;
+        }
     }
 }

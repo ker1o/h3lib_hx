@@ -70,7 +70,13 @@ class FileCache {
 
     public function loadConfig(url:String):Promise<Bool> {
         return loadTextByUrl(CONFIGS_ROOT_PATH + "/" + url).then(function(json:String) {
-            _configs[url] = Json.parse(json);
+            try {
+                _configs[url] = Json.parse(json);
+            }
+            catch(e:Dynamic) {
+                trace('Url "$url" wasnt loaded.');
+                throw e;
+            }
             return true;
         });
     }

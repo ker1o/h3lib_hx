@@ -120,6 +120,13 @@ class Spell implements ISpell {
 
         return res;
     }
+
+    public function getProbability(factionId:Int) {
+        if (!probabilities.exists(factionId)) {
+            return defaultProbability;
+        }
+        return probabilities.get(factionId);
+    }
 }
 
 //struct

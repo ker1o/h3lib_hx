@@ -551,7 +551,7 @@ class MapLoaderH3M implements IMapLoader {
         if (map.version == MapFormat.ROE || map.version == MapFormat.AB) {
             for(artifact in globalArtifacts) {
                 // combo
-                if (artifact.constituents != null) {
+                if (artifact.constituents.length > 0) {
                     map.allowedArtifact[artifact.id] = false;
                 }
             }
@@ -1411,9 +1411,9 @@ class MapLoaderH3M implements IMapLoader {
             if (artID != 255) {
                 //not none quest
                 hut.quest.m5arts.push(artID);
-                hut.quest.missionType = Mission.MISSION_ART;
+                hut.quest.missionType = MissionType.MISSION_ART;
             } else {
-                hut.quest.missionType = Mission.MISSION_NONE;
+                hut.quest.missionType = MissionType.MISSION_NONE;
             }
             hut.quest.lastDay = -1; //no timeout
             hut.quest.isCustomFirst = hut.quest.isCustomNext = hut.quest.isCustomComplete = false;
@@ -1478,38 +1478,38 @@ class MapLoaderH3M implements IMapLoader {
     }
 
     private function readQuest(guard:IQuestObject) {
-        guard.quest.missionType = (reader.readUInt8():Mission);
+        guard.quest.missionType = (reader.readUInt8():MissionType);
 
         switch(guard.quest.missionType) {
-            case Mission.MISSION_NONE:
+            case MissionType.MISSION_NONE:
                 return;
-            case Mission.MISSION_PRIMARY_STAT:
+            case MissionType.MISSION_PRIMARY_STAT:
 //                guard.quest.m2stats.resize(4);
                 for(x in 0...4) {
                     guard.quest.m2stats[x] = reader.readUInt8();
                 }
-            case Mission.MISSION_LEVEL | Mission.MISSION_KILL_HERO | Mission.MISSION_KILL_CREATURE:
+            case MissionType.MISSION_LEVEL | MissionType.MISSION_KILL_HERO | MissionType.MISSION_KILL_CREATURE:
                 guard.quest.m13489val = reader.readUInt32();
-            case Mission.MISSION_ART:
+            case MissionType.MISSION_ART:
                 var artNumber:Int = reader.readUInt8();
                 for(yy in 0...artNumber) {
                     var artid:Int = reader.readUInt16();
                     guard.quest.m5arts.push(artid);
                     map.allowedArtifact[artid] = false; //these are unavailable for random generation
                 }
-            case Mission.MISSION_ARMY:
+            case MissionType.MISSION_ARMY:
                 var typeNumber = reader.readUInt8();
                 guard.quest.m6creatures = [];
                 for(hh in 0...typeNumber) {
                     guard.quest.m6creatures[hh].type = VLC.instance.creh.creatures[reader.readUInt16()];
                     guard.quest.m6creatures[hh].count = reader.readUInt16();
                 }
-            case Mission.MISSION_RESOURCES:
+            case MissionType.MISSION_RESOURCES:
 //                guard.quest.m7resources.resize(7);
                 for(x in 0...7) {
                     guard.quest.m7resources[x] = reader.readUInt32();
                 }
-            case Mission.MISSION_HERO | Mission.MISSION_PLAYER:
+            case MissionType.MISSION_HERO | MissionType.MISSION_PLAYER:
                 guard.quest.m13489val = reader.readUInt8();
             default:
         }

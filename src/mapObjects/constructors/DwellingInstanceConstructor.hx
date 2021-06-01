@@ -1,7 +1,10 @@
 package mapObjects.constructors;
 
+import mod.VLC;
 import creature.Creature;
 import mapObjects.town.GDwelling;
+
+using Reflect;
 
 class DwellingInstanceConstructor extends DefaultObjectTypeHandler<GDwelling> {
     private var availableCreatures:Array<Array<Creature>>;
@@ -33,5 +36,28 @@ class DwellingInstanceConstructor extends DefaultObjectTypeHandler<GDwelling> {
             }
         }
         return false;
+    }
+
+    override function initTypeData(input:Dynamic) {
+        var levels:Array<Dynamic> = input.field("creatures");
+        var totalLevels:Int = levels != null ? levels.length : 0;
+
+        availableCreatures.resize(totalLevels);
+        for (currentLevel in 0...totalLevels) {
+            var creaturesOnLevel:Array<Dynamic> = levels[currentLevel];
+            var creaturesNumber = creaturesOnLevel.length;
+            availableCreatures[currentLevel] = [];
+            availableCreatures[currentLevel].resize(creaturesNumber);
+
+            for (currentCreature in 0...creaturesNumber ){
+                var name = creaturesOnLevel[currentCreature];
+                var meta = "core";
+                VLC.instance.modh.identifiers.requestIdentifierByNodeName("creature", name, meta, function(index:Int) {
+                    availableCreatures[currentLevel][currentCreature] = VLC.instance.creh.creatures[index];
+                });
+            }
+            //assert(!availableCreatures[currentLevel].empty());
+        }
+        guards = input.field("guards");
     }
 }

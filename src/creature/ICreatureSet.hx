@@ -17,4 +17,5 @@ interface ICreatureSet {
     function validTypes(allowUnrandomized:Bool):Bool;
     function slotEmpty(slot:SlotId):Bool;
     function addToSlot(slot:SlotId, cre:CreatureId, count:TQuantity, allowMerging:Bool = false):Void;
+    function getStack(slot:SlotId):StackInstance;
 }

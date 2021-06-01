@@ -11,6 +11,9 @@ class ArtifactSet {
     //map<position,artifact_id>; positions: 0 - head; 1 - shoulders; 2 - neck; 3 - right hand; 4 - left hand; 5 - torso; 6 - right ring; 7 - left ring; 8 - feet; 9 - misc1; 10 - misc2; 11 - misc3; 12 - misc4; 13 - mach1; 14 - mach2; 15 - mach3; 16 - mach4; 17 - spellbook; 18 - misc5
     public var artifactsWorn:Map<ArtifactPosition, ArtSlotInfo>;
 
+    public var bearerType:Void->ArtBearer;
+    public var putArtifact:ArtifactPosition->ArtifactInstance->Void;
+
     public function new() {
         artifactsInBackpack = [];
         artifactsWorn = new Map<ArtifactPosition, ArtSlotInfo>();
@@ -23,15 +26,6 @@ class ArtifactSet {
             slot = slot - GameConstants.BACKPACK_START;
             artifactsInBackpack.splice(slot, 1);
         }
-    }
-
-    public function putArtifact(pos:ArtifactPosition, art:ArtifactInstance) {
-        throw "It's an abstract method, please override it.";
-    }
-
-    // todo as getter?
-    public function bearerType():ArtBearer {
-        throw "It's an abstract method, please override it.";
     }
 
     public function retrieveNewArtSlot(slot:ArtifactPosition):ArtSlotInfo {
@@ -47,8 +41,12 @@ class ArtifactSet {
 
     public function setNewArtSlot(slot:ArtifactPosition, art:ArtifactInstance, locked:Bool) {
         var asi:ArtSlotInfo = retrieveNewArtSlot(slot);
-        asi.artifact = art;
-        asi.locked = locked;
+
+        // ToDo: check if it's ok
+        if (asi != null) {
+            asi.artifact = art;
+            asi.locked = locked;
+        }
     }
 
     public function isPositionFree(pos:ArtifactPosition, onlyLockCheck:Bool):Bool {

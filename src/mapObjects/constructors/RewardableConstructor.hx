@@ -16,4 +16,9 @@ class RewardableConstructor extends AObjectTypeHandler {
         ret.appearance = objTempl;
         return ret;
     }
+
+    override function initTypeData(input:Dynamic) {
+        super.initTypeData(input);
+        objectInfo.init(input);
+    }
 }

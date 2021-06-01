@@ -1,5 +1,6 @@
 package creature;
 
+import artifacts.Artifact.ArtBearer;
 import constants.id.CreatureId;
 import herobonus.BonusSystemNodeType;
 import mapObjects.ArmedInstance;
@@ -29,6 +30,7 @@ class StackInstance extends BonusSystemNode {
         super();
         stackBasicDescriptor = new StackBasicDescriptor();
         artifactSet = new ArtifactSet();
+        artifactSet.bearerType = bearerType;
 
         init();
         if (creature != null) {
@@ -129,5 +131,9 @@ class StackInstance extends BonusSystemNode {
 
     public function getPower() {
         return stackBasicDescriptor.type.AIValue * stackBasicDescriptor.count;
+    }
+
+    public function bearerType():ArtBearer {
+        return ArtBearer.COMMANDER;
     }
 }

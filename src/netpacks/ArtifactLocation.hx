@@ -20,10 +20,26 @@ class ArtifactLocation {
     }
 
     public function getHolderArtSet():ArtifactSet {
-        throw "Please finish implement me!";
+        var heroInstance:GHeroInstance = artHolder;
+        if (heroInstance != null) {
+            return heroInstance.artifactSet;
+        }
+        var stackInstance:StackInstance = artHolder;
+        if (stackInstance != null) {
+            return stackInstance.artifactSet;
+        }
+        throw "Can't find ArtifactSet from holder";
     }
 
     public function getHolderNode():BonusSystemNode {
-        throw "Please finish implement me!";
+        var heroInstance:GHeroInstance = artHolder;
+        if (heroInstance != null) {
+            return heroInstance.bonusSystemNode;
+        }
+        var stackInstance:StackInstance = artHolder;
+        if (stackInstance != null) {
+            return stackInstance;
+        }
+        throw "Can't find BonusSystemNode from holder";
     }
 }

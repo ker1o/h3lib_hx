@@ -18,6 +18,7 @@ class Building {
     public var upgrade:BuildingID; /// indicates that building "upgrade" can be improved by this, -1 = empty
 
     public var mode:BuildMode;
+    public var height:TowerHeight;
 
     public var name:String;
     public var description:String;

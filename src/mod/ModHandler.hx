@@ -49,6 +49,7 @@ class ModHandler {
         content.preloadData(coreMod);
 
         content.load(coreMod);
+        VLC.instance.creh.buildBonusTreeForTiers(); //do that after all new creatures are loaded
 
         identifiers.finalize();
     }

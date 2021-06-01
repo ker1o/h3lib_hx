@@ -6,7 +6,7 @@ import creature.StackBasicDescriptor;
 class Quest {
     public var qid:Int; //unique quest id for serialization / identification
 
-    public var missionType:Mission;
+    public var missionType:MissionType;
     public var progress:Progress;
     public var lastDay:Int; //after this day (first day is 0) mission cannot be completed ; if -1 - no limit
 
@@ -22,7 +22,7 @@ class Quest {
     public var textOption:UInt;
     public var completedOption:UInt;
     public var stackToKill:StackBasicDescriptor;
-    public var stackDirection:UInt;
+    public var stackDirection:Int;
     public var heroName:String; //backup of hero name
     public var heroPortrait:Int;
 
@@ -61,7 +61,7 @@ class Quest {
     }
 }
 
-@:enum abstract Mission(Int) from Int to Int {
+@:enum abstract MissionType(Int) from Int to Int {
     public var MISSION_NONE:Int = 0;
     public var MISSION_LEVEL:Int = 1;
     public var MISSION_PRIMARY_STAT:Int = 2;

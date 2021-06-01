@@ -48,6 +48,59 @@ class Int3 {
         y -= other.y;
         z -= other.z;
     }
+
+    public function dist2dSQ(o:Int3) {
+        var dx = (x - o.x);
+        var dy = (y - o.y);
+        return (dx*dx) + (dy*dy);
+    }
+
+    public function less(i:Int3) {
+        if (z < i.z)
+            return true;
+        if (z > i.z)
+            return false;
+        if (y < i.y)
+            return true;
+        if (y > i.y)
+            return false;
+        if (x < i.x)
+            return true;
+        if (x > i.x)
+            return false;
+        return false;
+    }
+
+    public function equals(o:Int3) {
+        return x == o.x && y == o.y && z == o.z;
+    }
+
+    public function dist(o:Int3, formula:DistanceFormula) {
+        switch(formula) {
+            case DIST_2D:
+                return dist2d(o);
+            case DIST_MANHATTAN:
+                return mandist2d(o);
+            case DIST_CHEBYSHEV:
+                return chebdist2d(o);
+            case DIST_2DSQ:
+                return dist2dSQ(o);
+            default:
+                return 0;
+        }
+    }
+
+    function dist2d(o:Int3) {
+        return Math.sqrt(dist2dSQ(o));
+    }
+    //manhattan distance used for patrol radius (z coord is not used)
+    function mandist2d(o:Int3) {
+        return Math.abs(o.x - x) + Math.abs(o.y - y);
+    }
+    //chebyshev distance used for ambient sounds (z coord is not used)
+    function chebdist2d(o:Int3) {
+        return Math.max(Math.abs(o.x - x), Math.abs(o.y - y));
+    }
 }
 
 typedef HashInt3 = Int;

@@ -32,8 +32,10 @@ import constants.DateType;
 class GameInfoCallback extends CallbackBase {
     var _gs:GameState;
 
-    public function new() {
+    public function new(gs:GameState = null, player:Null<PlayerColor> = null) {
         super();
+        _gs = gs;
+        _player = player;
     }
 
 //    public function getDate(mode:DateType = DateType.DAY):Int {
@@ -53,7 +55,7 @@ class GameInfoCallback extends CallbackBase {
         }
     }
 
-    function getPlayer(color:PlayerColor, verbose:Bool = false) {
+    public function getPlayer(color:PlayerColor, verbose:Bool = false) {
         //funtion written from scratch since it's accessed A LOT by AI
 
         if(!color.isValidPlayer()) {
@@ -161,18 +163,28 @@ class GameInfoCallback extends CallbackBase {
 //    public function getOwner(heroID:ObjectInstanceId):PlayerColor {
 //    }
 //
-//    public function getObjByQuestIdentifier(identifier:Int):GObjectInstance {
-//    }
-//
+    public function getObjByQuestIdentifier(identifier:Int):GObjectInstance {
+        if (!_gs.map.questIdentifierToId.keys().hasNext()) {
+            //assume that it is VCMI map and quest identifier equals instance identifier
+            return getObj(new ObjectInstanceId(identifier), true);
+        } else {
+            if (!_gs.map.questIdentifierToId.exists(identifier)) {
+                throw 'There is no object with such quest identifier "$identifier"!';
+            }
+            return getObj(_gs.map.questIdentifierToId[identifier]);
+        }
+    }
+
 //    public function guardingCreaturePosition (pos:Int3):Int3 {
 //    }
 //
 //    public function getGuardingCreatures (pos:Int3):Array<GObjectInstance> {
 //    }
 //
-//    public function getMapSize():Int3 {
-//    }
-//
+    public function getMapSize():Int3 {
+        return new Int3(_gs.map.width, _gs.map.height, _gs.map.twoLevel ? 2 : 1);
+    }
+
 //    public function getAllVisibleTiles():Array<Array<Array<TerrainTile>>> {
 //    }
 //
@@ -193,7 +205,18 @@ class GameInfoCallback extends CallbackBase {
 //
 //    public function getAvailableHeroes(townOrTavern:GObjectInstance):Array<GHeroInstance> {
 //    }
-//
+
+    public function getTile(x:Int, y:Int, z:Int):TerrainTile {
+        return _gs.map.getTile(x, y, z);
+    }
+
+    public function getTileByInt3(tile:Int3, verbose:Bool = false) {
+//        ERROR_VERBOSE_OR_NOT_RET_VAL_IF(!isVisible(tile), verbose, tile.toString() + " is not visible!", nullptr);
+
+        //boost::shared_lock<boost::shared_mutex> lock(*gs->mx);
+        return _gs.map.getTileByInt3(tile);
+    }
+
 //    public function getTavernRumor(townOrTavern:GObjectInstance):String {
 //    }
 //
@@ -267,7 +290,7 @@ class GameInfoCallback extends CallbackBase {
 //    }
 
     function hasAccess(playerId:PlayerColor):Bool {
-        return _player != null || _player.isSpectator() || _gs.getPlayerRelations(playerId, _player) != PlayerRelations.ENEMIES;
+        return _player == null || _player.isSpectator() || _gs.getPlayerRelations(playerId, _player) != PlayerRelations.ENEMIES;
     }
 
     function isVisibleAtPositionInternal(pos:Int3, player:PlayerColor = null):Bool {

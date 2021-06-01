@@ -342,9 +342,9 @@ class ArtHandler implements IHandlerBase {
     public function legalArtifact(id:ArtifactId):Bool {
         var art = artifacts[id];
         //assert ( (!art.constituents) || art.constituents.lrngth ); //artifacts is not combined or has some components
-        return ((art.possibleSlots[ArtBearer.HERO].length > 0 ||
-                (art.possibleSlots[ArtBearer.COMMANDER].length > 0 && VLC.instance.modh.modules.COMMANDERS) ||
-                (art.possibleSlots[ArtBearer.CREATURE].length > 0 && VLC.instance.modh.modules.STACK_ARTIFACT)) &&
+        return ((art.possibleSlots.exists(ArtBearer.HERO) && art.possibleSlots[ArtBearer.HERO].length > 0 ||
+                (art.possibleSlots.exists(ArtBearer.COMMANDER) && art.possibleSlots[ArtBearer.COMMANDER].length > 0 && VLC.instance.modh.modules.COMMANDERS) ||
+                (art.possibleSlots.exists(ArtBearer.CREATURE) && art.possibleSlots[ArtBearer.CREATURE].length > 0 && VLC.instance.modh.modules.STACK_ARTIFACT)) &&
                 !(art.constituents.length > 0) && //no combo artifacts spawning
                 (art.aClass:Int) >= (ArtClass.ART_TREASURE:Int) &&
                 (art.aClass:Int) <= (ArtClass.ART_RELIC:Int));
@@ -396,7 +396,7 @@ class ArtHandler implements IHandlerBase {
 
         var out:Array<Artifact> = [];
         getAllowed(out);
-        var artID:ArtifactId = out[out.length - 1].id;
+        var artID:ArtifactId = out[Std.random(out.length)].id;
         erasePickedArt(artID);
         return artID;
     }

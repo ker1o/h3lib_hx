@@ -1,5 +1,6 @@
 package creature;
 
+import herobonus.BonusSystemNode;
 import constants.id.CreatureId;
 import herobonus.Bonus;
 import constants.ArtifactId;
@@ -85,7 +86,7 @@ class Creature extends BonusSystemNode {
                 bonus.sid = id;
             }
         }
-        treeHasChanged();
+        BonusSystemNode.treeHasChanged();
     }
 
     public static function getQuantityID(quantity:Int) {

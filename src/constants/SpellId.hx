@@ -90,7 +90,7 @@ import mod.VLC;
     public var FIRST_NON_SPELL:Int = 70;
     public var AFTER_LAST:Int = 82;
 
-    public inline function toSpell():Spell {
+    public function toSpell():Spell {
         return VLC.instance.spellh.objects[this];
     }
 }

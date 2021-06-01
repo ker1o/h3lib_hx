@@ -20,7 +20,13 @@ class PlayerSettings {
     public var compOnly:Bool; //true if this player is a computer only player. required for RMG
 
     public function new() {
-
+        bonus = PlayerSettingsBonus.RANDOM;
+        castle = PlayerSettingsBonus.NONE;
+        hero = PlayerSettingsBonus.RANDOM;
+        heroPortrait = PlayerSettingsBonus.RANDOM;
+        color = 0;
+        team = new TeamID(0);
+        connectedPlayerIDs = [];
     }
 
     public function isControlledByHuman():Bool {

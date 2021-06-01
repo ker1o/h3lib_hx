@@ -4,7 +4,7 @@ import constants.PrimarySkill;
 import herobonus.selector.Selector.BonusSelector;
 typedef NodesVector = Array<BonusSystemNode>;
 
-class BonusSystemNode implements IBonusBearer {
+class BonusSystemNode extends BonusBearer {
 
     private var bonuses:BonusList; //wielded bonuses (local or up-propagated here)
     private var exportedBonuses:BonusList; //bonuses coming from this node (wielded or propagated away)
@@ -18,17 +18,15 @@ class BonusSystemNode implements IBonusBearer {
     static private var cachingEnabled:Bool;
     private var cachedBonuses:BonusList;
     private var cachedLast:Int; // Int64
-    private var treeChanged:Int;
+    private static var treeChanged:Int;
 
     // Setting a value to cachingStr before getting any bonuses caches the result for later requests.
     // This string needs to be unique, that's why it has to be setted in the following manner:
     // [property key]_[value] => only for selector
     private var cachedRequests:Map<String, BonusList>;
 
-    private var _bonusBearer:BonusBearer;
-    
     public function new(nodeType:BonusSystemNodeType = BonusSystemNodeType.UNKNOWN, ?other:BonusSystemNode) {
-        _bonusBearer = new BonusBearer();
+        super();
 
         if (other != null) {
             // can we just assign? or copy?
@@ -160,7 +158,7 @@ class BonusSystemNode implements IBonusBearer {
     }
 
 
-    public function treeHasChanged():Void {
+    public static function treeHasChanged():Void {
         treeChanged++;
     }
 
@@ -290,24 +288,97 @@ class BonusSystemNode implements IBonusBearer {
             removeBonus(bonus);
     }
 
+    private function getAllBonusesWithoutCaching(selector:BonusSelector, limit:BonusSelector, root:BonusSystemNode):BonusList
+    {
+        var ret = new BonusList();
+
+        // Get bonus results without caching enabled.
+        var beforeLimiting = new BonusList();
+        var afterLimiting = new BonusList();
+        getAllBonusesRec(beforeLimiting);
+
+        if(root == null || root == this)
+        {
+            limitBonuses(beforeLimiting, afterLimiting);
+        } else if(root != null) {
+            //We want to limit our query against an external node. We get all its bonuses,
+            // add the ones we're considering and see if they're cut out by limiters
+            var rootBonuses = new BonusList();
+            var limitedRootBonuses = new BonusList();
+            getAllBonusesRec(rootBonuses);
+
+            for (b in beforeLimiting) {
+                rootBonuses.push(b);
+            }
+
+            root.limitBonuses(rootBonuses, limitedRootBonuses);
+
+            for (b in beforeLimiting)
+                if (limitedRootBonuses.indexOf(b) > -1)
+                    afterLimiting.push(b);
+
+        }
+        afterLimiting.getBonuses(ret, selector, limit);
+        ret.stackBonuses();
+        return ret;
+    }
+
+    function getAllBonusesRec(out:BonusList) {
+        var beforeUpdate = new BonusList();
+        forEachParent(function(p:BonusSystemNode) {
+            p.getAllBonusesRec(beforeUpdate);
+        });
+        bonuses.getAllBonuses(beforeUpdate);
+
+        for(b in beforeUpdate) {
+            out.push(update(b));
+        }
+    }
+
+    function update(b:Bonus):Bonus {
+        if (b.updater != null)
+            return b.updater.update(b, this);
+        return b;
+    }
+
+    function limitBonuses(allBonuses:BonusList, out:BonusList) {
+        //assert(allBonuses != out); //todo should it work in-place?
+
+        var undecided:BonusList = allBonuses;
+        var accepted:BonusList = out;
+
+        while(true) {
+            var undecidedCount:Int = undecided.length;
+            var i = 0;
+            while(i < undecided.length) {
+                var b:Bonus = undecided[i];
+                var context:BonusLimitationContext = new BonusLimitationContext(b, this, out, undecided);
+                var decision:Int = b.limiter != null ? (b.limiter.limit(context) ? 1 : 0) : LimiterDecision.ACCEPT; //bonuses without limiters will be accepted by default
+                if(decision == LimiterDecision.DISCARD)
+                {
+                    undecided.erase(i);
+                    continue;
+                }
+                else if(decision == LimiterDecision.ACCEPT)
+                {
+                    accepted.push(b);
+                    undecided.erase(i);
+                    continue;
+                }
+                else {
+                    //assert(decision == ILimiter.NOT_SURE);
+                }
+                i++;
+            }
+
+            if (undecided.length == undecidedCount) //we haven't moved a single bonus . limiters reached a stable state
+                return;
+        }
+    }
+
     // IBonusBearer
-    public function getAllBonuses(selector:BonusSelector, limit:BonusSelector, root:BonusSystemNode = null, cachingStr:String = ""):BonusList {
-        return _bonusBearer.getAllBonuses(selector, limit, root, cachingStr);
-    }
-
-    public function getPrimSkillLevel(id:PrimarySkill):Int {
-        return _bonusBearer.getPrimSkillLevel(id);
-    }
-
-    public function getBonuses(selector:BonusSelector, cachingStr:String):BonusList {
-        return _bonusBearer.getBonuses(selector, cachingStr);
-    }
-
-    public function hasBonus(selector:BonusSelector, cachingStr:String = null):Bool {
-        return _bonusBearer.hasBonus(selector, cachingStr);
-    }
-
-    public function manaLimit():Int {
-        return _bonusBearer.manaLimit();
+    override public function getAllBonuses(selector:BonusSelector, limit:BonusSelector, root:BonusSystemNode = null, cachingStr:String = ""):BonusList {
+        // ToDo: do we need caching as in original?
+        return getAllBonusesWithoutCaching(selector, limit, root);
     }
 }

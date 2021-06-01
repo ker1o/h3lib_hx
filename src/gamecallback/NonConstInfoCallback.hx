@@ -34,17 +34,13 @@ class NonConstInfoCallback extends PrivilegedInfoCallback {
 //
 //    public function getTown(objid:ObjectInstanceId):GTownInstance {
 //    }
-
-    public function getTile(pos:Int3):TerrainTile {
-        return _gs.map.getTileByInt3(pos);
-    }
-
 //    public function getArtInstance(aid:ArtifactInstanceID):ArtifactInstance {
 //    }
 //
-//    public function getObjInstance(oid:ObjectInstanceId):GObjectInstance {
-//    }
-//
+    public function getObjInstance(oid:ObjectInstanceId):GObjectInstance {
+        return _gs.map.objects[oid.getNum()];
+    }
+
 //    public function getArmyInstance(oid:ObjectInstanceId):ArmedInstance {
 //    }
 }

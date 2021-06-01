@@ -1,5 +1,6 @@
 package mapObjects;
 
+import gamecallback.IGameCallback;
 import gamecallback.GameCallback;
 import mod.VLC;
 import mapping.TerrainTile;
@@ -32,6 +33,12 @@ class GObjectInstance implements IObjectInterface {
     public static var cb:GameCallback;
 
     public function new() {
+        // ?
+        pos = new Int3(-1, -1, -1);
+        ID = Obj.NO_OBJ;
+        subID = -1;
+        tempOwner = new PlayerColor(PlayerColor.UNFLAGGABLE);
+        blockVisit = false;
     }
 
     public function setOwner(ow:PlayerColor) {
@@ -105,5 +112,23 @@ class GObjectInstance implements IObjectInterface {
 
     public function getObjectName() {
         return VLC.instance.objtypeh.getObjectName(ID, subID);
+    }
+
+    public function getOwner() {
+        return tempOwner;
+    }
+
+    public function initObj() {
+        if (ID == Obj.TAVERN) {
+            blockVisit = true;
+        }
+    }
+
+    public function getSightCenter() {
+        return visitablePos();
+    }
+
+    public function getSightRadius() {
+        return 3;
     }
 }

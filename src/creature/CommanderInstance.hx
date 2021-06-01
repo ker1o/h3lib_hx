@@ -1,5 +1,6 @@
 package creature;
 
+import artifacts.Artifact.ArtBearer;
 import constants.CommanderSecondarySkills;
 import herobonus.BonusSystemNodeType;
 import constants.id.CreatureId;
@@ -19,6 +20,7 @@ class CommanderInstance extends StackInstance {
         init();
         setTypeByCreatureId(id);
         name = "Commando"; //TODO - parse them
+        artifactSet.bearerType = bearerType;
     }
 
     override function init() {
@@ -38,5 +40,9 @@ class CommanderInstance extends StackInstance {
     public function giveStackExp(exp:Int) {
         if (alive > 0)
             experience += exp;
+    }
+
+    override public function bearerType():ArtBearer {
+        return ArtBearer.COMMANDER;
     }
 }

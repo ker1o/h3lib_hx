@@ -37,6 +37,8 @@ class PlayerInfo {
         // ToDo: initialize some default as in VCMI
         allowedFactions = [];
         posOfMainTown = new Int3();
+        heroesNames = [];
+        team = new TeamID(0);
     }
 
     public function canAnyonePlay() {

@@ -1,5 +1,6 @@
 package creature;
 
+import herobonus.selector.Selector.BonusSelector;
 import filesystem.FileCache;
 import constants.CreatureType;
 import constants.GameConstants;
@@ -168,7 +169,7 @@ class CreatureHandler implements IHandlerBase {
             //conf.setMeta(scope);
 
             VLC.instance.objtypeh.loadSubObject(object.identifier, conf, Obj.MONSTER, object.idNumber);
-            if (object.advMapDef != "") {
+            if (object.advMapDef != null && object.advMapDef != "") {
                 var templ:Dynamic = {animation: object.advMapDef};
                 VLC.instance.objtypeh.getHandlerFor(Obj.MONSTER, object.idNumber).addTemplate(templ);
             }
@@ -386,6 +387,39 @@ class CreatureHandler implements IHandlerBase {
                 }
             }
         }
+
+        var factionName:String = config.field("faction");
+        VLC.instance.modh.identifiers.requestIdentifierByNodeName("faction", factionName, "core", function(faction:Int)
+        {
+            creature.faction = faction;
+        });
+
+        var upgrades:Array<Dynamic> = config.field("upgrades");
+
+        if (upgrades != null) {
+            for (value in upgrades) {
+                VLC.instance.modh.identifiers.requestIdentifierByNodeName("creature", value, "core", function(identifier:Int) {
+                    creature.upgrades.push(new CreatureId(identifier));
+                });
+            }
+        }
+
+        creature.animation.projectileImageName = config.field("graphics").field("missile").field("projectile");
+
+        creature.special = (config.hasField("special") && config.field("special")) || (config.hasField("disabled") && config.field("disabled"));
+
+        var sounds:Dynamic = config.field("sound");
+
+        if (sounds != null) {
+            if (sounds.hasField("attack")) creature.sounds.attack = sounds.field("attack");
+            if (sounds.hasField("defend")) creature.sounds.defend = sounds.field("defend");
+            if (sounds.hasField("killed")) creature.sounds.killed = sounds.field("killed");
+            if (sounds.hasField("move")) creature.sounds.move = sounds.field("move");
+            if (sounds.hasField("shoot")) creature.sounds.shoot = sounds.field("shoot");
+            if (sounds.hasField("wince")) creature.sounds.wince = sounds.field("wince");
+            if (sounds.hasField("startMoving")) creature.sounds.startMoving = sounds.field("startMoving");
+            if (sounds.hasField("endMoving")) creature.sounds.endMoving = sounds.field("endMoving");
+        }
     }
 
     private function loadBonuses(creature:Dynamic, bonuses:String) {
@@ -469,7 +503,7 @@ class CreatureHandler implements IHandlerBase {
 
             if(allowed.length == 0)
             {
-                trace("Cannot pick a random creature of tier %d!", tier);
+                trace('Cannot pick a random creature of tier $tier!');
                 return (CreatureType.NONE:CreatureId);
             }
 
@@ -479,4 +513,19 @@ class CreatureHandler implements IHandlerBase {
         return (r:CreatureId);
     }
 
+    public function removeBonusesFromAllCreatures() {
+        allCreatures.removeBonuses(BonusSelector.getAll());
+    }
+
+    public function buildBonusTreeForTiers() {
+        for (c in creatures) {
+            if (0 < c.level && c.level < creaturesOfLevel.length) {
+                c.attachTo(creaturesOfLevel[c.level]);
+            } else {
+                c.attachTo(creaturesOfLevel[0]);
+            }
+        }
+        for (b in creaturesOfLevel)
+            b.attachTo(allCreatures);
+    }
 }

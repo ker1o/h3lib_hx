@@ -1,5 +1,7 @@
 package mapping;
 
+import utils.logicalexpression.Variant;
+import mod.VLC;
 import constants.Obj;
 import mapping.MapEditManager;
 import constants.id.ObjectInstanceId;
@@ -15,6 +17,8 @@ import mapObjects.town.GTownInstance;
 import mapping.MapEvent;
 import mapping.Rumor;
 import utils.Int3;
+
+using StringTools;
 
 class MapBody extends MapHeader {
     public var checksum:UInt /* UInt32 */;
@@ -215,7 +219,7 @@ class MapBody extends MapHeader {
         }
     }
 
-    public function removeBlockVisTiles(obj:GObjectInstance, total:Bool) {
+    public function removeBlockVisTiles(obj:GObjectInstance, total:Bool = false) {
         for (fx in 0...obj.getWidth()) {
             for(fy in 0...obj.getHeight()) {
                 var xVal = obj.pos.x - fx;
@@ -241,5 +245,91 @@ class MapBody extends MapHeader {
             editManager = new MapEditManager(this);
         }
         return editManager;
+    }
+
+    public function checkForObjectives() {
+        // NOTE: probably should be moved to MapFormatH3M.cpp
+        for (event in triggeredEvents) {
+            var patcher = function(cond:EventCondition):Variant<EventCondition> {
+                switch (cond.condition) {
+                    case WinLoseType.HAVE_ARTIFACT:
+                        event.onFulfill.replace("%s", VLC.instance.arth.artifacts[cond.objectType].name);
+
+                    case WinLoseType.HAVE_CREATURES:
+                        event.onFulfill.replace("%s", VLC.instance.creh.creatures[cond.objectType].nameSing);
+                        event.onFulfill.replace("%d", Std.string(cond.value));
+
+                    case WinLoseType.HAVE_RESOURCES:
+                        event.onFulfill.replace("%s", VLC.instance.generaltexth.restypes[cond.objectType]);
+                        event.onFulfill.replace("%d", Std.string(cond.value));
+
+                    case WinLoseType.HAVE_BUILDING:
+                        if (isInTheMap(cond.position)) {
+                            cond.object = getObjectiveObjectFrom(cond.position, Obj.TOWN);
+                        }
+
+                    case WinLoseType.CONTROL:
+                        if (isInTheMap(cond.position)) {
+                            cond.object = getObjectiveObjectFrom(cond.position, (cond.objectType:Obj));
+                        }
+
+                        if (cond.object != null) {
+                            var town:GTownInstance = cast(cond.object, GTownInstance);
+                            if (town != null)
+                                event.onFulfill.replace("%s", town.name);
+                            var hero:GHeroInstance = cast(cond.object, GHeroInstance);
+                            if (hero != null)
+                                event.onFulfill.replace("%s", hero.name);
+                        }
+
+                    case WinLoseType.DESTROY:
+                        if (isInTheMap(cond.position)) {
+                            cond.object = getObjectiveObjectFrom(cond.position, (cond.objectType:Obj));
+                        }
+
+                        if (cond.object) {
+                            var hero = cast(cond.object, GHeroInstance);
+                            if (hero != null) {
+                                event.onFulfill.replace("%s", hero.name);
+                            }
+                        }
+                    case WinLoseType.TRANSPORT:
+                        cond.object = getObjectiveObjectFrom(cond.position, Obj.TOWN);
+                    default:
+                }
+                return cond;
+            };
+            event.trigger = event.trigger.morph(patcher);
+        }
+    }
+
+    function getObjectiveObjectFrom(pos:Int3, type:Obj):GObjectInstance	{
+        for (object in getTileByInt3(pos).visitableObjects) {
+            if (object.ID == type) {
+                return object;
+            }
+        }
+        // There is weird bug because of which sometimes heroes will not be found properly despite having correct position
+        // Try to workaround that and find closest object that we can use
+
+    //	logGlobal.error("Failed to find object of type %d at %s", int(type), pos.toString());
+    //	logGlobal.error("Will try to find closest matching object");
+
+        var bestMatch:GObjectInstance = null;
+        for (object in objects) {
+            if (object != null && object.ID == type) {
+                if (bestMatch == null) {
+                    bestMatch = object;
+                } else {
+                    if (object.pos.dist2dSQ(pos) < bestMatch.pos.dist2dSQ(pos)) {
+                        bestMatch = object;// closer than one we already found
+                    }
+                }
+            }
+        }
+        //assert(bestMatch != null); // if this happens - victory conditions or map itself is very, very broken
+
+        //logGlobal.error("Will use %s from %s", bestMatch.getObjectName(), bestMatch.pos.toString());
+        return bestMatch;
     }
 }

@@ -1,5 +1,14 @@
 package gamestate;
 
+import herobonus.BonusSystemNodeType;
+import mapObjects.misc.GObelisk;
+import mapObjects.quest.GKeys;
+import mapObjects.ArmedInstance;
+import mapObjects.quest.GSeerHut;
+import mapObjects.misc.GSubterraneanGate;
+import mapObjects.IBoatGenerator;
+import mapping.PlayerInfo;
+import constants.BuildingID;
 import artifacts.Artifact;
 import constants.id.SlotId;
 import constants.id.CreatureId;
@@ -48,6 +57,8 @@ import startinfo.PlayerSettings;
 import startinfo.PlayerSettingsBonus;
 import startinfo.StartInfo;
 
+using Reflect;
+
 class GameState extends NonConstInfoCallback {
     public var scenarioOps:StartInfo;
     public var currentPlayer:PlayerColor; //ID of player currently having turn
@@ -62,13 +73,36 @@ class GameState extends NonConstInfoCallback {
 
     public function new() {
         super();
+        _gs = this;
         scenarioOps = new StartInfo();
         hpool = new HeroesPool();
+        players = new Map<PlayerColor, PlayerState>();
+        teams = new Map<TeamID, TeamState>();
+        globalEffects = new BonusSystemNode();
+        globalEffects.setDescription("Global effects");
+        globalEffects.setNodeType(BonusSystemNodeType.GLOBAL_EFFECTS);
+        day = 0;
+
+        initPlayers();
+    }
+
+    //stub
+    private function initPlayers() {
+        scenarioOps.playerInfos.set(new PlayerColor(0), new PlayerSettings());
+        scenarioOps.playerInfos.set(new PlayerColor(1), new PlayerSettings());
+        scenarioOps.playerInfos.set(new PlayerColor(2), new PlayerSettings());
+        scenarioOps.playerInfos.set(new PlayerColor(3), new PlayerSettings());
+        scenarioOps.playerInfos.set(new PlayerColor(4), new PlayerSettings());
     }
 
     public function init(mapService:IMapService, startInfo:StartInfo = null, allowSavingRandomMap:Bool = false) {
         //ToDo
         initNewGame(mapService, "Vial of Life.h3m");
+
+        VLC.instance.arth.initAllowedArtifactsList(map.allowedArtifact);
+        trace("Map loaded!");
+
+        day = 0;
 
         trace("initialization");
         initPlayerStates();
@@ -85,6 +119,26 @@ class GameState extends NonConstInfoCallback {
         buildBonusSystemTree();
         initVisitingAndGarrisonedHeroes();
         initFogOfWar();
+
+        // Explicitly initialize static variables
+        for (playerColor in players.keys()) {
+            GKeys.playerKeyMap[playerColor] = [];
+        }
+        for (teamId in teams.keys()) {
+            GObelisk.visited.set(teamId, 0);
+        }
+
+        //logGlobal.debug("\tChecking objectives");
+        map.checkForObjectives(); //needs to be run when all objects are properly placed
+
+        var seedAfterInit = Std.random(2147483647);
+        trace('Seed after init is $seedAfterInit (before was ${scenarioOps.seedToBeUsed})');
+        if (scenarioOps.seedPostInit > 0) {
+            //RNG must be in the same state on all machines when initialization is done (otherwise we have desync)
+            //assert(scenarioOps.seedPostIit == seedAfterInit);
+        } else {
+            scenarioOps.seedPostInit = seedAfterInit; //store the post init "seed"
+        }
     }
 
     private function initNewGame(mapService:IMapService, mapName:String) {
@@ -96,10 +150,15 @@ class GameState extends NonConstInfoCallback {
         trace("Creating player entries in gs");
         for(elemKey in scenarioOps.playerInfos.keys())
         {
-            var p = players[elemKey];
+            var p = new PlayerState();
             p.color = elemKey;
             p.human = scenarioOps.playerInfos[elemKey].isControlledByHuman();
             p.team = map.players[elemKey.getNum()].team;
+            players[elemKey] = p;
+
+            if (!teams.exists(p.team)) {
+                teams.set(p.team, new TeamState());
+            }
             teams[p.team].id = p.team;//init team
             teams[p.team].players.push(elemKey);//add player to team
         }
@@ -392,21 +451,278 @@ class GameState extends NonConstInfoCallback {
     }
 
     function initStartingBonus() {
+        if (scenarioOps.mode == StartInfoMode.CAMPAIGN) {
+            return;
+        }
+        // These are the single scenario bonuses; predefined
+        // campaign bonuses are spread out over other init* functions.
+
+        trace("Starting bonuses");
+        for (playerColor in players.keys()) {
+            var playerState = players.get(playerColor);
+            //starting bonus
+            if (scenarioOps.playerInfos[playerColor].bonus == PlayerSettingsBonus.RANDOM)
+                scenarioOps.playerInfos[playerColor].bonus = (Std.random(2):PlayerSettingsBonus);
+            switch(scenarioOps.playerInfos[playerColor].bonus) {
+                case PlayerSettingsBonus.GOLD:
+                    playerState.resources[ResType.GOLD] += (5 + Std.random(10 - 5)) * 100;
+                case PlayerSettingsBonus.RESOURCE:
+                    var res = VLC.instance.townh.factions[scenarioOps.playerInfos[playerColor].castle].town.primaryRes;
+                    if (res == ResType.WOOD_AND_ORE) {
+                        var amount = 5 + Std.random(10 - 5);
+                        playerState.resources[ResType.WOOD] += amount;
+                        playerState.resources[ResType.ORE] += amount;
+                    } else {
+                        playerState.resources[res] += (3 + Std.random(6 - 3));
+                    }
+                case PlayerSettingsBonus.ARTIFACT:
+                    if (playerState.heroes.length == 0) {
+                        trace("Cannot give starting artifact - no heroes!");
+                        break;
+                    }
+                    var toGive:Artifact;
+                    toGive = VLC.instance.arth.artifacts[VLC.instance.arth.pickRandomArtifact(ArtClass.ART_TREASURE)];
+
+                    var hero:GHeroInstance = playerState.heroes[0];
+                    giveHeroArtifact(hero, toGive.id);
+                default:
+            }
+        }
     }
 
     function initTowns() {
+        trace("Towns");
+
+        //campaign bonuses for towns
+        if (scenarioOps.mode == StartInfoMode.CAMPAIGN) {
+            var chosenBonus = scenarioOps.campState.getBonusForCurrentMap();
+
+            if (chosenBonus != null && chosenBonus.type == TravelBonusType.BUILDING) {
+                for (g in 0...map.towns.length) {
+                    var owner:PlayerState = getPlayer(map.towns[g].getOwner());
+                    if (owner != null) {
+                        var pi:PlayerInfo = map.players[owner.color.getNum()];
+
+                        if (owner.human && //human-owned
+                        map.towns[g].pos == pi.posOfMainTown)
+                        {
+                            map.towns[g].builtBuildings.push(
+                                BuildingHandler.campToERMU(chosenBonus.info1, map.towns[g].subID, map.towns[g].builtBuildings));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        GTownInstance.universitySkills.splice(0, GTownInstance.universitySkills.length);
+        for (i in 0...4)
+            GTownInstance.universitySkills.push(14+i);//skills for university
+
+        for (elem in map.towns) {
+            var vti:GTownInstance = elem;
+            if(vti.town == null) {
+                vti.town = VLC.instance.townh.factions[vti.subID].town;
+            }
+            if(vti.name == "") {
+                vti.name = vti.town.names[Std.random(vti.town.names.length)];
+            }
+
+            //init buildings
+            if (vti.builtBuildings.contains(BuildingID.DEFAULT)) {//give standard set of buildings
+                vti.builtBuildings.remove(BuildingID.DEFAULT);
+                vti.builtBuildings.push(BuildingID.VILLAGE_HALL);
+                if(vti.tempOwner != PlayerColor.NEUTRAL)
+                    vti.builtBuildings.push(BuildingID.TAVERN);
+
+                vti.builtBuildings.push(BuildingID.DWELL_FIRST);
+                // TODO: WHY such in original?
+                if (Std.random(1) == 1) {
+                    vti.builtBuildings.push(BuildingID.DWELL_LVL_2);
+                }
+            }
+
+            //#1444 - remove entries that don't have buildings defined (like some unused extra town hall buildings)
+            for (bid in vti.builtBuildings) {
+                if (!vti.town.buildings.exists(bid) || vti.town.buildings.get(bid) == null) {
+                    vti.builtBuildings.remove(bid);
+                }
+            }
+
+            if (vti.builtBuildings.contains(BuildingID.SHIPYARD) && vti.shipyardStatus() == GeneratorState.TILE_BLOCKED) {
+                vti.builtBuildings.remove(BuildingID.SHIPYARD);//if we have harbor without water - erase it (this is H3 behaviour)
+            }
+
+            //init hordes
+            for (i in 0...GameConstants.CREATURES_PER_TOWN) {
+                if (vti.builtBuildings.contains(-31-i)) { //if we have horde for this level
+                    vti.builtBuildings.remove(((-31-i):BuildingID));//remove old ID
+                    if (vti.town.hordeLvl.get(0) == i) { //if town first horde is this one
+                        vti.builtBuildings.push(BuildingID.HORDE_1);//add it
+                        if (vti.builtBuildings.contains(BuildingID.DWELL_UP_FIRST+i)) {//if we have upgraded dwelling as well
+                            vti.builtBuildings.push(BuildingID.HORDE_1_UPGR);//add it as well
+                        }
+                    }
+                    if (vti.town.hordeLvl.get(1) == i) {//if town second horde is this one
+                        vti.builtBuildings.push(BuildingID.HORDE_2);
+                        if (vti.builtBuildings.contains(BuildingID.DWELL_UP_FIRST+i)) {
+                            vti.builtBuildings.push(BuildingID.HORDE_2_UPGR);
+                        }
+                    }
+                }
+            }
+
+            //Early check for #1444-like problems
+            for (building in vti.builtBuildings) {
+                if (vti.town.buildings.get(building) == null) {
+                    trace('$building is null!');
+                }
+            }
+
+            //town events
+            for (ev in vti.events) {
+                for (i in 0...GameConstants.CREATURES_PER_TOWN) {
+                    if (ev.buildings.contains(-31-i)) { //if we have horde for this level
+                        ev.buildings.remove(((-31-i):BuildingID));
+                        if (vti.town.hordeLvl.get(0) == i) {
+                            ev.buildings.push(BuildingID.HORDE_1);
+                        }
+                        if (vti.town.hordeLvl.get(1) == i) {
+                            ev.buildings.push(BuildingID.HORDE_2);
+                        }
+                    }
+                }
+            }
+            //init spells
+            vti.spells = [for (i in 0...GameConstants.SPELL_LEVELS) []];
+
+            for (z in 0...vti.obligatorySpells.length) {
+                var s = vti.obligatorySpells[z].toSpell();
+                vti.spells[s.level-1].push(s.id);
+                vti.possibleSpells.remove(s.id);
+            }
+            while (vti.possibleSpells.length > 0) {
+                var total = 0;
+                var sel = -1;
+
+                for (ps in 0...vti.possibleSpells.length) {
+                    total += vti.possibleSpells[ps].toSpell().getProbability(vti.subID);
+                }
+
+                if (total == 0) // remaining spells have 0 probability
+                    break;
+
+                var r = Std.random(total - 1);
+                for (ps in 0...vti.possibleSpells.length) {
+                    r -= vti.possibleSpells[ps].toSpell().getProbability(vti.subID);
+                    if (r < 0) {
+                        sel = ps;
+                        break;
+                    }
+                }
+                if (sel<0) {
+                    sel = 0;
+                }
+
+                var s = vti.possibleSpells[sel].toSpell();
+                vti.spells[s.level-1].push(s.id);
+                vti.possibleSpells.remove(s.id);
+            }
+            vti.possibleSpells.splice(0, vti.possibleSpells.length);
+            if (vti.getOwner() != PlayerColor.NEUTRAL) {
+                getPlayer(vti.getOwner()).towns.push(vti);
+            }
+        }
     }
 
     function initMapObjects() {
+        trace("Object initialization");
+        VLC.instance.creh.removeBonusesFromAllCreatures();
+
+        for (obj in map.objects) {
+            if (obj != null) {
+                trace('Calling Init for object ${obj.id}, ${obj.typeName}, ${obj.subTypeName}');
+                obj.initObj();
+            }
+        }
+        for (obj in map.objects) {
+            if (obj == null)
+                continue;
+
+            switch (obj.ID) {
+                case Obj.QUEST_GUARD | Obj.SEER_HUT:
+                    var q = cast(obj, GSeerHut);
+                    //assert (q);
+                    q.setObjToKill();
+                default:
+            }
+        }
+        GSubterraneanGate.postInit(); //pairing subterranean gates
+
+        map.calculateGuardingGreaturePositions(); //calculate once again when all the guards are placed and initialized
     }
 
     function buildBonusSystemTree() {
+        buildGlobalTeamPlayerTree();
+        attachArmedObjects();
+
+        for (t in map.towns) {
+            t.deserializationFix();
+        }
+        // CStackInstance <-> CCreature, CStackInstance <-> CArmedInstance, CArtifactInstance <-> CArtifact
+        // are provided on initializing / deserializing
     }
 
     function initVisitingAndGarrisonedHeroes() {
+        for (playerColor in players.keys()) {
+            var playerState = players[playerColor];
+            if (playerColor == PlayerColor.NEUTRAL)
+                continue;
+
+            //init visiting and garrisoned heroes
+            for (h in playerState.heroes) {
+                for (t in playerState.towns) {
+                    var vistile:Int3 = t.pos;
+                    vistile.x--; //tile next to the entrance
+                    if (vistile == h.pos || h.pos == t.pos) {
+                        t.setVisitingHero(h);
+                        if (h.pos == t.pos) {//visiting hero placed in the editor has same pos as the town - we need to correct it
+                            map.removeBlockVisTiles(h);
+                            h.pos.x -= 1;
+                            map.addBlockVisTiles(h);
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (hero in map.heroesOnMap) {
+            if (hero.visitedTown != null) {
+                if (hero.visitedTown.visitingHero != hero) {
+                    throw "hero.visitedTown.visitingHero != hero";
+                }
+            }
+        }
     }
 
     function initFogOfWar() {
+        trace("Fog of war"); //FIXME: should be initialized after all bonuses are set
+        var levelsCount = map.twoLevel ? 2 : 1;
+        for (teamState in teams) {
+            // 3-dimensional array
+            teamState.fogOfWarMap = [for(i in 0...map.width) [for(i in 0...map.height) [for(i in 0...levelsCount) false]]];
+
+            for (obj in map.objects) {
+                if (obj == null || teamState.players.indexOf(obj.tempOwner) == -1) continue; //not a flagged object
+
+                var tiles:Array<Int3> = [];
+                getTilesInRange(tiles, obj.getSightCenter(), obj.getSightRadius(), obj.tempOwner, 1);
+                for (tile in tiles) {
+                    teamState.fogOfWarMap[tile.x][tile.y][tile.z] = true;
+                }
+            }
+        }
     }
 
     function pickUnusedHeroTypeRandomly(owner:PlayerColor) {
@@ -429,7 +745,7 @@ class GameState extends NonConstInfoCallback {
             return factionHeroes[Std.random(factionHeroes.length - 1)].getNum();
         }
 
-        trace("Cannot find free hero of appropriate faction for player %s - trying to get first available...", owner.getStr());
+        trace('Cannot find free hero of appropriate faction for player ${owner.getStr()} - trying to get first available...');
         if(otherHeroes.length > 0) {
             return otherHeroes[Std.random(otherHeroes.length - 1)].getNum();
         }
@@ -794,7 +1110,6 @@ class GameState extends NonConstInfoCallback {
 
                 return result;
             default:
-                trace("");
         }
         return {first:Obj.NO_OBJ, second:-1};
     }
@@ -924,5 +1239,26 @@ class GameState extends NonConstInfoCallback {
         var ai:ArtifactInstance = ArtifactInstance.createNewArtifactInstance(artifact);
         map.addNewArtifactInstance(ai);
         ai.putAt(new ArtifactLocation(h, ai.firstAvailableSlot(h.artifactSet)));
+    }
+
+    public function buildGlobalTeamPlayerTree() {
+        for (teamState in teams) {
+            teamState.attachTo(globalEffects);
+
+            for(teamMember in teamState.players) {
+                var p:PlayerState = getPlayer(teamMember);
+                //assert(p);
+                p.attachTo(teamState);
+            }
+        }
+    }
+
+    public function attachArmedObjects() {
+        for (obj in map.objects) {
+            var armed:ArmedInstance = Std.isOfType(obj, ArmedInstance) ? cast(obj, ArmedInstance) : null;
+            if (armed != null) {
+                armed.whatShouldBeAttached().attachTo(armed.whereShouldBeAttached(this));
+            }
+        }
     }
 }

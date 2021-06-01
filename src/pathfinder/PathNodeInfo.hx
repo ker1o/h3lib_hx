@@ -24,7 +24,7 @@ class PathNodeInfo {
         if(coord != node.coord)
         {
             coord = node.coord;
-            tile = gs.getTile(coord);
+            tile = gs.getTileByInt3(coord);
             nodeObject = tile.topVisitableObj(excludeTopObject);
         }
 

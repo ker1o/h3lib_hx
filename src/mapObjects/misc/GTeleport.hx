@@ -10,6 +10,14 @@ class GTeleport extends GObjectInstance {
     public function new() {
         super();
     }
+
+    public function isEntrance() {
+        return type == BOTH || type == ENTRANCE;
+    }
+
+    public function isExit() {
+        return type == BOTH || type == EXIT;
+    }
 }
 
 @:enum abstract TeleportType(Int) from Int to Int {

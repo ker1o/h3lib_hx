@@ -1,7 +1,7 @@
 package mapObjects;
 
 interface IBoatGenerator {
-
+    function shipyardStatus():GeneratorState;
 }
 
 @:enum abstract GeneratorState(Int) from Int to Int {

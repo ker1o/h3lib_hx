@@ -1,5 +1,6 @@
 package mapObjects.hero;
 
+import herobonus.BonusSystemNode;
 import constants.id.HeroTypeId;
 import creature.CommanderInstance;
 import constants.SecSkillLevel;
@@ -92,6 +93,8 @@ class GHeroInstance extends ArmedInstance {
         visitedObjects = [];
         patrol = new Patrol();
         skillsInfo = new SecondarySkillsInfo();
+
+        artifactSet.bearerType = bearerType;
     }
 
     public function pushPrimSkill(which:PrimarySkill, val:BonusValue):Void {
@@ -126,10 +129,6 @@ class GHeroInstance extends ArmedInstance {
 
     public function copy():GHeroInstance {
         throw "Implement GHeroInstance.copy()!";
-    }
-
-    public function getOwner() {
-        return tempOwner;
     }
 
     public function initHeroWithType(subid:HeroTypeId) {
@@ -170,7 +169,7 @@ class GHeroInstance extends ArmedInstance {
         if(secSkills.length == 1 && secSkills[0].skill == SecondarySkill.DEFAULT && secSkills[0].level == -1) //set secondary skills to default
             secSkills = type.secSkillsInit;
 
-        if (name.length == 0)
+        if (name == null)
             name = type.name;
 
         if (sex == 0xFF)//sex is default
@@ -311,7 +310,7 @@ class GHeroInstance extends ArmedInstance {
             } else {
                 skill.val += value;
             }
-            bonusSystemNode.treeHasChanged();
+            BonusSystemNode.treeHasChanged();
         } else if(primarySkill == PrimarySkill.EXPERIENCE) {
             if (abs > 0) {
                 exp = value;
@@ -485,7 +484,7 @@ class GHeroInstance extends ArmedInstance {
         }
 
         //update specialty and other bonuses that scale with level
-        bonusSystemNode.treeHasChanged();
+        BonusSystemNode.treeHasChanged();
     }
 
     function maxlevelsToMagicSchool() {

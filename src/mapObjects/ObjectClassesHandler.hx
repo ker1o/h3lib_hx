@@ -210,8 +210,7 @@ class ObjectClassesHandler implements IHandlerBase {
 
     private function loadObjectEntry(identifier:String, entry:Dynamic, obj:ObjectContainter) {
         if (!handlerConstructors.exists(obj.handlerName)) {
-//            logGlobal.error("Handler with name %s was not found!", obj.handlerName);
-            return;
+            throw 'Handler with name ${obj.handlerName} was not found!';
         }
 
         var convertedId:String = ModHandler.normalizeIdentifier(entry.field("meta"), "core", identifier);
@@ -273,7 +272,7 @@ class ObjectClassesHandler implements IHandlerBase {
         for(i in 0...totalNumber) {
             var templ = new ObjectTemplate();
             templ.readTxt(parser[i]);
-            var key = '${templ.id}-${templ.subid}';
+            var key = '${(templ.id:Int)}-${templ.subid}';
             legacyTemplates.set(key, templ);
         }
 
@@ -306,6 +305,7 @@ class ObjectClassesHandler implements IHandlerBase {
         }
         throw 'Failed to find object of type $type $subtype';
     }
+
     public function removeSubObject(id:Int, subId:Int) {
 //        assert(objects.count(ID));
 //        assert(objects.at(ID)->subObjects.count(subID));

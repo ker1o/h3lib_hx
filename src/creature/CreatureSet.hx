@@ -138,4 +138,13 @@ class CreatureSet implements IArmyDescriptor implements ICreatureSet {
     public function getStackCount(slot:SlotId) {
         return stacks.exists(slot) ? stacks.get(slot).stackBasicDescriptor.count : 0;
     }
+
+    public function getStack(slot:SlotId) {
+        //assert(hasStackAtSlot(slot));
+        if (hasStackAtSlot(slot)) {
+            return stacks[slot];
+        } else {
+            return null;
+        }
+    }
 }

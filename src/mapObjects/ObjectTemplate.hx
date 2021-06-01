@@ -1,5 +1,6 @@
 package mapObjects;
 
+import constants.GameConstants;
 import utils.Array2D;
 import filesystem.FileCache;
 import utils.Int3;
@@ -8,6 +9,7 @@ import constants.Obj;
 import mapping.TerrainType;
 
 using StringTools;
+using Reflect;
 
 class ObjectTemplate {
 
@@ -272,6 +274,80 @@ class ObjectTemplate {
 
     public function canBePlacedAt(terrain:TerrainType) {
         return allowedTerrains.indexOf(terrain) != -1;
+    }
+
+    public function readJson(node:Dynamic, withTerrain:Bool = false) {
+        animationFile = node.hasField("animation") ? node.field("animation") : "";
+        editorAnimationFile = node.hasField("editorAnimation") ? node.field("editorAnimation") : "";
+
+        var visitDirs:Array<Dynamic> = node.field("visitableFrom");
+        if (visitDirs!= null && visitDirs.length > 0) {
+            if (visitDirs[0].charAt(0) == '+') visitDir |= 1;
+            if (visitDirs[0].charAt(1) == '+') visitDir |= 2;
+            if (visitDirs[0].charAt(2) == '+') visitDir |= 4;
+            if (visitDirs[1].charAt(2) == '+') visitDir |= 8;
+            if (visitDirs[2].charAt(2) == '+') visitDir |= 16;
+            if (visitDirs[2].charAt(1) == '+') visitDir |= 32;
+            if (visitDirs[2].charAt(0) == '+') visitDir |= 64;
+            if (visitDirs[1].charAt(0) == '+') visitDir |= 128;
+        } else {
+            visitDir = 0x00;
+        }
+
+        if (withTerrain && node.hasField("allowedTerrains")) {
+            var allowedTerrainsObj:Array<Dynamic> = node.field("allowedTerrains");
+            for (entry in allowedTerrainsObj) {
+                allowedTerrains.push(StringConstants.TERRAIN_NAMES.indexOf(entry));
+            }
+        } else {
+            for (i in 0...GameConstants.TERRAIN_TYPES) {
+                allowedTerrains.push((i:TerrainType));
+            }
+
+            allowedTerrains.remove(TerrainType.ROCK);
+        }
+
+        if (withTerrain && allowedTerrains.length == 0) {
+            trace("Loaded template without allowed terrains!");
+        }
+
+        var charToTile = function(ch:String) {
+            return switch (ch) {
+                case ' ' : 0;
+                case '0' : 0;
+                case 'V' : VISIBLE;
+                case 'B' : VISIBLE | BLOCKED;
+                case 'H' : BLOCKED;
+                case 'A' : VISIBLE | BLOCKED | VISITABLE;
+                case 'T' : BLOCKED | VISITABLE;
+                default:
+                    throw 'Unrecognized char $ch in template mask';
+            }
+        };
+
+        var mask:Array<Dynamic> = node.field("mask");
+        if (mask == null) {
+            mask = [];
+        }
+
+        var height = mask.length;
+        var width  = 0;
+        for (line in mask) {
+            width = cast Math.max(width, line.length);
+        }
+
+        setSize(width, height);
+
+        for (i in 0...mask.length) {
+            var line = mask[i];
+            for (j in 0...line.length) {
+                usedTiles.set(mask.length - 1 - i, line.length - 1 - j, charToTile(line[j]));
+            }
+        }
+
+        printPriority = node.field("zIndex");
+
+        afterLoadFixup();
     }
 }
 

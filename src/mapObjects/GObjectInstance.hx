@@ -30,6 +30,9 @@ class GObjectInstance implements IObjectInterface {
     public var typeName:String;
     public var subTypeName:String;
 
+    // pixi specific
+    public var fadeAnimKey:Int = -1;
+
     public static var cb:GameCallback;
 
     public function new() {

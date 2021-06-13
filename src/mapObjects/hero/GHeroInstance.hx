@@ -56,10 +56,10 @@ class GHeroInstance extends ArmedInstance {
     public var level:Int; //current level of hero
     public var name:String; //may be custom
     public var biography:String; //if custom
-    public var portrait:Int; //may be custom
-    public var mana:Int; // remaining spell points
-    public var secSkills:Array<{skill:SecondarySkill, level:Int}>; //first - ID of skill, second - level of skill (1 - basic, 2 - adv., 3 - expert); if hero has ability (-1, -1) it meansthat it should have default secondary abilities
-    public var movement:Int; //remaining movement points
+    public var portrait:Int = UNINITIALIZED_PORTRAIT; //may be custom
+    public var mana:Int = UNINITIALIZED_MANA; // remaining spell points
+    public var secSkills:Array<{skill:SecondarySkill, level:Int}> = []; //first - ID of skill, second - level of skill (1 - basic, 2 - adv., 3 - expert); if hero has ability (-1, -1) it meansthat it should have default secondary abilities
+    public var movement:Int = UNINITIALIZED_MOVEMENT; //remaining movement points
     public var sex:Int;
     public var inTownGarrison:Bool; // if hero is in town garrison
     public var visitedTown:GTownInstance; //set if hero is visiting town or in the town garrison
@@ -68,8 +68,8 @@ class GHeroInstance extends ArmedInstance {
 
     //public var artifacts:Array<CArtifact>; //hero's artifacts from bag
     //public var artifWorn:std.map<ui16,CArtifact>; //map<position,artifact_id>; positions: 0 - head; 1 - shoulders; 2 - neck; 3 - right-hand; 4 - left-hand; 5 - torso; 6 - right-ring; 7 - left-ring; 8 - feet; 9 - misc1; 10 - misc2; 11 - misc3; 12 - misc4; 13 - mach1; 14 - mach2; 15 - mach3; 16 - mach4; 17 - spellbook; 18 - misc5
-    public var spells:Array<SpellId>; //known spells (spell IDs)
-    public var visitedObjects:Array<ObjectInstanceId>;
+    public var spells:Array<SpellId> = []; //known spells (spell IDs)
+    public var visitedObjects:Array<ObjectInstanceId> = [];
 
     public var patrol:Patrol;
     public var skillsInfo:SecondarySkillsInfo;
@@ -88,13 +88,20 @@ class GHeroInstance extends ArmedInstance {
     public function new() {
         super();
 
-        secSkills = [];
-        spells = [];
-        visitedObjects = [];
+        bonusSystemNode.setNodeType(HERO);
+        ID = Obj.HERO;
+
         patrol = new Patrol();
         skillsInfo = new SecondarySkillsInfo();
 
         artifactSet.bearerType = bearerType;
+
+        isStanding = true;
+        moveDir = 4;
+        level = 1;
+        exp = 0xffffffff;
+        sex = 0xff;
+        secSkills.push({skill: SecondarySkill.DEFAULT, level: -1});
     }
 
     public function pushPrimSkill(which:PrimarySkill, val:BonusValue):Void {
